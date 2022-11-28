@@ -33,16 +33,30 @@ u8 wideModifier = 2;
 static u32 clrWhite, clrBlack;
 
 int level = 0,
+	oLvl = -1,
 	curLine;
 
 bool vcolCheck = false,
     hcolCheck = false,
+	tcolCheck = false,
     hasStarted = false;
 
 float constrain(float x, float min, float max) {
 	if (x < min) return min;
 	if (x > max) return max;
 	return x;
+}
+
+void drawLevel() {
+	for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
+		C2D_DrawLine(linelist[curLine]->startX - cX + SCREEN_WIDTH / 2,
+					 linelist[curLine]->startY - cY + SCREEN_HEIGHT / 2,
+					 clrBlack,
+					 linelist[curLine]->endX - cX + SCREEN_WIDTH / 2,
+					 linelist[curLine]->endY - cY + SCREEN_HEIGHT / 2,
+					 clrBlack, 2, 0.1f);
+	}
+	C2D_DrawCircleSolid(endPoint[level][0],endPoint[level][1], 0.4f, 1, C2D_Color32(0, 255, 255, 0xFF));
 }
 
 int main(int argc, char* argv[]) {
@@ -90,40 +104,41 @@ int main(int argc, char* argv[]) {
 		kUp = hidKeysUp();
 		
 		// Gameloop
-		if (!hasStarted) {
+		if (!hasStarted || oLvl != level) {
 			playerX = startPos[level][0];
 			playerY = startPos[level][1];
 			playerYVel = 0;
 			playerXVel = 0;
 			oX = playerX;
 			oY = playerY;
-			cX = constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2);
-			cY = constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2);
+			if (oLvl != level) {
+				cX = constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2);
+				cY = constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2);
+			}
+			oLvl = level;
 			hasStarted = true;
 		}
 		oX = playerX;
 		oY = playerY;
 		playerYVel += 0.3;
 		if (kHeld & KEY_DOWN) playerYVel += 0.9;
-		if (playerYVel > 15) playerYVel = 15;
-		if (playerYVel < -15) playerYVel = -15;
-		playerXVel = playerXVel / 2;
-		if (kHeld & KEY_LEFT) playerXVel -= 2;
-		if (kHeld & KEY_RIGHT) playerXVel += 2;
+		if (playerYVel > 9) playerYVel = 9;
+		if (playerYVel < -9) playerYVel = -9;
+		playerXVel = playerXVel / sqrt(6);
+		if (kHeld & KEY_LEFT) playerXVel -= 3;
+		if (kHeld & KEY_RIGHT) playerXVel += 3;
 		playerX += playerXVel;
 		hcolCheck = false;
 		if (vcolCheck) playerY -= abs(playerXVel);
-		for (int i = 0; i < levelLen[level]; i++) {
-			curLine = levelStart[level]+i;
+		for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 			if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 				hcolCheck = true;
 				break;
 			}
 		}
 		while (hcolCheck) {
-			bool tcolCheck = false;
-			for (int i = 0; i < levelLen[level]; i++) {
-				curLine = levelStart[level]+i;
+			tcolCheck = false;
+			for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 				if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 					tcolCheck = true;
 					break;
@@ -134,21 +149,20 @@ int main(int argc, char* argv[]) {
 			} else break;
 		}
 		if (vcolCheck) playerY += abs(playerXVel);
+		tcolCheck = vcolCheck;
 		vcolCheck = false;
 		if (hcolCheck) playerXVel = 0;
 		playerY += playerYVel;
-		for (int i = 0; i < levelLen[level]; i++) {
-			curLine = levelStart[level]+i;
+		for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 			if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 			if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 				vcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
 				break;
 			}
 		}
-		if (!vcolCheck && playerYVel > 0) {
+		if (tcolCheck) {
 			playerY += abs(playerXVel);
-			for (int i = 0; i < levelLen[level]; i++) {
-				curLine = levelStart[level]+i;
+			for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 				if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 				if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 					vcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
@@ -160,9 +174,8 @@ int main(int argc, char* argv[]) {
 			}
 		}
 		while (vcolCheck) {
-			bool tcolCheck = false;
-			for (int i = 0; i < levelLen[level]; i++) {
-				curLine = levelStart[level]+i;
+			tcolCheck = false;
+			for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 				if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 				if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 					tcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
@@ -174,8 +187,10 @@ int main(int argc, char* argv[]) {
 			} else break;
 		}
 		if (vcolCheck) {
-			if ((kDown & KEY_A) && playerYVel > 0) playerYVel = -5 * ((kHeld&KEY_DOWN) ? 2 : 1);
-			else {
+			if ((kDown & KEY_A) && playerYVel > 0) {
+				playerYVel = -5 * ((kHeld&KEY_DOWN) ? 2 : 1);
+				vcolCheck = false;
+			} else {
 				vcolCheck = playerYVel > 0;
 				playerYVel = 0;
 			}
@@ -196,15 +211,10 @@ int main(int argc, char* argv[]) {
 		// Top Screen
 		C2D_SceneBegin(top_main);
 		
-		for (int i = 0; i < levelLen[level]; i++) {
-			curLine = levelStart[level]+i;
-			C2D_DrawLine(linelist[curLine]->startX - cX + SCREEN_WIDTH / 2,
-						 linelist[curLine]->startY - cY + SCREEN_HEIGHT / 2,
-						 clrBlack,
-						 linelist[curLine]->endX - cX + SCREEN_WIDTH / 2,
-						 linelist[curLine]->endY - cY + SCREEN_HEIGHT / 2,
-						 clrBlack, 1.5, 0.1f);
-		}
+		// Draw Level
+		drawLevel();
+		
+		// Draw Player
 		C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
 							playerY - cY + SCREEN_HEIGHT / 2,
 							0.3f, 10, clrBlack);
@@ -219,15 +229,28 @@ int main(int argc, char* argv[]) {
 		C3D_FrameEnd(0);
 		
 		if (playerY > bounds[level][3]) { //rip
+			// Start Render
+			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+			C2D_TargetClear(top_main, clrWhite);
+			C2D_SceneBegin(top_main);
+			// Draw Level
+			drawLevel();
+        	// Done Rendering!
+			C3D_FrameEnd(0);
 			int frames = 0;
 			while (frames < 24) {
 				// Start Render
 				C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 				C2D_SceneBegin(top_main);
+				// Draw Level
+				drawLevel();
 				// Funni Animation
 				C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
-									SCREEN_HEIGHT, 0.8f, (frames / 24.0f) * 20,
-									C2D_Color32(255, 200 + 55 * (frames / 24.0f), 255 * (frames / 24.0f), 0xFF));
+									SCREEN_HEIGHT, 0.9f, (frames / 24.0f) * 69,
+									C2D_Color32(255, 200 - 200 * (frames / 24.0f), 0, C2D_FloatToU8(0.5 - (frames / 48.0f))));
+				C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
+									SCREEN_HEIGHT, 0.9f, (frames / 24.0f) * 69,
+									C2D_Color32(255, 255, 255, C2D_FloatToU8((frames / 12.0f) - 1)));
         		// Done Rendering!
 				C3D_FrameEnd(0);
 				frames++;

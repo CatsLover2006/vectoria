@@ -24,16 +24,6 @@ bool pointCircle(float px, float py, float cx, float cy, float r) {
 }
 
 bool lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
-  if(pointCircle(x1,y1, cx,cy,r)) {
-	  closestX = x1;
-	  closestY = y1;
-	  return true;
-  }
-  if (pointCircle(x2,y2, cx,cy,r)){
-	  closestX = x2;
-	  closestY = y2;
-	  return true;
-  }
   float distX = x1 - x2;
   float distY = y1 - y2;
   float len = sqrt( (distX*distX) + (distY*distY) );
@@ -41,7 +31,19 @@ bool lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, floa
   closestX = x1 + (dot * (x2-x1));
   closestY = y1 + (dot * (y2-y1));
   bool onSegment = linePoint(x1,y1,x2,y2, closestX,closestY);
-  if (!onSegment) return false;
+  if (!onSegment) {
+  	if(pointCircle(x1,y1, cx,cy,r)) {
+	  closestX = x1;
+	  closestY = y1;
+	  return true;
+  	}
+  	if (pointCircle(x2,y2, cx,cy,r)){
+	  closestX = x2;
+	  closestY = y2;
+	  return true;
+  	}
+	return false;
+  }
   distX = closestX - cx;
   distY = closestY - cy;
   float distance = sqrt( (distX*distX) + (distY*distY) );

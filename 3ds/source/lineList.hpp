@@ -21,26 +21,49 @@ const line* linelist[] = {
 	new line(350, 0, 0, 0)
 };
 
-const int levelLen[] = {
+const int levelEnd[] = {
+	8,
 	8
 };
 
 const int levelStart[] = {
-	0
+	0,
+	1
 };
 
 const float bounds[][4] = {
 	{
 		0,
 		0,
-		400,
-		300
-	}	
+		4000,
+		3000
+	},
+	{
+		0,
+		0,
+		350,
+		200
+	}
 };
 
 const float startPos[][2] = {
 	{
 		50,
 		124.3
+	},
+	{
+		50,
+		124.3
+	}
+};
+
+const float endPoint[][2] = {
+	{
+		315,
+		25
+	},
+	{
+		315,
+		25
 	}
 };
