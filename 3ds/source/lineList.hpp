@@ -39,8 +39,8 @@ const line* linelistKO[] = {
 };
 
 const line* linelistBG[] = {
-	new line(90, 20, 80, 50), // Level 1, A Button
-	new line(90, 20, 100, 50), // Level 1, A Button
+	new line(90, 20, 80 + 10/8.0f, 45), // Level 1, A Button
+	new line(90, 20, 100 - 10/8.0f, 45), // Level 1, A Button
 	new line(85, 35, 95, 35), // Level 1, A Button
 	new line(90, 10, 65, 35), // Level 1, A Button
 	new line(90, 10, 115, 35), // Level 1, A Button
