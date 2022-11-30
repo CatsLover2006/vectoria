@@ -20,8 +20,8 @@ const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
 
 enum gamestate {
-	inGame,
-	menu
+	inGame = 1,
+	menu = 0
 };
 enum animstate {
 	unset = -1,
@@ -286,7 +286,7 @@ int main(int argc, char* argv[]) {
 							break;
 						}
 					}
-					if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 10)) break;
+					if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) lol = SUBSTEPS + 1;
 				}
 				cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
 				cX /= 1.3;
@@ -296,6 +296,7 @@ int main(int argc, char* argv[]) {
 			}
 			case menu: {
 				// nothing to do, break imediately
+				gameState = inGame;
 				break;
 			}
 		}
@@ -393,7 +394,7 @@ int main(int argc, char* argv[]) {
 				}
 				
 				// Done Level Check
-				if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 10)) {
+				if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) {
 					// Log it
 					log << "Nice! Beat level " << level << " with a time of " << levelTimer << " seconds!" << std::endl;
 					animID = newLvl;
