@@ -33,7 +33,7 @@ include /opt/devkitpro/devkitARM/3ds_rules
 #     - <libctru folder>/default_icon.png
 # SMOL_ICON is the 24x24 app icon
 #---------------------------------------------------------------------------------
-TARGET			:=	$(notdir $(CURDIR))
+TARGET			:=	lines
 BUILD			:=	build
 SOURCES			:=	source
 DATA			:=	data

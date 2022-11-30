@@ -2,6 +2,8 @@
 !/**/
 !*.*
 !makefile
+*.lst
+*.map
 *.exe
 *.3dsx
 *.t3s
@@ -11,3 +13,4 @@
 *.gba
 *.nds
 *.o
+*.d
