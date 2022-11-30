@@ -8,6 +8,7 @@
 #define MAX_SPEED 59
 
 #include <citro2d.h>
+#include <3ds.h>
 
 #include <fstream>
 #include <iostream>
@@ -40,20 +41,21 @@ float playerX = 50,
     cX = playerX,
     cY = playerY,
 	animTimer = 0,
-	levelTimer = 0;
+	depthOffset = 0;
 
 const double pi = acos(-1.0);
 
 u8 consoleModel = 3;
 u8 lang = CFG_LANGUAGE_EN;
 u8 serial = 0;
-u8 wideModifier = 2;
 
 static u32 clrWhite, clrBlack, clrCyan, clrRed, clrGrey;
 
 int level = 0,
 	oLvl = -1,
 	curLine;
+
+long long levelTimer;
 
 animstate animID = unset; // -1 not animating
 gamestate gameState = inGame;
@@ -63,7 +65,8 @@ bool vcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
 	dcolCheck = false,
-	levelTimerRunning = false;
+	levelTimerRunning = false,
+	allow3D = true;
 
 float constrain(float x, float min, float max) {
 	if (x < min) return min;
@@ -83,18 +86,18 @@ float min (float a, float b) {
 
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		C2D_DrawLine(linelistBG[curLine]->startX - cX + SCREEN_WIDTH / 2,
+		C2D_DrawLine(linelistBG[curLine]->startX - cX + SCREEN_WIDTH / 2 - 3 * depthOffset,
 					 linelistBG[curLine]->startY - cY + SCREEN_HEIGHT / 2,
 					 clrGrey,
-					 linelistBG[curLine]->endX - cX + SCREEN_WIDTH / 2,
+					 linelistBG[curLine]->endX - cX + SCREEN_WIDTH / 2 - 3 * depthOffset,
 					 linelistBG[curLine]->endY - cY + SCREEN_HEIGHT / 2,
 					 clrGrey, 2, 0.05f);
 	}
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelistBG[curLine]->endX - cX + SCREEN_WIDTH / 2,
+		C2D_DrawCircleSolid(linelistBG[curLine]->endX - cX + SCREEN_WIDTH / 2 - 3 * depthOffset,
 							linelistBG[curLine]->endY - cY + SCREEN_HEIGHT / 2,
 							0.05f, 1, clrGrey);
-		C2D_DrawCircleSolid(linelistBG[curLine]->startX - cX + SCREEN_WIDTH / 2,
+		C2D_DrawCircleSolid(linelistBG[curLine]->startX - cX + SCREEN_WIDTH / 2 - 3 * depthOffset,
 							linelistBG[curLine]->startY - cY + SCREEN_HEIGHT / 2,
 							0.05f, 1, clrGrey);
 	}
@@ -130,10 +133,10 @@ void drawLevel() {
 							linelistKO[curLine]->startY - cY + SCREEN_HEIGHT / 2,
 							0.11f, 1, clrRed);
 	}
-	C2D_DrawCircleSolid(endPoint[level][0] - cX + SCREEN_WIDTH / 2,
+	C2D_DrawCircleSolid(endPoint[level][0] - cX + SCREEN_WIDTH / 2 + 2 * depthOffset,
 						endPoint[level][1] - cY + SCREEN_HEIGHT / 2,
 						0.15f, 3, clrBlack);
-	C2D_DrawCircleSolid(endPoint[level][0] - cX + SCREEN_WIDTH / 2,
+	C2D_DrawCircleSolid(endPoint[level][0] - cX + SCREEN_WIDTH / 2 + 2 * depthOffset,
 						endPoint[level][1] - cY + SCREEN_HEIGHT / 2,
 						0.4f, 2, clrCyan);
 }
@@ -159,7 +162,7 @@ int main(int argc, char* argv[]) {
 	clrRed = C2D_Color32(255, 0, 0, 0xFF);
 	clrGrey = C2D_Color32(200, 200, 200, 0xFF);
 	
-	// Wide mode
+	// 3D Mode
     Result res = cfguInit();
     if (R_SUCCEEDED(res)) {
 		CFGU_GetSystemLanguage(&lang);
@@ -167,12 +170,17 @@ int main(int argc, char* argv[]) {
 		CFGI_SecureInfoGetSerialNumber(&serial);
         cfguExit();
     }
-    if (consoleModel == 3) wideModifier = 1;
-	if (serial == 0) wideModifier = 1;
-    gfxSetWide(wideModifier == 2);
+    if (consoleModel == 3) allow3D = false; // 2DS
+    if (consoleModel == 5) { // New 2DS XL
+		allow3D = false;
+		gfxSetWide(true);
+	}
+	if (serial == 0) allow3D = false; // Citra
+	gfxSet3D(allow3D);
 	
 	// Create Screens
     C3D_RenderTarget * top_main = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+    C3D_RenderTarget * top_sub = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
     C3D_RenderTarget * bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 	//consoleInit(GFX_BOTTOM, NULL);
 	
@@ -220,7 +228,7 @@ int main(int argc, char* argv[]) {
 						if (!levelTimerRunning) log << "We Going!" << std::endl;
 						levelTimerRunning = true;
 					}
-					if (levelTimerRunning) levelTimer += 1 / 360.0f;
+					if (levelTimerRunning) levelTimer++;
 					if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
@@ -304,27 +312,38 @@ int main(int argc, char* argv[]) {
 		// Start Render
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 		C2D_TargetClear(top_main, clrWhite);
+		C2D_TargetClear(top_sub, clrWhite);
 		C2D_TargetClear(bottom, clrWhite);
 		
 		// Top Screen
-		C2D_SceneBegin(top_main);
-		switch (gameState) {
-			case inGame: {
-				// Draw Level
-				drawLevel();
-				
-				// Draw Player
-				C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
-									playerY - cY + SCREEN_HEIGHT / 2,
-									0.3f, (animID == -1 ? 10 : min(animTimer * 100, 10)), clrBlack);
-				C2D_DrawCircleSolid(playerX + cos(rot) * (animID == -1 ? 6 : min(animTimer * 60, 6)) - cX + SCREEN_WIDTH / 2,
-									playerY + sin(rot) * (animID == -1 ? 6 : min(animTimer * 60, 6)) - cY + SCREEN_HEIGHT / 2,
-									0.4f, (animID == -1 ? 2.5 : min(animTimer * 25, 2.5)), clrCyan);
-				
-				if (animID == newLvl) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
-				break;
+		for (int b = 0; b < 2; b++) {
+			if (b == 0) {
+				C2D_SceneBegin(top_main);
+				depthOffset = abs(osGet3DSliderState());
+				if (!allow3D) depthOffset = 0;
 			}
-			case menu: break;
+			if (b == 1) {
+				C2D_SceneBegin(top_sub);
+				depthOffset = -depthOffset;
+			}
+			switch (gameState) {
+				case inGame: {
+					// Draw Level
+					drawLevel();
+
+					// Draw Player
+					C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
+										playerY - cY + SCREEN_HEIGHT / 2,
+										0.3f, (animID == -1 ? 10 : min(animTimer * 100, 10)), clrBlack);
+					C2D_DrawCircleSolid(playerX + cos(rot) * (animID == -1 ? 6 : min(animTimer * 60, 6)) - cX + SCREEN_WIDTH / 2,
+										playerY + sin(rot) * (animID == -1 ? 6 : min(animTimer * 60, 6)) - cY + SCREEN_HEIGHT / 2,
+										0.4f, (animID == -1 ? 2.5 : min(animTimer * 25, 2.5)), clrCyan);
+
+					if (animID == newLvl) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
+					break;
+				}
+				case menu: break;
+			}
 		}
 		
 		// Bottom Screne
@@ -347,30 +366,51 @@ int main(int argc, char* argv[]) {
 					// Start Render
 					C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 					C2D_TargetClear(top_main, clrWhite);
-					C2D_SceneBegin(top_main);
-					// Draw Level
-					drawLevel();
+					C2D_TargetClear(top_sub, clrWhite);
+					for (int b = 0; b < 2; b++) {
+						if (b == 0) {
+							C2D_SceneBegin(top_main);
+							depthOffset = abs(osGet3DSliderState());
+							if (!allow3D) depthOffset = 0;
+						}
+						if (b == 1) {
+							C2D_SceneBegin(top_sub);
+							depthOffset = -depthOffset;
+						}
+						// Draw Level
+						drawLevel();
+					}
 					// Done Rendering!
 					C3D_FrameEnd(0);
 					// Log It
-					log << "Oof! Died after " << levelTimer << " seconds on level " << level << std::endl;
+					log << "Oof! Died after " << levelTimer/360.0f << " seconds on level " << level << std::endl;
 					animID = ded;
 					int frames = 0;
 					while (frames < 24) {
 						frames++;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-						C2D_SceneBegin(top_main);
-						// Draw Level
-						drawLevel();
-						// Funni Animation
-						C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
-											playerY - cY + SCREEN_HEIGHT / 2, 0.9f, (frames / 24.0f) * 69,
-											C2D_Color32(255, 200 - 200 * (frames / 24.0f), 0,
-														C2D_FloatToU8(0.5 - (frames / 48.0f))));
-						C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
-											playerY - cY + SCREEN_HEIGHT / 2, 0.9f, (frames / 24.0f) * 69,
-											C2D_Color32(255, 255, 255, C2D_FloatToU8((frames / 12.0f) - 1)));
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs(osGet3DSliderState());
+								if (!allow3D) depthOffset = 0;
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Funni Animation
+							C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2 + 5 * depthOffset,
+												playerY - cY + SCREEN_HEIGHT / 2, 0.9f, (frames / 24.0f) * 69,
+												C2D_Color32(255, 200 - 200 * (frames / 24.0f), 0,
+															C2D_FloatToU8(0.5 - (frames / 48.0f))));
+							C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2 + 5 * depthOffset,
+												playerY - cY + SCREEN_HEIGHT / 2, 0.9f, (frames / 24.0f) * 69,
+												C2D_Color32(255, 255, 255, C2D_FloatToU8((frames / 12.0f) - 1)));
+						}
 						// Done Rendering!
 						C3D_FrameEnd(0);
 					}
@@ -380,13 +420,24 @@ int main(int argc, char* argv[]) {
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 						C2D_TargetClear(top_main, clrWhite);
-						C2D_SceneBegin(top_main);
-						// Draw Level
-						drawLevel();
-						// Funni Animation
-						C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
-											playerY - cY + SCREEN_HEIGHT / 2, 0.9f, 69,
-											C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
+						C2D_TargetClear(top_sub, clrWhite);
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs(osGet3DSliderState());
+								if (!allow3D) depthOffset = 0;
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Funni Animation
+							C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2 + 5 * depthOffset,
+												playerY - cY + SCREEN_HEIGHT / 2, 0.9f, 69,
+												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
+						}
 						// Done Rendering!
 						C3D_FrameEnd(0);
 					}
@@ -396,7 +447,7 @@ int main(int argc, char* argv[]) {
 				// Done Level Check
 				if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) {
 					// Log it
-					log << "Nice! Beat level " << level << " with a time of " << levelTimer << " seconds!" << std::endl;
+					log << "Nice! Beat level " << level << " with a time of " << levelTimer/360.0f << " seconds!" << std::endl;
 					animID = newLvl;
 					int frames = 0;
 					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
@@ -406,20 +457,30 @@ int main(int argc, char* argv[]) {
 						frames++;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-						C2D_SceneBegin(top_main);
-						// Draw Level
-						drawLevel();
-						// Draw Player
-						C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
-											playerY - cY + SCREEN_HEIGHT / 2,
-											0.3f, 10, clrBlack);
-						C2D_DrawCircleSolid(playerX + cos(rot) * 6 - cX + SCREEN_WIDTH / 2,
-											playerY + sin(rot) * 6 - cY + SCREEN_HEIGHT / 2,
-											0.4f, 2.5, clrCyan);
-						// Funni Animation
-						C2D_DrawCircleSolid(endPoint[level][0] - cX + SCREEN_WIDTH / 2,
-											endPoint[level][1] - cY + SCREEN_HEIGHT / 2,
-											0.9f, 2 + frames * 10, clrCyan);
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs(osGet3DSliderState());
+								if (!allow3D) depthOffset = 0;
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Draw Player
+							C2D_DrawCircleSolid(playerX - cX + SCREEN_WIDTH / 2,
+												playerY - cY + SCREEN_HEIGHT / 2,
+												0.3f, 10, clrBlack);
+							C2D_DrawCircleSolid(playerX + cos(rot) * 6 - cX + SCREEN_WIDTH / 2,
+												playerY + sin(rot) * 6 - cY + SCREEN_HEIGHT / 2,
+												0.4f, 2.5, clrCyan);
+							// Funni Animation
+							C2D_DrawCircleSolid(endPoint[level][0] - cX + SCREEN_WIDTH / 2 + 2 * depthOffset,
+												endPoint[level][1] - cY + SCREEN_HEIGHT / 2,
+												0.9f, 2 + frames * 10, clrCyan);
+						}
 						// Done Rendering!
 						C3D_FrameEnd(0);
 					}

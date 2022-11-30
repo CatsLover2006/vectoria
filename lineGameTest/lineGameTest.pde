@@ -9,7 +9,7 @@ float playerX = 50,
       oY = playerY, 
       playerYVel = 0, 
       playerXVel = 0,
-      scaleFactor = 1,
+      scaleFactor = 2,
       rot = 0,
       rotSpd = 0,
       cX = playerX,
@@ -25,7 +25,7 @@ boolean vcolCheck = false,
 boolean doingInternalAnimation = false;
 
 void settings() {
-  size(floor(400*scaleFactor), floor(240*scaleFactor), FX2D);
+  size(floor(400*scaleFactor), floor(240*scaleFactor));
 }
 
 void setup() {
@@ -55,9 +55,9 @@ void draw() {
   if (pressed[2]) playerYVel += 0.9;
   if (playerYVel > 15) playerYVel = 15;
   if (playerYVel < -15) playerYVel = -15;
-  playerXVel = playerXVel / 2;
-  if (pressed[0]) playerXVel -= 2;
-  if (pressed[3]) playerXVel += 2;
+  playerXVel = playerXVel / sqrt(5.2);
+  if (pressed[0]) playerXVel -= 2.5;
+  if (pressed[3]) playerXVel += 2.5;
   playerX += playerXVel;
   hcolCheck = false;
   if (vcolCheck) playerY -= abs(playerXVel);
@@ -114,7 +114,7 @@ void draw() {
     } else break;
   }
   if (vcolCheck) {
-    if (pressed[1] && playerYVel > 0) playerYVel = -5 * (pressed[2]?2:1);
+    if (pressed[1] && playerYVel > 0) playerYVel = -5.7 * (pressed[2]?2:1);
     else {
       vcolCheck = playerYVel>0;
       playerYVel = 0;
@@ -127,10 +127,14 @@ void draw() {
   if (vcolCheck) rotSpd = ((playerX-oX)>0?0.1:-0.1) * sqrt((playerX-oX)*(playerX-oX)+(playerY-oY)*(playerY-oY)*(vcolCheck?1:0));
   else rotSpd /= sqrt(1.1);
   rot += rotSpd;
-  fill(0);
-  circle(playerX - cX + SCREEN_WIDTH/2, playerY - cY + SCREEN_HEIGHT/2, 20);
-  fill(255, 0, 0);
-  circle(playerX + cos(rot) * 7 - cX + SCREEN_WIDTH/2, playerY + sin(rot) * 7 - cY + SCREEN_HEIGHT/2, 5);
+  strokeWeight(2);
+  stroke(200);
+  for(int i = 0; i < bgList[level].length; i++) {
+    line(bgList[level][i].startX - cX + SCREEN_WIDTH/2,
+         bgList[level][i].startY - cY + SCREEN_HEIGHT/2,
+         bgList[level][i].endX - cX + SCREEN_WIDTH/2,
+         bgList[level][i].endY - cY + SCREEN_HEIGHT/2);
+  }
   stroke(0);
   for(int i = 0; i < lineList[level].length; i++) {
     line(lineList[level][i].startX - cX + SCREEN_WIDTH/2,
@@ -138,28 +142,26 @@ void draw() {
          lineList[level][i].endX - cX + SCREEN_WIDTH/2,
          lineList[level][i].endY - cY + SCREEN_HEIGHT/2);
   }
+  stroke(255, 0, 0);
+  for(int i = 0; i < koList[level].length; i++) {
+    line(koList[level][i].startX - cX + SCREEN_WIDTH/2,
+         koList[level][i].startY - cY + SCREEN_HEIGHT/2,
+         koList[level][i].endX - cX + SCREEN_WIDTH/2,
+         koList[level][i].endY - cY + SCREEN_HEIGHT/2);
+  }
   noStroke();
+  fill(0);
+  circle(endPos[level][0] - cX + SCREEN_WIDTH/2, endPos[level][1] - cY + SCREEN_HEIGHT/2, 6);
+  circle(playerX - cX + SCREEN_WIDTH/2, playerY - cY + SCREEN_HEIGHT/2, 20);
+  fill(0, 255, 255);
+  circle(playerX + cos(rot) * 6 - cX + SCREEN_WIDTH/2, playerY + sin(rot) * 6 - cY + SCREEN_HEIGHT/2, 5);
+  circle(endPos[level][0] - cX + SCREEN_WIDTH/2, endPos[level][1] - cY + SCREEN_HEIGHT/2, 4);
   popMatrix();
   if (playerY > bounds[level][3]) { //rip
-    thread("deathAnimation"); // Isn't stable; too lazy to fix
+    hasStarted = false;
   }
-}
-
-void deathAnimation() {
-  noLoop();
-  pushMatrix();
-  scale(scaleFactor);
-  doingInternalAnimation = true;
-  float start = millis();
-  while (millis()-start < 400) {
-    fill(255, 200 + 55 * (millis()-start)/400,  255 * (millis()-start)/400);
-    circle(playerX - cX + SCREEN_WIDTH/2, SCREEN_HEIGHT, (millis()-start)/10);
-    redraw();
-  }
-  popMatrix();
-  hasStarted = false;
-  doingInternalAnimation = false;
-  loop();
+  for(int i = 0; i < koList[level].length; i++)
+    if (lineCircle(koList[level][i].startX,koList[level][i].startY,koList[level][i].endX,koList[level][i].endY, playerX, playerY, 10)) hasStarted = false;
 }
 
 void keyPressed() {
@@ -182,6 +184,11 @@ void keyPressed() {
     case 'd':
     case 'D': {
       pressed[3] = true;
+      break;
+    }
+    case 'l':
+    case 'L': {
+      println(playerX + "," + playerY);
       break;
     }
   }
