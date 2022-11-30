@@ -1,7 +1,6 @@
 // Line Game 3DS
 // By Hail AKA Half-Qilin
 
-
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
@@ -20,6 +19,15 @@
 const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
 
+enum gamestate {
+	inGame
+};
+enum animstate {
+	unset = -1,
+	newLvl = 1,
+	ded = 0
+};
+
 float playerX = 50,
     playerY = 50,
     oX = playerX,
@@ -30,7 +38,8 @@ float playerX = 50,
     rotSpd = 0,
     cX = playerX,
     cY = playerY,
-	animTimer = 0;
+	animTimer = 0,
+	levelTimer = 0;
 
 const double pi = acos(-1.0);
 
@@ -43,14 +52,16 @@ static u32 clrWhite, clrBlack, clrCyan, clrRed, clrGrey;
 
 int level = 0,
 	oLvl = -1,
-	curLine,
-	animID = -1; // -1 not animating
+	curLine;
+
+animstate animID = unset; // -1 not animating
 
 bool vcolCheck = false,
     hcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
-	dcolCheck = false;
+	dcolCheck = false,
+	levelTimerRunning = false;
 
 float constrain(float x, float min, float max) {
 	if (x < min) return min;
@@ -200,6 +211,8 @@ int main(int argc, char* argv[]) {
 				cX = constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2);
 				cY = constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2);
 			}
+			levelTimer = 0;
+			levelTimerRunning = false;
 			oLvl = level;
 			dcolCheck = false;
 			hasStarted = true;
@@ -208,6 +221,11 @@ int main(int argc, char* argv[]) {
 			oX = playerX;
 			oY = playerY;
 			playerYVel += 0.3 / SUBSTEPS;
+			if (kHeld & (KEY_DOWN | KEY_LEFT | KEY_RIGHT | KEY_A)) {
+				if (!levelTimerRunning) log << "We Going!" << std::endl;
+				levelTimerRunning = true;
+			}
+			if (levelTimerRunning) levelTimer += 1 / 360.0f;
 			if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 			if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 			if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
@@ -273,6 +291,7 @@ int main(int argc, char* argv[]) {
 					break;
 				}
 			}
+			if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 10)) break;
 		}
 		cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
 		cX /= 1.3;
@@ -298,7 +317,7 @@ int main(int argc, char* argv[]) {
 							playerY + sin(rot) * (animID == -1 ? 6 : min(animTimer * 60, 6)) - cY + SCREEN_HEIGHT / 2,
 							0.4f, (animID == -1 ? 2.5 : min(animTimer * 25, 2.5)), clrCyan);
 		
-		if (animID == 0) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
+		if (animID == newLvl) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
 		
 		// Bottom Screne
         //C2D_SceneBegin(bottom);
@@ -321,7 +340,9 @@ int main(int argc, char* argv[]) {
 			drawLevel();
         	// Done Rendering!
 			C3D_FrameEnd(0);
-			animID = 1;
+			// Log It
+			log << "Oof! Died after " << levelTimer << " seconds on level " << level << std::endl;
+			animID = ded;
 			int frames = 0;
 			while (frames < 24) {
 				// Start Render
@@ -347,7 +368,9 @@ int main(int argc, char* argv[]) {
 		
 		// Done Level Check
 		if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 10)) {
-			animID = 0;
+			// Log it
+			log << "Nice! Beat level " << level << " with a time of " << levelTimer << " seconds!" << std::endl;
+			animID = newLvl;
 			int frames = 0;
 			float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
 			float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
