@@ -1,15 +1,10 @@
-import processing.javafx.*;
-
-int SCREEN_WIDTH = 400,
-    SCREEN_HEIGHT = 240;
-
 float playerX = 50,
       playerY = 50, 
       oX = playerX, 
       oY = playerY, 
       playerYVel = 0, 
       playerXVel = 0,
-      scaleFactor = 2,
+      scaleFactor = 2.4f,
       rot = 0,
       rotSpd = 0,
       cX = playerX,
@@ -21,20 +16,18 @@ boolean pressed[] = new boolean[4];
 boolean vcolCheck = false,
         hcolCheck = false,
         hasStarted = false;
-        
-boolean doingInternalAnimation = false;
 
 void settings() {
-  size(floor(400*scaleFactor), floor(240*scaleFactor));
-}
+  size(960, 544, P2D);
+  smooth(4);
+}//*/
 
 void setup() {
   noStroke();
   frameRate(60);
-}
+}//*/
 
 void draw() {
-  if (doingInternalAnimation) return;
   if (!hasStarted) {
     playerX = startPos[level][0];
     playerY = startPos[level][1];
@@ -42,8 +35,8 @@ void draw() {
     playerXVel = 0;
     oX = playerX;
     oY = playerY;
-    cX = constrain(playerX, SCREEN_WIDTH/2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH/2);
-    cY = constrain(playerY, SCREEN_HEIGHT/2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT/2);
+    cX = constrain(playerX, (width/scaleFactor)/2 + bounds[level][0], bounds[level][2] - (width/scaleFactor)/2);
+    cY = constrain(playerY, (height/scaleFactor)/2 + bounds[level][1], bounds[level][3] - (height/scaleFactor)/2);
     hasStarted = true;
   }
   pushMatrix();
@@ -53,8 +46,8 @@ void draw() {
   oY = playerY;
   playerYVel += 0.3;
   if (pressed[2]) playerYVel += 0.9;
-  if (playerYVel > 15) playerYVel = 15;
-  if (playerYVel < -15) playerYVel = -15;
+  if (playerYVel > 59) playerYVel = 59;
+  if (playerYVel < -59) playerYVel = -59;
   playerXVel = playerXVel / sqrt(5.2);
   if (pressed[0]) playerXVel -= 2.5;
   if (pressed[3]) playerXVel += 2.5;
@@ -120,9 +113,9 @@ void draw() {
       playerYVel = 0;
     }
   }
-  cX += constrain(playerX, SCREEN_WIDTH/2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH/2) * 0.3;
+  cX += constrain(playerX, (width/scaleFactor)/2 + bounds[level][0], bounds[level][2] - (width/scaleFactor)/2) * 0.3;
   cX /= 1.3;
-  cY += constrain(playerY, SCREEN_HEIGHT/2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT/2) * 0.3;
+  cY += constrain(playerY, (height/scaleFactor)/2 + bounds[level][1], bounds[level][3] - (height/scaleFactor)/2) * 0.3;
   cY /= 1.3;
   if (vcolCheck) rotSpd = ((playerX-oX)>0?0.1:-0.1) * sqrt((playerX-oX)*(playerX-oX)+(playerY-oY)*(playerY-oY)*(vcolCheck?1:0));
   else rotSpd /= sqrt(1.1);
@@ -130,32 +123,32 @@ void draw() {
   strokeWeight(2);
   stroke(200);
   for(int i = 0; i < bgList[level].length; i++) {
-    line(bgList[level][i].startX - cX + SCREEN_WIDTH/2,
-         bgList[level][i].startY - cY + SCREEN_HEIGHT/2,
-         bgList[level][i].endX - cX + SCREEN_WIDTH/2,
-         bgList[level][i].endY - cY + SCREEN_HEIGHT/2);
+    line(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + bgList[level][i].startX,
+         floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + bgList[level][i].startY,
+         floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + bgList[level][i].endX,
+         floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + bgList[level][i].endY);
   }
   stroke(0);
   for(int i = 0; i < lineList[level].length; i++) {
-    line(lineList[level][i].startX - cX + SCREEN_WIDTH/2,
-         lineList[level][i].startY - cY + SCREEN_HEIGHT/2,
-         lineList[level][i].endX - cX + SCREEN_WIDTH/2,
-         lineList[level][i].endY - cY + SCREEN_HEIGHT/2);
+    line(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + lineList[level][i].startX,
+         floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + lineList[level][i].startY,
+         floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + lineList[level][i].endX,
+         floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + lineList[level][i].endY);
   }
   stroke(255, 0, 0);
   for(int i = 0; i < koList[level].length; i++) {
-    line(koList[level][i].startX - cX + SCREEN_WIDTH/2,
-         koList[level][i].startY - cY + SCREEN_HEIGHT/2,
-         koList[level][i].endX - cX + SCREEN_WIDTH/2,
-         koList[level][i].endY - cY + SCREEN_HEIGHT/2);
+    line(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + koList[level][i].startX,
+         floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + koList[level][i].startY,
+         floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + koList[level][i].endX,
+         floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + koList[level][i].endY);
   }
   noStroke();
   fill(0);
-  circle(endPos[level][0] - cX + SCREEN_WIDTH/2, endPos[level][1] - cY + SCREEN_HEIGHT/2, 6);
-  circle(playerX - cX + SCREEN_WIDTH/2, playerY - cY + SCREEN_HEIGHT/2, 20);
+  circle(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + endPos[level][0], floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + endPos[level][1], 6);
+  circle(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + playerX, floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + playerY, 20);
   fill(0, 255, 255);
-  circle(playerX + cos(rot) * 6 - cX + SCREEN_WIDTH/2, playerY + sin(rot) * 6 - cY + SCREEN_HEIGHT/2, 5);
-  circle(endPos[level][0] - cX + SCREEN_WIDTH/2, endPos[level][1] - cY + SCREEN_HEIGHT/2, 4);
+  circle(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + cos(rot) * 5 + playerX, floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + sin(rot) * 5 + playerY, 6);
+  circle(floor(scaleFactor*(0.5 - cX + (width/scaleFactor)/2))/scaleFactor + endPos[level][0], floor(scaleFactor*(0.5 - cY + (height/scaleFactor)/2))/scaleFactor + endPos[level][1], 4);
   popMatrix();
   if (playerY > bounds[level][3]) { //rip
     hasStarted = false;

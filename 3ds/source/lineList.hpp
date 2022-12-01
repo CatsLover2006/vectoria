@@ -28,7 +28,7 @@ const line* linelist[] = {
     new line(400, 155, 375, 165), // Level 2
     new line(330, 145, 270, 145), // Level 2
     new line(0, -100, 0, 250), // Level 2
-    new line(400, -100, 400, 250), // Level 2
+    new line(400, -100, 400, 260), // Level 2
     new line(0, -100, 400, -100), // Level 2
     new line(130, 145, 70, 145), // Level 2
     new line(0, 90, 70, 100), // Level 2
@@ -36,6 +36,14 @@ const line* linelist[] = {
     new line(330, 55, 270, 55), // Level 2
     new line(330, 55, 400, 0), // Level 2
     new line(330, -20, 270, -20), // Level 2
+    new line(0, 0, 0, 220), // Level 3
+    new line(0, 220, 20, 240), // Level 3
+    new line(40, 220, 20, 240), // Level 3
+    new line(10, 230, 30, 230), // Level 3
+    new line(40, 220, 30, 210), // Level 3
+    new line(40, 180, 30, 190), // Level 3
+    new line(30, 210, 30, 190), // Level 3
+    new line(40, 180, 80, 170), // Level 3
 };
 
 const line* linelistKO[] = {
@@ -53,7 +61,7 @@ const line* linelistKO[] = {
 	new line(100, 280, 200, 260), // Level 2
     new line(300, 280, 400, 260), // Level 2
     new line(300, 200, 300, 150), // Level 2
-    new line(270, 155, 130, 155), // Level 2
+    new line(300, 155, 130, 155), // Level 2
     new line(270, 65, 130, 65), // Level 2
 };
 
@@ -116,34 +124,58 @@ const line* linelistBG[] = {
     new line(140, -10, 130, -20), // Level 2, Extended Arrow
 };
 
-const int levelStart[] = {
-	0,
-	11
+const line* lineListFake[] = {
+    new line(0, 220, 30, 190), // Level 3
+    new line(0, 180, 30, 210), // Level 3
+    new line(10, 210, 10, 190), // Level 3
 };
 
-const int levelEnd[] = {
+const int levelStart[] = {
+	0,
 	11,
 	25
 };
 
+const int levelEnd[] = {
+	11,
+	25,
+	33
+};
+
 const int koStart[] = {
 	0,
-	11
+	11,
+	0
 };
 
 const int koEnd[] = {
 	11,
-	16
+	16,
+	0
 };
 
 const int bgStart[] = {
 	0,
-	37
+	37,
+	0
 };
 
 const int bgEnd[] = {
 	37,
-	56
+	56,
+	0
+};
+
+const int falseStart[] = {
+	0,
+	0,
+	0
+};
+
+const int falseEnd[] = {
+	0,
+	0,
+	3
 };
 
 
@@ -159,7 +191,13 @@ const float bounds[][4] = {
 		-100,
 		400,
 		300
-	}
+	},
+	{
+    	0,
+    	0,
+    	800,
+    	240
+  	}
 };
 
 const float startPos[][2] = {
@@ -170,7 +208,11 @@ const float startPos[][2] = {
 	{
 		50,
 		249.8
-	}
+	},
+	{
+    	20,
+    	220
+  	}
 };
 
 const float endPoint[][2] = {
@@ -181,7 +223,11 @@ const float endPoint[][2] = {
 	{
 		115,
 		-20
-	}
+	},
+	{
+    	108,
+    	167
+  	}
 };
 
-const int levels = 2;
+const int levels = 3;
