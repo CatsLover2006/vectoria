@@ -112,9 +112,9 @@ const line* linelistBG[] = {
     new line(100, 100, 100 + sqrt(200), 100 + sqrt(200)), // Level 2, Arrow 3
     new line(100, 100, 100 + sqrt(200), 100), // Level 2, Arrow 3
     new line(100, 100, 100, 100 + sqrt(200)), // Level 2, Arrow 3
-    new line(210, 17.5, 190, 17.5), // Level 2, Arrow 4
-    new line(210, 17.5, 200, 7.5), // Level 2, Arrow 4
-    new line(210, 17.5, 200, 27.5), // Level 2, Arrow 4
+    new line(210, 18, 190, 18), // Level 2, Arrow 4
+    new line(210, 18, 200, 8), // Level 2, Arrow 4
+    new line(210, 18, 200, 28), // Level 2, Arrow 4
     new line(300, -20, 150, -20), // Level 2, Extended Arrow
     new line(160, -30, 150, -20), // Level 2, Extended Arrow
     new line(160, -10, 150, -20), // Level 2, Extended Arrow
