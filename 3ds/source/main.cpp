@@ -223,20 +223,25 @@ int main(int argc, char* argv[]) {
 	log << "0";
 	log.close();
     FILE * saveFile = fopen ("save_hail_lines.txt", "r");
-    fscanf(saveFile, "%lx", &saveVersion);
+    fscanf(saveFile, "%x", &saveVersion);
     switch (saveVersion) {
 		case 1: {
 			unsigned int len = 0;
 			unsigned long scoreRandomCode = 0;
+			unsigned long tScore = 0;
             fscanf(saveFile, "%x", &len);
 			for (int i = 0; i < len; i++) {
 				highScores[i] = 0;
-				fscanf(saveFile, "%lx|%lx", &(highScores[i]), &scoreRandomCode);
-				highScores[i] = (highScores[i]) ^ (~scoreRandomCode);
+				fscanf(saveFile, "%lx|%lx", &tScore, &scoreRandomCode);
+				highScores[i] = tScore ^ (~scoreRandomCode);
 			}
 			break;
 		}
     }
+	fclose(saveFile);
+	
+	// Save Again
+	saveData(highScores);
 	
 	// Log
     log.open("log_hail_lines.txt", std::fstream::out | std::fstream::trunc);
@@ -567,6 +572,9 @@ int main(int argc, char* argv[]) {
 	
 	// End Log
     log.close();
+	
+	// Save on exit
+	saveData(highScores);
 	
 	// Exit ROM
     romfsExit();
