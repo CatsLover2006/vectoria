@@ -20,6 +20,9 @@
 const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
 
+const unsigned int currentSaveVersion = 1;
+unsigned int saveVersion = 0; // Save Version Update Handling
+
 enum gamestate {
 	inGame = 1,
 	menu = 0
@@ -55,7 +58,7 @@ int level = 0,
 	oLvl = -1,
 	curLine;
 
-long long levelTimer;
+unsigned long levelTimer;
 
 animstate animID = unset; // -1 not animating
 gamestate gameState = inGame;
@@ -157,6 +160,19 @@ void drawLevel() {
 						0.4f, 2, clrCyan);
 }
 
+void saveData (unsigned long* highScores) {
+    std::fstream saveFile;
+    saveFile.open("save_hail_lines.txt", std::fstream::out | std::fstream::trunc);
+    saveFile << std::hex << currentSaveVersion << std::endl;
+    saveFile << std::hex << levels << std::endl;
+	for (int i = 0; i < levels; i++) {
+		unsigned long maxScoreRandomCode = rand();
+		saveFile << std::hex << (highScores[i] ^ maxScoreRandomCode) << "|" << std::hex
+			<< ~maxScoreRandomCode << "|" << std::endl;
+	}
+    saveFile.close();
+}
+
 int main(int argc, char* argv[]) {
     // Init Libs
     romfsInit();
@@ -170,6 +186,10 @@ int main(int argc, char* argv[]) {
     touchPosition touch;
 	u32 kDown, kHeld, kUp;
 	int jumpableFor = 25;
+	
+	// High Scores
+	unsigned long highScores[levels];
+	for (int i = 0; i < levels; i++) highScores[i] = 0;
 	
 	// Create Colors
     clrWhite = C2D_Color32(255, 255, 255, 0xFF);
@@ -196,11 +216,31 @@ int main(int argc, char* argv[]) {
     C3D_RenderTarget * top_main = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_RenderTarget * top_sub = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
     C3D_RenderTarget * bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
-	//consoleInit(GFX_BOTTOM, NULL);
+	
+	// Save Files
+	std::fstream log;
+	log.open("save_hail_lines.txt", std::fstream::out | std::fstream::app);
+	log << "0";
+	log.close();
+    FILE * saveFile = fopen ("save_hail_lines.txt", "r");
+    fscanf(saveFile, "%lx", &saveVersion);
+    switch (saveVersion) {
+		case 1: {
+			unsigned int len = 0;
+			unsigned long scoreRandomCode = 0;
+            fscanf(saveFile, "%x", &len);
+			for (int i = 0; i < len; i++) {
+				highScores[i] = 0;
+				fscanf(saveFile, "%lx|%lx", &(highScores[i]), &scoreRandomCode);
+				highScores[i] = (highScores[i]) ^ (~scoreRandomCode);
+			}
+			break;
+		}
+    }
 	
 	// Log
-	std::fstream log;
     log.open("log_hail_lines.txt", std::fstream::out | std::fstream::trunc);
+	log << "Game Ready!" << std::endl;
 	
 	// Main Loop
 	while (aptMainLoop())
@@ -243,6 +283,11 @@ int main(int argc, char* argv[]) {
 						levelTimerRunning = true;
 					}
 					if (levelTimerRunning) levelTimer++;
+					if (levelTimer == 0 && levelTimerRunning) { // Overflow Check
+						dcolCheck = true;
+						lol = SUBSTEPS + 1;
+						continue;
+					}
 					if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
@@ -317,7 +362,7 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			case menu: {
-				// nothing to do, break imediately
+				saveData(highScores);
 				gameState = inGame;
 				break;
 			}
@@ -462,6 +507,10 @@ int main(int argc, char* argv[]) {
 				if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) {
 					// Log it
 					log << "Nice! Beat level " << level << " with a time of " << levelTimer/360.0f << " seconds!" << std::endl;
+					if (highScores[level] == 0 || levelTimer < highScores[level]) {
+						highScores[level] = levelTimer;
+						log << "New high score!" << std::endl;
+					}
 					animID = newLvl;
 					int frames = 0;
 					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
@@ -499,7 +548,10 @@ int main(int argc, char* argv[]) {
 						C3D_FrameEnd(0);
 					}
 					level++;
-					if (level >= levels) level = 0;
+					if (level >= levels) {
+						level = 0;
+						gameState = menu;
+					}
 					hasStarted = false;
 				}
 				break;
