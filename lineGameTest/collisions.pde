@@ -1,38 +1,31 @@
+float closestX, closestY;
+
 // LINE/CIRCLE
 boolean lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
-
-  // is either end INSIDE the circle?
-  // if so, return true immediately
-  boolean inside1 = pointCircle(x1,y1, cx,cy,r);
-  boolean inside2 = pointCircle(x2,y2, cx,cy,r);
-  if (inside1 || inside2) return true;
-  
-  // get length of the line
-  float distX = x1 - x2;
+float distX = x1 - x2;
   float distY = y1 - y2;
   float len = sqrt( (distX*distX) + (distY*distY) );
-
-  // get dot product of the line and circle
   float dot = ( ((cx-x1)*(x2-x1)) + ((cy-y1)*(y2-y1)) ) / pow(len,2);
-
-  // find the closest point on the line
-  float closestX = x1 + (dot * (x2-x1));
-  float closestY = y1 + (dot * (y2-y1));
-  
-  // is this point actually on the line segment?
-  // if so keep going, but if not, return false
+  closestX = x1 + (dot * (x2-x1));
+  closestY = y1 + (dot * (y2-y1));
   boolean onSegment = linePoint(x1,y1,x2,y2, closestX,closestY);
-  if (!onSegment) return false;
-
-  // get distance to closest point
+  if (!onSegment) {
+    if(pointCircle(x1,y1, cx,cy,r)) {
+    closestX = x1;
+    closestY = y1;
+    return true;
+    }
+    if (pointCircle(x2,y2, cx,cy,r)){
+    closestX = x2;
+    closestY = y2;
+    return true;
+    }
+  return false;
+  }
   distX = closestX - cx;
   distY = closestY - cy;
   float distance = sqrt( (distX*distX) + (distY*distY) );
-
-  if (distance <= r) {
-    return true;
-  }
-  return false;
+  return distance <= r;
 }
 
 

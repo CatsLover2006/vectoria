@@ -197,7 +197,7 @@ int main(int argc, char* argv[]) {
 	clrCyan = C2D_Color32(0, 255, 255, 0xFF);
 	clrRed = C2D_Color32(255, 0, 0, 0xFF);
 	clrGrey = C2D_Color32(200, 200, 200, 0xFF);
-	clrFake = C2D_Color32(30, 0, 30, 0xFF);
+	clrFake = C2D_Color32(0, 0, 100, 0xFF);
 	
 	// 3D Mode
     Result res = cfguInit();
@@ -317,14 +317,14 @@ int main(int argc, char* argv[]) {
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 						if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
-							vcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+							vcolCheck = vcolCheck || (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
 							if (!vcolCheck) continue;
 							if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
 							else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
 							if (closestY > playerY) jumpableFor = 25;
 						}
 					}
-					if (tcolCheck) {
+					if (tcolCheck && !vcolCheck) {
 						playerY += abs(playerXVel/SUBSTEPS);
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 							if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
