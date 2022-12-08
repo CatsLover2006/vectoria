@@ -230,7 +230,7 @@ int main(int argc, char* argv[]) {
 			unsigned long scoreRandomCode = 0;
 			unsigned long tScore = 0;
             fscanf(saveFile, "%x", &len);
-			for (int i = 0; i < len; i++) {
+			for (unsigned int i = 0; i < len; i++) {
 				highScores[i] = 0;
 				fscanf(saveFile, "%lx|%lx", &tScore, &scoreRandomCode);
 				highScores[i] = tScore ^ (~scoreRandomCode);

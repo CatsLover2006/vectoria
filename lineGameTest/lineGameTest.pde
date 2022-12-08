@@ -10,7 +10,8 @@ float playerX = 50,
   cX = playerX,
   cY = playerY;
 
-int level = 0;
+int level = 0,
+  jumpableFor = 0;
 
 boolean pressed[] = new boolean[4];
 boolean vcolCheck = false,
@@ -76,6 +77,7 @@ void draw() {
       if (!vcolCheck) continue;
       if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
       else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
+      if (closestY > playerY) jumpableFor = 25;
     }
   }
   if (tcolCheck && !vcolCheck) {
@@ -87,6 +89,7 @@ void draw() {
         if (!vcolCheck) continue;
         if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
         else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
+        if (closestY > playerY) jumpableFor = 25;
       }
     }
     if (!vcolCheck) {
@@ -94,13 +97,12 @@ void draw() {
     }
   }
   if (vcolCheck) {
-    if (pressed[1] && playerYVel > 0) {
-      playerYVel = -5.7 * (pressed[2]?2:1);
-      playerY -= abs(playerXVel);
-    } else {
-      vcolCheck = playerYVel>0;
-      playerYVel = 0;
-    }
+    playerYVel = 0;
+  } else if (jumpableFor > 0) jumpableFor-=6;
+  if (jumpableFor > 0 && pressed[1]) {
+    playerYVel = -5.7 * (pressed[2]?2:1);
+    playerY -= abs(playerXVel);
+    jumpableFor = 0;
   }
   cX += constrain(playerX, (width/scaleFactor)/2 + bounds[level][0], bounds[level][2] - (width/scaleFactor)/2) * 0.3;
   cX /= 1.3;
