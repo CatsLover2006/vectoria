@@ -120,12 +120,12 @@ void draw() {
     rot += rotSpd;
     if (playerY > bounds[level][3]) { //rip
       hasStarted = false;
-      return;
+      doLogic = 0;
     }
     for (int i = 0; i < koList[level].length; i++)
       if (lineCircle(koList[level][i].startX, koList[level][i].startY, koList[level][i].endX, koList[level][i].endY, playerX, playerY, 10)) {
         hasStarted = false;
-        return;
+        doLogic = 0;
       }
     doLogic -= 1 / 360.0f;
   }
