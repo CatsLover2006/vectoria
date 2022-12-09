@@ -372,8 +372,8 @@ int main(int argc, char* argv[]) {
 			}
 			case menu: {
 				if (animID == exitAnim) {
-					levelTimer++;
-					if (levelTimer > 60) {
+					levelTimer+=6;
+					if (levelTimer > 360) {
 						gameState = inGame;
 						animID = enteredAnim;
 						hasStarted = false;
@@ -384,10 +384,13 @@ int main(int argc, char* argv[]) {
 					saveData(highScores);
 					hasStarted = true;
 					animTimer = 0;
+					dcolCheck = true;
 				}
-				if ((kUp & KEY_A) && (animID != exitAnim)) {
+				if ((kUp & KEY_A) && (animID != exitAnim) && !dcolCheck) {
 					animID = exitAnim;
+					levelTimer = 0;
 				}
+				if (!(kHeld & KEY_A)) dcolCheck = false;
 				break;
 			}
 		}
@@ -427,7 +430,7 @@ int main(int argc, char* argv[]) {
 				case menu: {
 					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 6 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
 					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
-					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 60.0f)));
+					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 360.0f)));
 					break;
 				}
 			}
