@@ -37,13 +37,27 @@ const line* linelist[] = {
     new line(330, 55, 400, 0), // Level 2
     new line(330, -20, 270, -20), // Level 2
     new line(0, 0, 0, 220), // Level 3
+    new line(0, 0, 800, 0), // Level 3
+    new line(800, 0, 800, 180), // Level 3
     new line(0, 220, 20, 240), // Level 3
-    new line(40, 220, 20, 240), // Level 3
-    new line(10, 230, 30, 230), // Level 3
-    new line(40, 220, 30, 210), // Level 3
+    new line(10, 230, 40, 230), // Level 3
+    new line(30, 230, 20, 240), // Level 3
     new line(40, 180, 30, 190), // Level 3
     new line(30, 210, 30, 190), // Level 3
     new line(40, 180, 80, 170), // Level 3
+    new line(40, 230, 80, 170), // Level 3
+    new line(30, 210, 80, 170), // Level 3
+    new line(30, 210, 40, 230), // Level 3
+    new line(150, 120, 200, 120), // Level 3
+    new line(150, 120, 175, 240), // Level 3
+    new line(200, 120, 175, 240), // Level 3
+    new line(355 - (25/120.0f)*50, 190, 355 + (25/120.0f)*50, 190), // Level 3
+    new line(420, 235, 480, 235), // Level 3
+    new line(610, 220, 700, 200), // Level 3
+    new line(740, 160, 800, 180), // Level 3
+    new line(660, 80, 700, 120), // Level 3
+    new line(660, 80, 650, 80), // Level 3
+    new line(600, 50, 500, 50), // Level 3
 };
 
 const line* linelistKO[] = {
@@ -63,6 +77,7 @@ const line* linelistKO[] = {
     new line(300, 200, 300, 150), // Level 2
     new line(300, 155, 130, 155), // Level 2
     new line(270, 65, 130, 65), // Level 2
+    new line(450, 0, 450, 160), // Level 3
 };
 
 const line* linelistBG[] = {
@@ -122,12 +137,33 @@ const line* linelistBG[] = {
     new line(150, -10, 140, -20), // Level 2, Extended Arrow
     new line(140, -30, 130, -20), // Level 2, Extended Arrow
     new line(140, -10, 130, -20), // Level 2, Extended Arrow
+    new line(255, 90, 275, 90), // Level 3, Arrow 1
+    new line(265, 100, 275, 90), // Level 3, Arrow 1
+    new line(265, 80, 275, 90), // Level 3, Arrow 1
+    new line(355, 170, 355, 169), // Level 3, !
+    new line(355, 155, 355, 165), // Level 3, !
+    new line(535, 155, 555, 155), // Level 3, Arrow 2
+    new line(545, 165, 555, 155), // Level 3, Arrow 2
+    new line(545, 145, 555, 155), // Level 3, Arrow 2
+    new line(730, 100, 730 + sqrt(200), 100 + sqrt(200)), // Level 3, Arrow 3
+    new line(730, 100, 730 + sqrt(200), 100), // Level 3, Arrow 3
+    new line(730, 100, 730, 100 + sqrt(200)), // Level 3, Arrow 3
+    new line(550, 70, 550, 67), // Level 3, ?
+    new line(550, 60, 560, 40), // Level 3, ?
+    new line(550, 30, 560, 40), // Level 3, ?
+    new line(550, 30, 540, 40), // Level 3, ?
+    new line(540, 45, 540, 40), // Level 3, ?
 };
 
 const line* lineListFake[] = {
     new line(0, 220, 30, 190), // Level 3
     new line(0, 180, 30, 210), // Level 3
     new line(10, 210, 10, 190), // Level 3
+    new line(330, 120, 380, 120), // Level 3
+    new line(330, 120, 355, 240), // Level 3
+    new line(380, 120, 355, 240), // Level 3
+    new line(600, 100, 500, 100), // Level 3
+    new line(500, 50, 500, 0), // Level 3
 };
 
 const int levelStart[] = {
@@ -139,31 +175,31 @@ const int levelStart[] = {
 const int levelEnd[] = {
 	11,
 	25,
-	33
+	47
 };
 
 const int koStart[] = {
 	0,
 	11,
-	0
+	16
 };
 
 const int koEnd[] = {
 	11,
 	16,
-	0
+	17
 };
 
 const int bgStart[] = {
 	0,
 	37,
-	0
+	56
 };
 
 const int bgEnd[] = {
 	37,
 	56,
-	0
+	72
 };
 
 const int falseStart[] = {
@@ -175,7 +211,7 @@ const int falseStart[] = {
 const int falseEnd[] = {
 	0,
 	0,
-	3
+	8
 };
 
 
@@ -225,8 +261,8 @@ const float endPoint[][2] = {
 		-20
 	},
 	{
-    	108,
-    	167
+    	475,
+    	60
   	}
 };
 

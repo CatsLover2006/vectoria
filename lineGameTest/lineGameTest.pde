@@ -22,6 +22,10 @@ void settings() {
   size(960, 544);
   scaleFactor = max(height/240.0f, width/400.0f);
   smooth(2);
+  println(lineList[level].length);
+  println(koList[level].length);
+  println(bgList[level].length);
+  println(fakeList[level].length);
 }//*/
 
 void setup() {
