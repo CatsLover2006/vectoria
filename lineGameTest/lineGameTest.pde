@@ -30,7 +30,7 @@ void settings() {
 
 void setup() {
   noStroke();
-  frameRate(65355);
+  frameRate(360);
 }//*/
 
 void draw() {

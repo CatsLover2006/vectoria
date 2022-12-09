@@ -16,6 +16,7 @@
 
 #include "lineList.hpp"
 #include "collisions.hpp"
+#include "letters.hpp"
 
 const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
@@ -29,8 +30,9 @@ enum gamestate {
 };
 enum animstate {
 	unset = -1,
-	newLvl = 1,
-	ded = 0
+	enteredAnim = 1,
+	ded = 0,
+	exitAnim = 2,
 };
 
 float playerX = 50,
@@ -61,15 +63,14 @@ int level = 0,
 unsigned long levelTimer;
 
 animstate animID = unset; // -1 not animating
-gamestate gameState = inGame;
+gamestate gameState = menu;
 
 bool vcolCheck = false,
     hcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
 	dcolCheck = false,
-	levelTimerRunning = false,
-	allow3D = true;
+	levelTimerRunning = false;
 
 float constrain(float x, float min, float max) {
 	if (x < min) return min;
@@ -185,7 +186,8 @@ int main(int argc, char* argv[]) {
 	// Input Vars
     touchPosition touch;
 	u32 kDown, kHeld, kUp;
-	int jumpableFor = 25;
+	int jumpableFor = 25,
+		jumpFor = 0;
 	
 	// High Scores
 	unsigned long highScores[levels];
@@ -204,13 +206,9 @@ int main(int argc, char* argv[]) {
     if (R_SUCCEEDED(res)) {
 		CFGU_GetSystemLanguage(&lang);
         CFGU_GetSystemModel(&consoleModel);
-		CFGI_SecureInfoGetSerialNumber(&serial);
         cfguExit();
     }
-    if (consoleModel == 3) allow3D = false; // 2DS
-    if (consoleModel == 5) allow3D = false; // New 2DS XL
-	if (serial == 0) allow3D = false; // Citra
-	gfxSet3D(allow3D);
+	gfxSet3D(true);
 	
 	// Create Screens
     C3D_RenderTarget * top_main = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
@@ -250,6 +248,7 @@ int main(int argc, char* argv[]) {
 	// Main Loop
 	while (aptMainLoop())
     {
+    	startFrame:
 		animTimer += 1 / 60.0f;
 		// Input
 		hidScanInput();
@@ -274,6 +273,8 @@ int main(int argc, char* argv[]) {
 						cY = constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2);
 					}
 					levelTimer = 0;
+					jumpableFor = 0;
+					jumpFor = 0;
 					levelTimerRunning = false;
 					oLvl = level;
 					dcolCheck = false;
@@ -343,10 +344,13 @@ int main(int argc, char* argv[]) {
 					if (vcolCheck) {
 						playerYVel = 0;
 					} else if (jumpableFor) jumpableFor--;
-					if (jumpableFor && (kDown & KEY_A)) {
+					if ((kHeld & KEY_A)) jumpFor = 25;
+					else if (jumpFor) jumpFor--;
+					if (jumpableFor && jumpFor) {
 						playerYVel = xAdd * -6.5 * ((kHeld&KEY_DOWN) ? 2 : 1);
 						playerY -= abs(playerXVel);
 						jumpableFor = 0;
+						jumpFor = 0;
 					}
 					if (jumpableFor) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor ? 1 : 0));
 					else rotSpd /= pow(1.1, 1/13.0);
@@ -367,8 +371,23 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			case menu: {
-				saveData(highScores);
-				gameState = inGame;
+				if (animID == exitAnim) {
+					levelTimer++;
+					if (levelTimer > 60) {
+						gameState = inGame;
+						animID = enteredAnim;
+						hasStarted = false;
+						goto startFrame;
+					}
+				}
+				if (!hasStarted) {
+					saveData(highScores);
+					hasStarted = true;
+					animTimer = 0;
+				}
+				if ((kUp & KEY_A) && (animID != exitAnim)) {
+					animID = exitAnim;
+				}
 				break;
 			}
 		}
@@ -384,7 +403,6 @@ int main(int argc, char* argv[]) {
 			if (b == 0) {
 				C2D_SceneBegin(top_main);
 				depthOffset = abs(osGet3DSliderState());
-				if (!allow3D) depthOffset = 0;
 			}
 			if (b == 1) {
 				C2D_SceneBegin(top_sub);
@@ -403,10 +421,15 @@ int main(int argc, char* argv[]) {
 										floor(0.5 - cY + SCREEN_HEIGHT / 2) + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerY,
 										0.4f, (animID == -1 ? 3 : min(animTimer * 30, 3)), clrCyan);
 
-					if (animID == newLvl) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
+					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
 					break;
 				}
-				case menu: break;
+				case menu: {
+					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 6 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
+					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
+					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 60.0f)));
+					break;
+				}
 			}
 		}
 		
@@ -435,7 +458,6 @@ int main(int argc, char* argv[]) {
 						if (b == 0) {
 							C2D_SceneBegin(top_main);
 							depthOffset = abs(osGet3DSliderState());
-							if (!allow3D) depthOffset = 0;
 						}
 						if (b == 1) {
 							C2D_SceneBegin(top_sub);
@@ -458,7 +480,6 @@ int main(int argc, char* argv[]) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
 								depthOffset = abs(osGet3DSliderState());
-								if (!allow3D) depthOffset = 0;
 							}
 							if (b == 1) {
 								C2D_SceneBegin(top_sub);
@@ -489,7 +510,6 @@ int main(int argc, char* argv[]) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
 								depthOffset = abs(osGet3DSliderState());
-								if (!allow3D) depthOffset = 0;
 							}
 							if (b == 1) {
 								C2D_SceneBegin(top_sub);
@@ -516,7 +536,7 @@ int main(int argc, char* argv[]) {
 						highScores[level] = levelTimer;
 						log << "New high score!" << std::endl;
 					}
-					animID = newLvl;
+					animID = enteredAnim;
 					int frames = 0;
 					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
 					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
@@ -529,7 +549,6 @@ int main(int argc, char* argv[]) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
 								depthOffset = abs(osGet3DSliderState());
-								if (!allow3D) depthOffset = 0;
 							}
 							if (b == 1) {
 								C2D_SceneBegin(top_sub);
