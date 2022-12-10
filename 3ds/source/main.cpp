@@ -344,7 +344,7 @@ int main(int argc, char* argv[]) {
 					if (vcolCheck) {
 						playerYVel = 0;
 					} else if (jumpableFor) jumpableFor--;
-					if ((kHeld & KEY_A)) jumpFor = 25;
+					if ((kDown & KEY_A)) jumpFor = 25;
 					else if (jumpFor) jumpFor--;
 					if (jumpableFor && jumpFor) {
 						playerYVel = xAdd * -6.5 * ((kHeld&KEY_DOWN) ? 2 : 1);
@@ -521,7 +521,7 @@ int main(int argc, char* argv[]) {
 							// Draw Level
 							drawLevel();
 							// Funni Animation
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
+							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 4 * depthOffset),
 												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, 69,
 												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
 						}
