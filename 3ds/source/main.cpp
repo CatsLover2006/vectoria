@@ -17,6 +17,7 @@
 #include "lineList.hpp"
 #include "collisions.hpp"
 #include "letters.hpp"
+#include "buttons.hpp"
 
 const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
@@ -26,7 +27,7 @@ unsigned int saveVersion = 0; // Save Version Update Handling
 
 enum gamestate {
 	inGame = 1,
-	menu = 0
+	menu = 0,
 };
 enum animstate {
 	unset = -1,
@@ -34,9 +35,17 @@ enum animstate {
 	ded = 0,
 	exitAnim = 2,
 };
+enum levelExitType {
+	nextLevel = 0,
+	toMenu = 1,
+};
+enum menuID {
+	mainMenu = 0,
+	levelSelect = 1,
+};
 
-float playerX = 50,
-    playerY = 50,
+float playerX = 69,
+    playerY = 420,
     oX = playerX,
     oY = playerY,
     playerYVel = 0,
@@ -57,13 +66,14 @@ u8 serial = 0;
 static u32 clrWhite, clrBlack, clrCyan, clrRed, clrGrey, clrFake;
 
 int level = 0,
-	oLvl = -1,
 	curLine;
 
 unsigned long levelTimer;
 
 animstate animID = unset; // -1 not animating
 gamestate gameState = menu;
+levelExitType goTo = toMenu;
+menuID currentMenu = mainMenu;
 
 bool vcolCheck = false,
     hcolCheck = false,
@@ -71,6 +81,12 @@ bool vcolCheck = false,
     hasStarted = false,
 	dcolCheck = false,
 	levelTimerRunning = false;
+
+const button* menuButtons[] = {
+	new button("All levels", BOTTOM_SCREEN_WIDTH/2 - 100, 24, 200, 28, 0.6f),
+	new button("Level Select", BOTTOM_SCREEN_WIDTH/2 - 100, 72, 200, 28, 0.6f),
+};
+const int menuButtonCount = 2;
 
 float constrain(float x, float min, float max) {
 	if (x < min) return min;
@@ -161,6 +177,19 @@ void drawLevel() {
 						0.4f, 2, clrCyan);
 }
 
+void drawInfo(C3D_RenderTarget * target) {
+	C2D_TargetClear(target, clrWhite);
+    C2D_SceneBegin(target);
+	drawString(to_str(levelTimer / 360.0f), 3, 15, 0.48f, 1, clrBlack);
+	drawString(to_str(playerX), 3, 27, 0.40f, 1, clrBlack);
+	drawString(to_str(playerY), 3, 39, 0.40f, 1, clrBlack);
+	drawString(to_str(playerXVel), 3, 49, 0.32f, 1, clrBlack);
+	drawString(to_str(playerYVel), 3, 59, 0.32f, 1, clrBlack);
+	drawString(to_str(C3D_GetProcessingTime()*6.0f), 3, 69, 0.32f, 1, clrBlack);
+	drawString(to_str(C3D_GetDrawingTime()*6.0f), 3, 79, 0.32f, 1, clrBlack);
+	drawString(to_str(C3D_GetCmdBufUsage()*100.0f), 3, 89, 0.32f, 1, clrBlack);
+}
+
 void saveData (unsigned long* highScores) {
     std::fstream saveFile;
     saveFile.open("save_hail_lines.txt", std::fstream::out | std::fstream::trunc);
@@ -185,6 +214,8 @@ int main(int argc, char* argv[]) {
 	
 	// Input Vars
     touchPosition touch;
+    touchPosition lastTouch;
+    touchPosition startTouch;
 	u32 kDown, kHeld, kUp;
 	int jumpableFor = 25,
 		jumpFor = 0;
@@ -214,6 +245,9 @@ int main(int argc, char* argv[]) {
     C3D_RenderTarget * top_main = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     C3D_RenderTarget * top_sub = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
     C3D_RenderTarget * bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+
+    // Level Buttons
+    button* levelButtons[levels];
 	
 	// Save Files
 	std::fstream log;
@@ -228,7 +262,7 @@ int main(int argc, char* argv[]) {
 			unsigned long scoreRandomCode = 0;
 			unsigned long tScore = 0;
             fscanf(saveFile, "%x", &len);
-			for (unsigned int i = 0; i < len; i++) {
+			for (unsigned int i = 0; i < min(len, levels); i++) {
 				highScores[i] = 0;
 				fscanf(saveFile, "%lx|%lx", &tScore, &scoreRandomCode);
 				highScores[i] = tScore ^ (~scoreRandomCode);
@@ -252,15 +286,18 @@ int main(int argc, char* argv[]) {
 		animTimer += 1 / 60.0f;
 		// Input
 		hidScanInput();
+		lastTouch = touch;
         hidTouchRead(&touch);
 		kDown = hidKeysDown();
 		kHeld = hidKeysHeld();
 		kUp = hidKeysUp();
+		if (kDown & KEY_TOUCH) startTouch = touch;
 		
+		// Game Logic
 		switch (gameState) {
 			case inGame: {
 				// Gameloop
-				if (!hasStarted || oLvl != level) {
+				if (!hasStarted) {
 					animTimer = 0;
 					playerX = startPos[level][0];
 					playerY = startPos[level][1];
@@ -268,7 +305,7 @@ int main(int argc, char* argv[]) {
 					playerXVel = 0;
 					oX = playerX;
 					oY = playerY;
-					if (oLvl != level) {
+					if (animID == enteredAnim) {
 						cX = constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2);
 						cY = constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2);
 					}
@@ -276,7 +313,6 @@ int main(int argc, char* argv[]) {
 					jumpableFor = 0;
 					jumpFor = 0;
 					levelTimerRunning = false;
-					oLvl = level;
 					dcolCheck = false;
 					hasStarted = true;
 				}
@@ -373,7 +409,7 @@ int main(int argc, char* argv[]) {
 			case menu: {
 				if (animID == exitAnim) {
 					levelTimer+=6;
-					if (levelTimer > 360) {
+					if (levelTimer > 144) {
 						gameState = inGame;
 						animID = enteredAnim;
 						hasStarted = false;
@@ -381,16 +417,44 @@ int main(int argc, char* argv[]) {
 					}
 				}
 				if (!hasStarted) {
+    				for (int i = 0; i < levels; i++)
+    					levelButtons[i] = new button((i != 0 && (highScores[i] == 0 && highScores[i-1] == 0)) ? "x" : std::to_string(i+1),
+    												(i / 6) * 36 + 19, (i % 6) * 36 + 16, 30, 30, 0.6f);
 					saveData(highScores);
 					hasStarted = true;
 					animTimer = 0;
 					dcolCheck = true;
+					currentMenu = mainMenu;
 				}
-				if ((kUp & KEY_A) && (animID != exitAnim) && !dcolCheck) {
-					animID = exitAnim;
-					levelTimer = 0;
+				if (animID == exitAnim) break;
+				switch (currentMenu) {
+					case mainMenu: {
+						if (onButton(menuButtons[0], startTouch.px, startTouch.py) && 
+							(kUp & KEY_TOUCH && onButton(menuButtons[0], lastTouch.px, lastTouch.py))) {
+							animID = exitAnim;
+							levelTimer = 0;
+							level = 0;
+							goTo = nextLevel;
+						}
+						if (onButton(menuButtons[1], startTouch.px, startTouch.py) && 
+							(kUp & KEY_TOUCH && onButton(menuButtons[1], lastTouch.px, lastTouch.py))) {
+							currentMenu = levelSelect;
+						}
+						break;
+					}
+					case levelSelect: {
+						for (int i = 0; i < levels; i++)
+							if (onButton(levelButtons[i], startTouch.px, startTouch.py) && 
+								(kUp & KEY_TOUCH && onButton(levelButtons[i], lastTouch.px, lastTouch.py))
+								&& !(i != 0 && (highScores[i] == 0 && highScores[i-1] == 0))) {
+								animID = exitAnim;
+								levelTimer = 0;
+								level = i;
+								goTo = toMenu;
+							}
+						break;
+					}
 				}
-				if (!(kHeld & KEY_A)) dcolCheck = false;
 				break;
 			}
 		}
@@ -424,13 +488,13 @@ int main(int argc, char* argv[]) {
 										floor(0.5 - cY + SCREEN_HEIGHT / 2) + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerY,
 										0.4f, (animID == -1 ? 3 : min(animTimer * 30, 3)), clrCyan);
 
-					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
+					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					break;
 				}
 				case menu: {
-					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 6 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
-					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 1 - animTimer))));
-					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 360.0f)));
+					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 3 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
+					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
+					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 144.0f)));
 					break;
 				}
 			}
@@ -439,9 +503,34 @@ int main(int argc, char* argv[]) {
 		// Bottom Screne
         C2D_SceneBegin(bottom);
 		switch (gameState) {
-			case inGame: break;
-			case menu: break;
+			case menu: {
+				if (animID == exitAnim) {
+
+				}
+				switch (currentMenu) {
+					case mainMenu: {
+						for (int i = 0; i < menuButtonCount; i++)
+							drawButton(menuButtons[i], (kHeld & KEY_TOUCH && onButton(menuButtons[i], startTouch.px, startTouch.py))?clrRed:clrBlack, 2.0f);
+						break;
+					}
+					case levelSelect: {
+						for (int i = 0; i < levels; i++)
+							drawButton(levelButtons[i], (kHeld & KEY_TOUCH && onButton(levelButtons[i], startTouch.px, startTouch.py))?clrRed:clrBlack, 2.0f);
+						break;
+					}
+				}
+				break;
+			}
+			case inGame: {
+				drawString(to_str(levelTimer / 360.0f), 3, 15, 0.48f, 1, clrBlack);
+				break;
+			}
 		}
+        if (kHeld & KEY_TOUCH) {
+        	C2D_DrawLine(touch.px, touch.py, C2D_Color32(255, 255, 255, 0x00),
+        		startTouch.px, startTouch.py, C2D_Color32(255, 0, 0, 0xc0), 2, 0.9f);
+        	C2D_DrawCircleSolid(startTouch.px, startTouch.py, 0.9f, 1, clrRed);
+        }
         
         // Done Rendering!
 		C3D_FrameEnd(0);
@@ -472,7 +561,7 @@ int main(int argc, char* argv[]) {
 					// Done Rendering!
 					C3D_FrameEnd(0);
 					// Log It
-					log << "Oof! Died after " << levelTimer/360.0f << " seconds on level " << level << std::endl;
+					log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
 					animID = ded;
 					int frames = 0;
 					while (frames < 24) {
@@ -534,7 +623,7 @@ int main(int argc, char* argv[]) {
 				// Done Level Check
 				if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) {
 					// Log it
-					log << "Nice! Beat level " << level << " with a time of " << levelTimer/360.0f << " seconds!" << std::endl;
+					log << "Nice! Beat level " << level << " with a time of " << to_str(levelTimer/360.0f) << " seconds!" << std::endl;
 					if (highScores[level] == 0 || levelTimer < highScores[level]) {
 						highScores[level] = levelTimer;
 						log << "New high score!" << std::endl;
@@ -575,7 +664,7 @@ int main(int argc, char* argv[]) {
 						C3D_FrameEnd(0);
 					}
 					level++;
-					if (level >= levels) {
+					if (level >= levels || goTo == toMenu) {
 						level = 0;
 						gameState = menu;
 					}

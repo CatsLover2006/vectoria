@@ -1,3 +1,6 @@
+#include <sstream>
+#include <iomanip>
+
 class letter {
 	public:
 		const line ** lines;
@@ -152,15 +155,15 @@ const line* letterZ7[] = {
 	new line(18, 0, 0, 0),
 };
 const line* letter0[] = {
-	new line(20, -20, 20, -5),
-	new line(15, -25, 5, -25),
-	new line(15, 0, 5, 0),
+	new line(16, -20, 16, -5),
+	new line(11, -25, 5, -25),
+	new line(11, 0, 5, 0),
 	new line(0, -5, 5, 0),
 	new line(0, -20, 5, -25),
-	new line(15, -25, 20, -20),
-	new line(15, 0, 20, -5),
+	new line(11, -25, 16, -20),
+	new line(11, 0, 16, -5),
 	new line(0, -20, 0, -5),
-	new line(2.5, -22.5, 17.5, -2.5),
+	new line(2.5, -22.5, 13.5, -2.5),
 };
 const line* letter1[] = {
 	new line(5, 0, 5, -25),
@@ -173,6 +176,50 @@ const line* letter2[] = {
 	new line(9, -25, 14, -20),
 	new line(14, -20, 14, -15),
 	new line(14, -15, 0, 0),
+};
+const line* letter3[] = {
+	new line(13, -25, 13, 0),
+	new line(0, -25, 13, -25),
+	new line(3, -13, 13, -13),
+	new line(0, 0, 13, 0),
+};
+const line* letter4[] = {
+	new line(10, -25, 10, 0),
+	new line(10, -25, 0, -10),
+	new line(0, -10, 15, -13),
+};
+const line* letter5[] = {
+	new line(0, 0, 9, 0),
+	new line(0, -25, 14, -25),
+	new line(9, 0, 14, -5),
+	new line(14, -5, 14, -15),
+	new line(0, -15, 0, -25),
+	new line(0, -15, 14, -15),
+};
+const line* letter68[] = {
+	new line(0, 0, 15, 0),
+	new line(0, -25, 15, -25),
+	new line(0, -13, 15, -13),
+	new line(15, 0, 15, -13),
+	new line(0, -25, 0, 0),
+	new line(15, -25, 15, -13),
+};
+const line* letter9[] = {
+	new line(0, -25, 15, -25),
+	new line(0, -25, 0, -15),
+	new line(15, -25, 15, -15),
+	new line(0, -15, 15, -15),
+	new line(0, 0, 15, -15),
+};
+const line* letterPeriod[] = {
+	new line(0, -2.5, 2.5, -5),
+	new line(0, -2.5, 2.5, 0),
+	new line(5, -2.5, 2.5, -5),
+	new line(5, -2.5, 2.5, 0),
+	new line(5, -2.5, 0, 2.5),
+};
+const line* letterMinus[] = {
+	new line(0, -13, 10, -13),
 };
 
 const letter* letters[] = {
@@ -202,9 +249,19 @@ const letter* letters[] = {
 	new letter(letterX, 2, 20),
 	new letter(letterY, 3, 20),
 	new letter(letterZ7, 3, 18),
-	new letter(letter0, 9, 20),
+	new letter(letter0, 9, 16),
 	new letter(letter1, 3, 5),
 	new letter(letter2, 5, 14),
+	new letter(letter3, 4, 13),
+	new letter(letter4, 3, 15),
+	new letter(letter5, 6, 14),
+	new letter(letter68, 5, 14),
+	new letter(letterZ7, 2, 16),
+	new letter(letter68, 6, 14),
+	new letter(letter9, 5, 15),
+	new letter(letterPeriod, 4, 5),
+	new letter(letterMinus, 1, 10),
+	new letter(letterPeriod, 5, 5),
 };
 
 // Char to array index
@@ -212,6 +269,11 @@ int getIndex(char character) {
 	if (character >= 'A' && character <= 'Z') return character - 'A'; // Caps
 	if (character >= 'a' && character <= 'z') return character - 'a'; // Lowercase
 	if (character >= '0' && character <= '9') return character - '0' + 26; // Numbers
+	switch (character) {
+		case '.': return 36;
+		case '-': return 37;
+		case ',': return 38;
+	}
 	return 26; // Backup is 0
 }
 
@@ -247,5 +309,16 @@ float getWidth(std::string str, float scale, float weight) {
 		if (str.at(i) == ' ') x += 23 * scale + weight; // Effectively an A
 		else x += (letters[getIndex(str.at(i))]->size + 3) * scale + weight;
 	}
-	return x;
+	return x - weight;
+}
+
+// Float to String
+std::string to_str (float t, int accuracy = 3)
+{
+  std::ostringstream os;
+  if (t < 0) os << "-";
+  t = abs(t);
+  os << (unsigned long long)floor(t) << "."; // Whole Number
+  os << std::setfill('0') << std::setw(accuracy) << (unsigned short)floor((t - floor(t))*pow(10, accuracy)); // Decimal
+  return os.str ();
 }
