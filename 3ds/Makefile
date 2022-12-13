@@ -17,7 +17,7 @@ ROMFS			:=	romfs
 GFXBUILD		:=	$(ROMFS)/gfx
 APP_TITLE		:=	Vectoria
 APP_AUTHOR		:=	Hail (Half-Qilin)
-APP_DESCRIPTION		:=	A game of lines and a circle (Built with citro2d, libctru & devkitARM)
+APP_DESCRIPTION	:=	A game of lines and a circle (Built with citro2d, libctru & devkitARM)
 #ICON 			:=  icon.png
 #SMOL_ICON 		:=  smol_icon.png
 

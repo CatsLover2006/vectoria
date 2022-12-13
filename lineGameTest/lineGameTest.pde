@@ -23,7 +23,7 @@ boolean vcolCheck = false,
   tcolCheck = false;
 
 void settings() {
-  size(1000, 700, P2D);
+  size(480, 272, P2D);
   scaleFactor = max(height/240.0f, width/400.0f);
   smooth(65536); 
 }//*/
@@ -31,10 +31,13 @@ void settings() {
 void setup() {
   noStroke();
   frameRate(360);
+  println(lineList[level].length);
+  println(koList[level].length);
+  println(bgList[level].length);
+  println(fakeList[level].length);
 }//*/
 
 void draw() {
-  println(frameRate);
   if (!hasStarted) {
     playerX = startPos[level][0];
     playerY = startPos[level][1];
@@ -115,6 +118,7 @@ void draw() {
     }
     cX += constrain(playerX, (width/scaleFactor)/2 + bounds[level][0], bounds[level][2] - (width/scaleFactor)/2) * 0.3;
     cX /= 1.3;
+    if ((width/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (width/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
     cY += constrain(playerY, (height/scaleFactor)/2 + bounds[level][1], bounds[level][3] - (height/scaleFactor)/2) * 0.3;
     cY /= 1.3;
     rot += rotSpd;

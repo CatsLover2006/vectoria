@@ -26,7 +26,7 @@ const unsigned int currentSaveVersion = 1;
 unsigned int saveVersion = 0; // Save Version Update Handling
 
 enum gamestate {
-	inGame = 1,
+	mainLevel = 1,
 	menu = 0,
 };
 enum animstate {
@@ -34,6 +34,7 @@ enum animstate {
 	enteredAnim = 1,
 	ded = 0,
 	exitAnim = 2,
+	gameStart = 3,
 };
 enum levelExitType {
 	nextLevel = 0,
@@ -55,7 +56,8 @@ float playerX = 69,
     cX = playerX,
     cY = playerY,
 	animTimer = 0,
-	depthOffset = 0;
+	depthOffset = 0,
+	scaleFactor = 1;
 
 const double pi = acos(-1.0);
 
@@ -70,7 +72,7 @@ int level = 0,
 
 unsigned long levelTimer;
 
-animstate animID = unset; // -1 not animating
+animstate animID = gameStart; // -1 not animating
 gamestate gameState = menu;
 levelExitType goTo = toMenu;
 menuID currentMenu = mainMenu;
@@ -254,6 +256,8 @@ int main(int argc, char* argv[]) {
 	log.open("save_hail_lines.txt", std::fstream::out | std::fstream::app);
 	log << "0";
 	log.close();
+    log.open("log_hail_lines.txt", std::fstream::out | std::fstream::trunc);
+    log << "Save File Read..." << std::endl;
     FILE * saveFile = fopen ("save_hail_lines.txt", "r");
     fscanf(saveFile, "%x", &saveVersion);
     switch (saveVersion) {
@@ -264,8 +268,9 @@ int main(int argc, char* argv[]) {
             fscanf(saveFile, "%x", &len);
 			for (unsigned int i = 0; i < min(len, levels); i++) {
 				highScores[i] = 0;
-				fscanf(saveFile, "%lx|%lx", &tScore, &scoreRandomCode);
+				fscanf(saveFile, "%lx|%lx|\n", &tScore, &scoreRandomCode);
 				highScores[i] = tScore ^ (~scoreRandomCode);
+    			log << "Level " << i << " high score " << highScores[i] << std::endl;
 			}
 			break;
 		}
@@ -274,9 +279,6 @@ int main(int argc, char* argv[]) {
 	
 	// Save Again
 	saveData(highScores);
-	
-	// Log
-    log.open("log_hail_lines.txt", std::fstream::out | std::fstream::trunc);
 	log << "Game Ready!" << std::endl;
 	
 	// Main Loop
@@ -295,7 +297,7 @@ int main(int argc, char* argv[]) {
 		
 		// Game Logic
 		switch (gameState) {
-			case inGame: {
+			case mainLevel: {
 				// Gameloop
 				if (!hasStarted) {
 					animTimer = 0;
@@ -402,6 +404,7 @@ int main(int argc, char* argv[]) {
 				}
 				cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
 				cX /= 1.3;
+    			if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
 				cY += constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2) * 0.3;
 				cY /= 1.3;
 				break;
@@ -410,7 +413,7 @@ int main(int argc, char* argv[]) {
 				if (animID == exitAnim) {
 					levelTimer+=6;
 					if (levelTimer > 144) {
-						gameState = inGame;
+						gameState = mainLevel;
 						animID = enteredAnim;
 						hasStarted = false;
 						goto startFrame;
@@ -476,7 +479,7 @@ int main(int argc, char* argv[]) {
 				depthOffset = -depthOffset;
 			}
 			switch (gameState) {
-				case inGame: {
+				case mainLevel: {
 					// Draw Level
 					drawLevel();
 
@@ -494,6 +497,7 @@ int main(int argc, char* argv[]) {
 				case menu: {
 					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 3 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
 					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
+					if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 144.0f)));
 					break;
 				}
@@ -504,9 +508,6 @@ int main(int argc, char* argv[]) {
         C2D_SceneBegin(bottom);
 		switch (gameState) {
 			case menu: {
-				if (animID == exitAnim) {
-
-				}
 				switch (currentMenu) {
 					case mainMenu: {
 						for (int i = 0; i < menuButtonCount; i++)
@@ -519,10 +520,11 @@ int main(int argc, char* argv[]) {
 						break;
 					}
 				}
+				if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, BOTTOM_SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 				break;
 			}
-			case inGame: {
-				drawString(to_str(levelTimer / 360.0f), 3, 15, 0.48f, 1, clrBlack);
+			case mainLevel: {
+				drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
 				break;
 			}
 		}
@@ -537,11 +539,14 @@ int main(int argc, char* argv[]) {
 		
 		/* ------------- AFTER FRAME CHECKS ------------- */
 		switch (gameState) {
-			case inGame: {
+			case mainLevel: {
 				// Death Check
 				if (playerY > bounds[level][3] || dcolCheck) {
 					playerY = constrain(playerY, bounds[level][1], bounds[level][3]);
-					playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
+					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2)
+						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - SCREEN_WIDTH) / 2, bounds[level][0] + (bounds[level][2] + SCREEN_WIDTH) / 2);
+					else
+						playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
 					// Start Render
 					C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 					C2D_TargetClear(top_main, clrWhite);
@@ -633,10 +638,11 @@ int main(int argc, char* argv[]) {
 					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
 					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
 					float dist = sqrt(x * x + y * y);
-					while (2 + frames * 10 < dist) {
-						frames++;
+					while (2 + frames * 10/6.0f < dist) {
+						frames+=6;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						C2D_TargetClear(bottom, clrWhite);
 						for (int b = 0; b < 2; b++) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
@@ -658,7 +664,7 @@ int main(int argc, char* argv[]) {
 							// Funni Animation
 							C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
 												endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
-												0.9f, 2 + frames * 10, clrCyan);
+												0.9f, 2 + frames * 10/6.0f, clrCyan);
 						}
 						// Done Rendering!
 						C3D_FrameEnd(0);
