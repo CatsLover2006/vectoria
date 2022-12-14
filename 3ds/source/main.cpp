@@ -81,7 +81,6 @@ bool vcolCheck = false,
     hcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
-	dcolCheck = false,
 	levelTimerRunning = false;
 
 const button* menuButtons[] = {
@@ -315,7 +314,6 @@ int main(int argc, char* argv[]) {
 					jumpableFor = 0;
 					jumpFor = 0;
 					levelTimerRunning = false;
-					dcolCheck = false;
 					hasStarted = true;
 				}
 				for (int lol = 0; lol < SUBSTEPS; lol++) {
@@ -327,11 +325,7 @@ int main(int argc, char* argv[]) {
 						levelTimerRunning = true;
 					}
 					if (levelTimerRunning) levelTimer++;
-					if (levelTimer == 0 && levelTimerRunning) { // Overflow Check
-						dcolCheck = true;
-						lol = SUBSTEPS + 1;
-						continue;
-					}
+					if (levelTimer == 0 && levelTimerRunning) goto exitLoopLevel; // Overflow Check
 					if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
@@ -394,13 +388,11 @@ int main(int argc, char* argv[]) {
 					else rotSpd /= pow(1.1, 1/13.0);
 					rot += rotSpd;
 					for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
-						if (lineCircle(linelistKO[curLine]->startX, linelistKO[curLine]->startY, linelistKO[curLine]->endX, linelistKO[curLine]->endY, playerX, playerY, 10)) {
-							dcolCheck = true;
-							lol = SUBSTEPS + 1;
-							break;
-						}
+						if (lineCircle(linelistKO[curLine]->startX, linelistKO[curLine]->startY, linelistKO[curLine]->endX, linelistKO[curLine]->endY, playerX, playerY, 10)) 
+							goto exitLoopLevel;
 					}
-					if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) lol = SUBSTEPS + 1;
+					if (playerY > bounds[level][3]) goto exitLoopLevel;
+					if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) goto winMainLevel;
 				}
 				cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
 				cX /= 1.3;
@@ -408,6 +400,150 @@ int main(int argc, char* argv[]) {
 				cY += constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2) * 0.3;
 				cY /= 1.3;
 				break;
+				{
+					winMainLevel:
+					// Log it
+					log << "Nice! Beat level " << level << " with a time of " << to_str(levelTimer/360.0f) << " seconds!" << std::endl;
+					if (highScores[level] == 0 || levelTimer < highScores[level]) {
+						highScores[level] = levelTimer;
+						log << "New high score!" << std::endl;
+					}
+					animID = enteredAnim;
+					int frames = 0;
+					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
+					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
+					float dist = sqrt(x * x + y * y);
+					while (2 + frames * 10/6.0f < dist) {
+						frames+=6;
+						// Start Render
+						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs(osGet3DSliderState());
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Draw Player
+							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+												0.3f, 10, clrBlack);
+							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(cos(rot) * 5),
+												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2) + floor(sin(rot) * 5),
+												0.4f, 3, clrCyan);
+							// Funni Animation
+							C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
+												endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+												0.9f, 2 + frames * 10/6.0f, clrCyan);
+						}
+						// Timer
+						C2D_TargetClear(bottom, clrWhite);
+	        			C2D_SceneBegin(bottom);
+						drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+						// Done Rendering!
+						C3D_FrameEnd(0);
+					}
+					level++;
+					if (level >= levels || goTo == toMenu) {
+						level = 0;
+						gameState = menu;
+					}
+					hasStarted = false;
+					goto startFrame;
+				}
+				{
+					exitLoopLevel:
+					playerY = constrain(playerY, bounds[level][1], bounds[level][3]);
+					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2)
+						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - SCREEN_WIDTH) / 2, bounds[level][0] + (bounds[level][2] + SCREEN_WIDTH) / 2);
+					else
+						playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
+					// Start Render
+					C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+					C2D_TargetClear(top_main, clrWhite);
+					C2D_TargetClear(top_sub, clrWhite);
+					for (int b = 0; b < 2; b++) {
+						if (b == 0) {
+							C2D_SceneBegin(top_main);
+							depthOffset = abs(osGet3DSliderState());
+						}
+						if (b == 1) {
+							C2D_SceneBegin(top_sub);
+							depthOffset = -depthOffset;
+						}
+						// Draw Level
+						drawLevel();
+					}
+					// Timer
+					C2D_TargetClear(bottom, clrWhite);
+        			C2D_SceneBegin(bottom);
+					drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+					// Done Rendering!
+					C3D_FrameEnd(0);
+					// Log It
+					log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
+					animID = ded;
+					int frames = 0;
+					while (frames < 24) {
+						frames++;
+						// Start Render
+						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs(osGet3DSliderState());
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Funni Animation
+							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
+												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (frames / 24.0f) * 69,
+												C2D_Color32(255, 200 - 200 * (frames / 24.0f), 0,
+															C2D_FloatToU8(0.5 - (frames / 48.0f))));
+							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
+												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (frames / 24.0f) * 69,
+												C2D_Color32(255, 255, 255, C2D_FloatToU8((frames / 12.0f) - 1)));
+						}
+						// Done Rendering!
+						C3D_FrameEnd(0);
+					}
+					frames = 0;
+					while (frames < 10) {
+						frames++;
+						// Start Render
+						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						C2D_TargetClear(top_main, clrWhite);
+						C2D_TargetClear(top_sub, clrWhite);
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs(osGet3DSliderState());
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Funni Animation
+							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 4 * depthOffset),
+												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, 69,
+												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
+						}
+						// Done Rendering!
+						C3D_FrameEnd(0);
+					}
+					hasStarted = false;
+					goto startFrame;
+				}
 			}
 			case menu: {
 				if (animID == exitAnim) {
@@ -426,7 +562,6 @@ int main(int argc, char* argv[]) {
 					saveData(highScores);
 					hasStarted = true;
 					animTimer = 0;
-					dcolCheck = true;
 					currentMenu = mainMenu;
 				}
 				if (animID == exitAnim) break;
@@ -536,150 +671,6 @@ int main(int argc, char* argv[]) {
         
         // Done Rendering!
 		C3D_FrameEnd(0);
-		
-		/* ------------- AFTER FRAME CHECKS ------------- */
-		switch (gameState) {
-			case mainLevel: {
-				// Death Check
-				if (playerY > bounds[level][3] || dcolCheck) {
-					playerY = constrain(playerY, bounds[level][1], bounds[level][3]);
-					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2)
-						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - SCREEN_WIDTH) / 2, bounds[level][0] + (bounds[level][2] + SCREEN_WIDTH) / 2);
-					else
-						playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
-					// Start Render
-					C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-					C2D_TargetClear(top_main, clrWhite);
-					C2D_TargetClear(top_sub, clrWhite);
-					for (int b = 0; b < 2; b++) {
-						if (b == 0) {
-							C2D_SceneBegin(top_main);
-							depthOffset = abs(osGet3DSliderState());
-						}
-						if (b == 1) {
-							C2D_SceneBegin(top_sub);
-							depthOffset = -depthOffset;
-						}
-						// Draw Level
-						drawLevel();
-					}
-					// Done Rendering!
-					C3D_FrameEnd(0);
-					// Log It
-					log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
-					animID = ded;
-					int frames = 0;
-					while (frames < 24) {
-						frames++;
-						// Start Render
-						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-						for (int b = 0; b < 2; b++) {
-							if (b == 0) {
-								C2D_SceneBegin(top_main);
-								depthOffset = abs(osGet3DSliderState());
-							}
-							if (b == 1) {
-								C2D_SceneBegin(top_sub);
-								depthOffset = -depthOffset;
-							}
-							// Draw Level
-							drawLevel();
-							// Funni Animation
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (frames / 24.0f) * 69,
-												C2D_Color32(255, 200 - 200 * (frames / 24.0f), 0,
-															C2D_FloatToU8(0.5 - (frames / 48.0f))));
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (frames / 24.0f) * 69,
-												C2D_Color32(255, 255, 255, C2D_FloatToU8((frames / 12.0f) - 1)));
-						}
-						// Done Rendering!
-						C3D_FrameEnd(0);
-					}
-					frames = 0;
-					while (frames < 10) {
-						frames++;
-						// Start Render
-						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-						C2D_TargetClear(top_main, clrWhite);
-						C2D_TargetClear(top_sub, clrWhite);
-						for (int b = 0; b < 2; b++) {
-							if (b == 0) {
-								C2D_SceneBegin(top_main);
-								depthOffset = abs(osGet3DSliderState());
-							}
-							if (b == 1) {
-								C2D_SceneBegin(top_sub);
-								depthOffset = -depthOffset;
-							}
-							// Draw Level
-							drawLevel();
-							// Funni Animation
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 4 * depthOffset),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, 69,
-												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
-						}
-						// Done Rendering!
-						C3D_FrameEnd(0);
-					}
-					hasStarted = false;
-				}
-				
-				// Done Level Check
-				if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) {
-					// Log it
-					log << "Nice! Beat level " << level << " with a time of " << to_str(levelTimer/360.0f) << " seconds!" << std::endl;
-					if (highScores[level] == 0 || levelTimer < highScores[level]) {
-						highScores[level] = levelTimer;
-						log << "New high score!" << std::endl;
-					}
-					animID = enteredAnim;
-					int frames = 0;
-					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
-					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
-					float dist = sqrt(x * x + y * y);
-					while (2 + frames * 10/6.0f < dist) {
-						frames+=6;
-						// Start Render
-						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-						C2D_TargetClear(bottom, clrWhite);
-						for (int b = 0; b < 2; b++) {
-							if (b == 0) {
-								C2D_SceneBegin(top_main);
-								depthOffset = abs(osGet3DSliderState());
-							}
-							if (b == 1) {
-								C2D_SceneBegin(top_sub);
-								depthOffset = -depthOffset;
-							}
-							// Draw Level
-							drawLevel();
-							// Draw Player
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
-												0.3f, 10, clrBlack);
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(cos(rot) * 5),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2) + floor(sin(rot) * 5),
-												0.4f, 3, clrCyan);
-							// Funni Animation
-							C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
-												endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
-												0.9f, 2 + frames * 10/6.0f, clrCyan);
-						}
-						// Done Rendering!
-						C3D_FrameEnd(0);
-					}
-					level++;
-					if (level >= levels || goTo == toMenu) {
-						level = 0;
-						gameState = menu;
-					}
-					hasStarted = false;
-				}
-				break;
-			}
-			case menu: break;
-		}
 	}
 	
 	// Deinit Graphics

@@ -67,6 +67,14 @@ const line* linelist[] = {
     new line(60, 0, 0, -60), // Level 2
     new line(100, -100, 80, -80), // Level 2
     new line(0, -160, 30, -130), // Level 2
+    new line(0, -40, 0, 170), // Level 8
+    new line(400, 0, 400, 170), // Level 8
+    new line(0, 170, 60, 180), // Level 8
+    new line(300, 140, 0, 110), // Level 8
+    new line(400, 170, 340, 180), // Level 8
+    new line(400, 0, 0, -40), // Level 8
+    new line(50, 70, 100, 20), // Level 8
+    new line(0, 10, 10, 20), // Level 8
 };
 
 const line* linelistKO[] = {
@@ -89,6 +97,7 @@ const line* linelistKO[] = {
     new line(450, 0, 450, 160), // Level 10
     new line(0, 100, 20, 80), // Level 2
     new line(0, 60, 20, 80), // Level 2
+    new line(400, 50, 75, 17.5), // Level 8
 };
 
 const line* linelistBG[] = {
@@ -170,6 +179,22 @@ const line* linelistBG[] = {
     new line(50, -70, 50 - sqrt(200), sqrt(200) - 70), // Level 2, Arrow 2
     new line(50, -70, 50 - sqrt(200), -70), // Level 2, Arrow 2
     new line(50, -70, 50, sqrt(200) - 70), // Level 2, Arrow 2
+    new line(140, 155, 160, 155), // Level 8, Arrow 1
+    new line(150, 165, 160, 155), // Level 8, Arrow 1
+    new line(150, 145, 160, 155), // Level 8, Arrow 1
+    new line(190, 5, 210, 5), // Level 8, Arrow 2
+    new line(200, 15, 210, 5), // Level 8, Arrow 2
+    new line(200, -5, 210, 5), // Level 8, Arrow 2
+    new line(63, 116, 63 - sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(63, 116, 63 + sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(53, 126, 63 - sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(73, 126, 63 + sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(63, 136, 63 - sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(63, 136, 63 + sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(53, 126, 63 - sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(73, 126, 63 + sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(70, 126, 68, 126), // Level 8, Player
+    new line(69, 125, 69, 127), // Level 8, Player
 };
 
 const line* lineListFake[] = {
@@ -191,7 +216,7 @@ const int levelStart[] = {
 	0,
 	0,
 	0,
-	0,
+	56,
 	0,
 	25
 };
@@ -204,7 +229,7 @@ const int levelEnd[] = {
 	0,
 	0,
 	0,
-	0,
+	64,
 	0,
 	47
 };
@@ -217,7 +242,7 @@ const int koStart[] = {
 	0,
 	0,
 	0,
-	0,
+	19,
 	0,
 	16
 };
@@ -230,7 +255,7 @@ const int koEnd[] = {
 	0,
 	0,
 	0,
-	0,
+	20,
 	0,
 	17
 };
@@ -243,7 +268,7 @@ const int bgStart[] = {
 	0,
 	0,
 	0,
-	0,
+	78,
 	0,
 	56
 };
@@ -256,7 +281,7 @@ const int bgEnd[] = {
 	0,
 	0,
 	0,
-	0,
+	94,
 	0,
 	72
 };
@@ -332,11 +357,11 @@ const float bounds[][4] = {
 		300
 	},
 	{
-		0,
-		-100,
-		400,
-		300
-	},
+	    0,
+	    -40,
+	    400,
+	    200
+  	},
 	{
 		0,
 		-100,
@@ -381,9 +406,9 @@ const float startPos[][2] = {
 		249.8
 	},
 	{
-		50,
-		249.8
-	},
+	    30,
+	    164.85
+  	},
 	{
 		50,
 		249.8
@@ -424,9 +449,9 @@ const float endPoint[][2] = {
 		249.8
 	},
 	{
-		50,
-		249.8
-	},
+    	390,
+    	24
+  	},
 	{
 		50,
 		249.8

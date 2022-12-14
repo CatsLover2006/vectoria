@@ -11,33 +11,41 @@ public class line {
 
 line[][] lineList = {
   {
-    new line(0, -300, 0, 170), // Level 2
-    new line(0, 170, 80, 180), // Level 2
-    new line(50, 130, 100, 120), // Level 2
-    new line(100, -300, 100, 120), // Level 2
-    new line(30, 80, 70, 80), // Level 2
-    new line(70, 40, 100, 30), // Level 2
-    new line(60, 0, 0, -60), // Level 2
-    new line(100, -100, 80, -80), // Level 2
-    new line(0, -160, 30, -130), // Level 2
+    new line(0, -40, 0, 170), // Level 8
+    new line(400, 0, 400, 170), // Level 8
+    new line(0, 170, 60, 180), // Level 8
+    new line(300, 140, 0, 110), // Level 8
+    new line(400, 170, 340, 180), // Level 8
+    new line(400, 0, 0, -40), // Level 8
+    new line(50, 70, 100, 20), // Level 8
+    new line(0, 10, 10, 20), // Level 8
   }
 };
 
 line[][] koList = {
   {
-    new line(0, 100, 20, 80), // Level 2
-    new line(0, 60, 20, 80), // Level 2
+    new line(400, 50, 75, 17.5), // Level 8
   }
 };
 
 line[][] bgList = {
   {
-    new line(35, 25, 35, 45), // Level 2, Arrow 1
-    new line(25, 35, 35, 25), // Level 2, Arrow 1
-    new line(45, 35, 35, 25), // Level 2, Arrow 1
-    new line(50, -70, 50 - sqrt(200), sqrt(200) - 70), // Level 2, Arrow 2
-    new line(50, -70, 50 - sqrt(200), -70), // Level 2, Arrow 2
-    new line(50, -70, 50, sqrt(200) - 70), // Level 2, Arrow 2
+    new line(140, 155, 160, 155), // Level 8, Arrow 1
+    new line(150, 165, 160, 155), // Level 8, Arrow 1
+    new line(150, 145, 160, 155), // Level 8, Arrow 1
+    new line(190, 5, 210, 5), // Level 8, Arrow 2
+    new line(200, 15, 210, 5), // Level 8, Arrow 2
+    new line(200, -5, 210, 5), // Level 8, Arrow 2
+    new line(63, 116, 63 - sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(63, 116, 63 + sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(53, 126, 63 - sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(73, 126, 63 + sqrt(50), 126 - sqrt(50)), // Level 8, Player
+    new line(63, 136, 63 - sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(63, 136, 63 + sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(53, 126, 63 - sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(73, 126, 63 + sqrt(50), 126 + sqrt(50)), // Level 8, Player
+    new line(70, 126, 68, 126), // Level 8, Player
+    new line(69, 125, 69, 127), // Level 8, Player
   }
 };
 
@@ -49,22 +57,22 @@ line[][] fakeList = {
 float[][] bounds = {
   {
     0,
-    -200,
-    100,
+    -40,
+    400,
     200
   }
 };
 
 float[][] startPos = {
   {
-    50,
-    166.2
+    30,
+    164.85
   }
 };
 
 float[][] endPos = {
   {
-    50,
-    -180
+    390,
+    24
   }
 };
