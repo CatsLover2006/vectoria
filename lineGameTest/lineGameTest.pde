@@ -23,7 +23,7 @@ boolean vcolCheck = false,
   tcolCheck = false;
 
 void settings() {
-  size(480, 272, P2D);
+  size(800, 480, P2D);
   scaleFactor = max(height/240.0f, width/400.0f);
   smooth(65536); 
 }//*/
@@ -57,8 +57,10 @@ void draw() {
   while (doLogic > 1 / 360.0f) {
     oX = playerX;
     oY = playerY;
-    playerYVel += 0.3 / SUBSTEPS;
-    if (pressed[2]) playerYVel += 0.9 / SUBSTEPS;
+    if (!vcolCheck || jumpableFor == 0) {
+      playerYVel += 0.3 / SUBSTEPS;
+      if (pressed[2]) playerYVel += 0.9 / SUBSTEPS;
+    }
     if (playerYVel > 59) playerYVel = 59;
     if (playerYVel < -59) playerYVel = -59;
     playerXVel = playerXVel / xDiv;
@@ -69,7 +71,6 @@ void draw() {
     if (vcolCheck) playerY -= abs(playerXVel / SUBSTEPS);
     for (int i = 0; i < lineList[level].length; i++) {
       if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
-        if (abs((closestY - playerY) / (closestX - playerX))>0.84) continue;
         hcolCheck=true;
         if (playerX == closestX) continue;
         else playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan((playerY - closestY)/(playerX - closestX))));
@@ -78,7 +79,6 @@ void draw() {
     if (vcolCheck) playerY += abs(playerXVel / SUBSTEPS);
     tcolCheck = vcolCheck;
     vcolCheck = false;
-    if (hcolCheck) playerXVel = 0;
     playerY += playerYVel / SUBSTEPS;
     for (int i = 0; i < lineList[level].length; i++) {
       if (abs((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;

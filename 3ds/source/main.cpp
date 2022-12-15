@@ -1,4 +1,4 @@
-// Line Game 3DS
+// Vectoria 3DS
 // By Hail AKA Half-Qilin
 
 #define SCREEN_WIDTH 400
@@ -14,10 +14,10 @@
 #include <iostream>
 #include <cmath>
 
-#include "lineList.hpp"
-#include "collisions.hpp"
-#include "letters.hpp"
-#include "buttons.hpp"
+#include "../../data/lineListNintendo.hpp"
+#include "../../data/collisions.hpp"
+#include "../../data/letters.hpp"
+#include "../../data/buttons.hpp"
 
 const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
@@ -68,7 +68,8 @@ u8 serial = 0;
 static u32 clrWhite, clrBlack, clrCyan, clrRed, clrGrey, clrFake;
 
 int level = 0,
-	curLine;
+	curLine,
+	frames = 0;
 
 unsigned long levelTimer;
 
@@ -81,7 +82,8 @@ bool vcolCheck = false,
     hcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
-	levelTimerRunning = false;
+	levelTimerRunning = false,
+	updateSave = true;
 
 const button* menuButtons[] = {
 	new button("All levels", BOTTOM_SCREEN_WIDTH/2 - 100, 24, 200, 28, 0.6f),
@@ -280,6 +282,10 @@ int main(int argc, char* argv[]) {
 	saveData(highScores);
 	log << "Game Ready!" << std::endl;
 	
+	// Compiler Warning Fixes
+	hidScanInput();
+    hidTouchRead(&startTouch);
+	
 	// Main Loop
 	while (aptMainLoop())
     {
@@ -319,14 +325,16 @@ int main(int argc, char* argv[]) {
 				for (int lol = 0; lol < SUBSTEPS; lol++) {
 					oX = playerX;
 					oY = playerY;
-					playerYVel += 0.3 / SUBSTEPS;
 					if (kHeld & (KEY_DOWN | KEY_LEFT | KEY_RIGHT | KEY_A)) {
 						if (!levelTimerRunning) log << "We Going!" << std::endl;
 						levelTimerRunning = true;
 					}
 					if (levelTimerRunning) levelTimer++;
 					if (levelTimer == 0 && levelTimerRunning) goto exitLoopLevel; // Overflow Check
-					if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
+					if (!vcolCheck || !jumpableFor) {
+						playerYVel += 0.3 / SUBSTEPS;
+						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
+					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
 					playerXVel /= xDiv;
@@ -337,7 +345,6 @@ int main(int argc, char* argv[]) {
 					if (vcolCheck) playerY -= abs(playerXVel/SUBSTEPS);
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
-							if (abs((closestY - playerY) / (closestX - playerX))>0.84) continue;
 							hcolCheck = true;
 							if (playerX == closestX) continue;
 							else playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan((playerY - closestY)/(playerX - closestX))));
@@ -372,7 +379,6 @@ int main(int argc, char* argv[]) {
 						}
 						if (!vcolCheck) playerY -= abs(playerXVel/SUBSTEPS);
 					}
-					if (hcolCheck) playerXVel = 0;
 					if (vcolCheck) {
 						playerYVel = 0;
 					} else if (jumpableFor) jumpableFor--;
@@ -406,10 +412,11 @@ int main(int argc, char* argv[]) {
 					log << "Nice! Beat level " << level << " with a time of " << to_str(levelTimer/360.0f) << " seconds!" << std::endl;
 					if (highScores[level] == 0 || levelTimer < highScores[level]) {
 						highScores[level] = levelTimer;
+						updateSave = true;
 						log << "New high score!" << std::endl;
 					}
 					animID = enteredAnim;
-					int frames = 0;
+					frames = 0;
 					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
 					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
 					float dist = sqrt(x * x + y * y);
@@ -487,7 +494,7 @@ int main(int argc, char* argv[]) {
 					// Log It
 					log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
 					animID = ded;
-					int frames = 0;
+					frames = 0;
 					while (frames < 24) {
 						frames++;
 						// Start Render
@@ -559,7 +566,8 @@ int main(int argc, char* argv[]) {
     				for (int i = 0; i < levels; i++)
     					levelButtons[i] = new button((i != 0 && (highScores[i] == 0 && highScores[i-1] == 0)) ? "x" : std::to_string(i+1),
     												(i / 6) * 36 + 19, (i % 6) * 36 + 16, 30, 30, 0.6f);
-					saveData(highScores);
+					if (updateSave) saveData(highScores);
+					updateSave = false;
 					hasStarted = true;
 					animTimer = 0;
 					currentMenu = mainMenu;
