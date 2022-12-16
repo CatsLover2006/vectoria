@@ -74,7 +74,32 @@ const line* linelist[] = {
     new line(400, 170, 340, 180), // Level 8
     new line(400, 0, 0, -40), // Level 8
     new line(50, 70, 100, 20), // Level 8
-    new line(0, 10, 10, 20), // Level 8
+    new line(0, 10, 10, 20), // Level 8new line(0, 0, 0, 60), // Level 3
+    new line(0, 0, 400, 0), // Level 3
+    new line(40, 60, 0, 60), // Level 3
+    new line(400, 0, 400, 60), // Level 3
+    new line(360, 60, 400, 60), // Level 3
+    new line(200 - (160 * sin(5 * pi / 12)), 60 + (160 * cos(5 * pi / 12)), 40, 60), // Level 3
+    new line(200 - (160 * sin(5 * pi / 12)), 60 + (160 * cos(5 * pi / 12)),
+             200 - (160 * sin(4 * pi / 12)), 60 + (160 * cos(4 * pi / 12))), // Level 3
+    new line(200 - (160 * sin(3 * pi / 12)), 60 + (160 * cos(3 * pi / 12)),
+             200 - (160 * sin(4 * pi / 12)), 60 + (160 * cos(4 * pi / 12))), // Level 3
+    new line(200 - (160 * sin(3 * pi / 12)), 60 + (160 * cos(3 * pi / 12)),
+             200 - (160 * sin(2 * pi / 12)), 60 + (160 * cos(2 * pi / 12))), // Level 3
+    new line(200 - (160 * sin(2 * pi / 12)), 60 + (160 * cos(2 * pi / 12)),
+             200 - (160 * sin(pi / 12)), 60 + (160 * cos(pi / 12))), // Level 3
+    new line(200, 220, 200 - (160 * sin(pi / 12)), 60 + (160 * cos(pi / 12))), // Level 3
+    new line(200 + (160 * sin(5 * pi / 12)), 60 + (160 * cos(5 * pi / 12)), 360, 60), // Level 3
+    new line(200 + (160 * sin(5 * pi / 12)), 60 + (160 * cos(5 * pi / 12)),
+             200 + (160 * sin(4 * pi / 12)), 60 + (160 * cos(4 * pi / 12))), // Level 3
+    new line(200 + (160 * sin(3 * pi / 12)), 60 + (160 * cos(3 * pi / 12)),
+             200 + (160 * sin(4 * pi / 12)), 60 + (160 * cos(4 * pi / 12))), // Level 3
+    new line(200 + (160 * sin(3 * pi / 12)), 60 + (160 * cos(3 * pi / 12)),
+             200 + (160 * sin(2 * pi / 12)), 60 + (160 * cos(2 * pi / 12))), // Level 3
+    new line(200 + (160 * sin(2 * pi / 12)), 60 + (160 * cos(2 * pi / 12)),
+             200 + (160 * sin(pi / 12)), 60 + (160 * cos(pi / 12))), // Level 3
+    new line(200, 220, 200 + (160 * sin(pi / 12)), 60 + (160 * cos(pi / 12))), // Level 3
+    new line(200 + (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12), 305, 110), // Level 3
 };
 
 const line* linelistKO[] = {
@@ -98,6 +123,40 @@ const line* linelistKO[] = {
     new line(0, 100, 20, 80), // Level 2
     new line(0, 60, 20, 80), // Level 2
     new line(400, 50, 75, 17.5), // Level 8
+    new line(200 - (80 * sin(5 * pi / 12)), 60 + 80 * cos(5 * pi / 12), 120, 60), // Level 3
+    new line(200 - (80 * sin(5 * pi / 12)), 60 + 80 * cos(5 * pi / 12),
+             200 - (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 - (80 * sin(3 * pi / 12)), 60 + 80 * cos(3 * pi / 12),
+             200 - (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 - (80 * sin(3 * pi / 12)), 60 + 80 * cos(3 * pi / 12),
+             200 - (80 * sin(2 * pi / 12)), 60 + 80 * cos(2 * pi / 12)), // Level 3
+    new line(200 - (80 * sin(2 * pi / 12)), 60 + 80 * cos(2 * pi / 12),
+             200 - (80 * sin(pi / 12)), 60 + 80 * cos(pi / 12)), // Level 3
+    new line(200, 140, 200 - (80 * sin(pi / 12)), 60 + 80 * cos(pi / 12)), // Level 3
+    new line(200 + (80 * sin(5 * pi / 12)), 60 + 80 * cos(5 * pi / 12), 280, 60), // Level 3
+    new line(200 + (80 * sin(5 * pi / 12)), 60 + 80 * cos(5 * pi / 12),
+             200 + (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 + (80 * sin(3 * pi / 12)), 60 + 80 * cos(3 * pi / 12),
+             200 + (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 + (80 * sin(3 * pi / 12)), 60 + 80 * cos(3 * pi / 12),
+             200 + (80 * sin(2 * pi / 12)), 60 + 80 * cos(2 * pi / 12)), // Level 3
+    new line(200 + (80 * sin(2 * pi / 12)), 60 + 80 * cos(2 * pi / 12),
+             200 + (80 * sin(pi / 12)), 60 + 80 * cos(pi / 12)), // Level 3
+    new line(200, 140, 200 + (80 * sin(pi / 12)), 60 + 80 * cos(pi / 12)), // Level 3
+    new line(200 - (80 * sin(5 * pi / 12)), 60 - 80 * cos(5 * pi / 12), 120, 60), // Level 3
+    new line(200 - (80 * sin(5 * pi / 12)), 60 - 80 * cos(5 * pi / 12),
+             200 - (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 - (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
+             200 - (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 - (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
+             200 - (80 * sin(2 * pi / 12)), 60 - 80 * cos(2 * pi / 12)), // Level 3
+    new line(200 + (80 * sin(5 * pi / 12)), 60 - 80 * cos(5 * pi / 12), 280, 60), // Level 3
+    new line(200 + (80 * sin(5 * pi / 12)), 60 - 80 * cos(5 * pi / 12),
+             200 + (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 + (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
+             200 + (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
+    new line(200 + (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
+             200 + (80 * sin(2 * pi / 12)), 60 - 80 * cos(2 * pi / 12)), // Level 3
 };
 
 const line* lineListFake[] = {
@@ -109,12 +168,20 @@ const line* lineListFake[] = {
     new line(380, 120, 355, 240), // Level 10
     new line(600, 100, 500, 100), // Level 10
     new line(500, 50, 500, 0), // Level 10
+    new line(200, 60, 200 + (80 * sin(pi / 12)), 60 + (80 * cos(pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(4 * pi / 12)), 60 + (80 * cos(4 * pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(7 * pi / 12)), 60 + (80 * cos(7 * pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(10 * pi / 12)), 60 + (80 * cos(10 * pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(13 * pi / 12)), 60 + (80 * cos(13 * pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(16 * pi / 12)), 60 + (80 * cos(16 * pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(19 * pi / 12)), 60 + (80 * cos(19 * pi / 12))), // Level 3
+    new line(200, 60, 200 + (80 * sin(22 * pi / 12)), 60 + (80 * cos(22 * pi / 12))), // Level 3
 };
 
 const int levelStart[] = {
 	0,
 	47,
-	0,
+	64,
 	11,
 	0,
 	0,
@@ -127,7 +194,7 @@ const int levelStart[] = {
 const int levelEnd[] = {
 	11,
 	56,
-	0,
+	82,
 	25,
 	0,
 	0,
@@ -140,7 +207,7 @@ const int levelEnd[] = {
 const int koStart[] = {
 	0,
 	17,
-	0,
+	20,
 	11,
 	0,
 	0,
@@ -153,7 +220,7 @@ const int koStart[] = {
 const int koEnd[] = {
 	11,
 	19,
-	0,
+	40,
 	16,
 	0,
 	0,
@@ -166,7 +233,7 @@ const int koEnd[] = {
 const int falseStart[] = {
 	0,
 	0,
-	0,
+	8,
 	0,
 	0,
 	0,
@@ -179,7 +246,7 @@ const int falseStart[] = {
 const int falseEnd[] = {
 	0,
 	0,
-	0,
+	16,
 	0,
 	0,
 	0,
@@ -205,9 +272,9 @@ const float bounds[][4] = {
   	},
 	{
 		0,
-		-100,
+		0,
 		400,
-		300
+		240
 	},
 	{
 		0,
@@ -263,9 +330,9 @@ const float startPos[][2] = {
 		166.2
 	},
 	{
-		50,
-		249.8
-	},
+   		20,
+    	50
+  	},
 	{
 		50,
 		249.8
@@ -306,9 +373,9 @@ const float endPoint[][2] = {
     	-180
 	},
 	{
-		50,
-		249.8
-	},
+    	380,
+    	30
+  	},
 	{
 		115,
 		-20

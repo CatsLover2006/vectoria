@@ -95,12 +95,18 @@ const line* linelistBG[] = {
     new line(73, 126, 63 + sqrt(50), 126 + sqrt(50)), // Level 8, Player
     new line(70, 126, 68, 126), // Level 8, Player
     new line(69, 125, 69, 127), // Level 8, Player
+    new line(290, 139, 290 - sqrt(200), 139 + sqrt(200)), // Level 3, Arrow 2
+    new line(290, 139, 290 - sqrt(200), 139), // Level 3, Arrow 2
+    new line(290, 139, 290, 139 + sqrt(200)), // Level 3, Arrow 2
+    new line(110 + sqrt(200), 139 + sqrt(200), 110, 139), // Level 3, Arrow 1
+    new line(110 + sqrt(200), 139 + sqrt(200), 110, 139 + sqrt(200)), // Level 3, Arrow 1
+    new line(110 + sqrt(200), 139 + sqrt(200), 110 + sqrt(200), 139), // Level 3, Arrow 1
 };
 
 const int bgStart[] = {
 	0,
 	72,
-	0,
+	94,
 	37,
 	0,
 	0,
@@ -113,7 +119,7 @@ const int bgStart[] = {
 const int bgEnd[] = {
 	37,
 	78,
-	0,
+	100,
 	56,
 	0,
 	0,
