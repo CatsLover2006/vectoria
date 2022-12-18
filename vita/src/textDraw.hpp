@@ -1,6 +1,6 @@
 #include "../../data/letters.hpp"
 // Draw String
-void drawString(std::string str, float x, float y, float scale, float weight, unsigned int color) {
+void drawString(std::string str, double x, double y, double scale, double weight, unsigned int color) {
 	for (unsigned int i = 0; i < str.size(); i++) {
 		if (str.at(i) == ' ') x += 23 * scale + weight; // Effectively an A
 		else {
@@ -25,7 +25,7 @@ void drawString(std::string str, float x, float y, float scale, float weight, un
 }
 #include "../../data/buttons.hpp"
 // Draw Button
-void drawButton (button* buttonToDraw, unsigned int color, float weight) {
+void drawButton (button* buttonToDraw, unsigned int color, double weight) {
 	vita2d_draw_line(buttonToDraw->x, buttonToDraw->y, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y, color);
 	vita2d_draw_line(buttonToDraw->x, buttonToDraw->y, buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, color);
 	vita2d_draw_line(buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y + buttonToDraw->h, color);
@@ -37,7 +37,7 @@ void drawButton (button* buttonToDraw, unsigned int color, float weight) {
 	drawString(buttonToDraw->buttonText, buttonToDraw->x + buttonToDraw->w/2 - getWidth(buttonToDraw->buttonText, buttonToDraw->textScale, weight)/2,
 						buttonToDraw->y + (buttonToDraw->h/2) + buttonToDraw->textScale * 12.5, buttonToDraw->textScale, weight, color);
 }
-void drawButton (const button* buttonToDraw, unsigned int color, float weight) {
+void drawButton (const button* buttonToDraw, unsigned int color, double weight) {
 	vita2d_draw_line(buttonToDraw->x, buttonToDraw->y, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y, color);
 	vita2d_draw_line(buttonToDraw->x, buttonToDraw->y, buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, color);
 	vita2d_draw_line(buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y + buttonToDraw->h, color);

@@ -1,8 +1,8 @@
 class line {
 	public:
-		float startX, endX, startY, endY;
+		double startX, endX, startY, endY;
 	  
-		line (float x1, float y1, float x2, float y2) {
+		line (double x1, double y1, double x2, double y2) {
 			startX = x1;
 			endX = x2;
 			startY = y1;
@@ -257,7 +257,7 @@ const int falseEnd[] = {
 };
 
 
-const float bounds[][4] = {
+const double bounds[][4] = {
 	{
 		0,
 		0,
@@ -320,7 +320,7 @@ const float bounds[][4] = {
   	}
 };
 
-const float startPos[][2] = {
+const double startPos[][2] = {
 	{
 		50,
 		163.8
@@ -363,7 +363,7 @@ const float startPos[][2] = {
   	}
 };
 
-const float endPoint[][2] = {
+const double endPoint[][2] = {
 	{
 		375,
 		25

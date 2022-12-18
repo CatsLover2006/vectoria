@@ -1,8 +1,8 @@
 class button {
 	public:
 		std::string buttonText;
-		float x, y, w, h, textScale;
-		button(std::string text, float xIn, float yIn, float wIn, float hIn, float textScaleIn) {
+		double x, y, w, h, textScale;
+		button(std::string text, double xIn, double yIn, double wIn, double hIn, double textScaleIn) {
 			buttonText = text;
 			x = xIn;
 			y = yIn;

@@ -1,7 +1,7 @@
 // Vectoria 3DS
 // By Hail AKA Half-Qilin
 
-float scaleFactor = 1;
+double scaleFactor = 1;
 
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
@@ -22,7 +22,7 @@ const double pi = acos(-1.0);
 #include "../../data/collisions.hpp"
 #include "textDraw.hpp"
 
-const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
+const double xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
 
 const unsigned int currentSaveVersion = 1;
@@ -48,7 +48,7 @@ enum menuID {
 	levelSelect = 1,
 };
 
-float playerX = 69,
+double playerX = 69,
     playerY = 420,
     oX = playerX,
     oY = playerY,
@@ -91,18 +91,18 @@ const button* menuButtons[] = {
 };
 const int menuButtonCount = 2;
 
-float constrain(float x, float min, float max) {
+double constrain(double x, double min, double max) {
 	if (x < min) return min;
 	if (x > max) return max;
 	return x;
 }
 
-float max (float a, float b) {
+double max (double a, double b) {
 	if (a > b) return a;
 	return b;
 }
 
-float min (float a, float b) {
+double min (double a, double b) {
 	if (a < b) return a;
 	return b;
 }
@@ -393,6 +393,11 @@ int main(int argc, char* argv[]) {
 					if (jumpableFor) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor ? 1 : 0));
 					else rotSpd /= pow(1.1, 1/13.0);
 					rot += rotSpd;
+					cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
+					cX /= 1.3;
+					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
+					cY += constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2) * 0.3;
+					cY /= 1.3;
 					for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
 						if (lineCircle(linelistKO[curLine]->startX, linelistKO[curLine]->startY, linelistKO[curLine]->endX, linelistKO[curLine]->endY, playerX, playerY, 10)) 
 							goto exitLoopLevel;
@@ -400,11 +405,6 @@ int main(int argc, char* argv[]) {
 					if (playerY > bounds[level][3]) goto exitLoopLevel;
 					if (pointCircle(endPoint[level][0], endPoint[level][1], playerX, playerY, 12)) goto winMainLevel;
 				}
-				cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
-				cX /= 1.3;
-    			if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
-				cY += constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2) * 0.3;
-				cY /= 1.3;
 				break;
 				{
 					winMainLevel:
@@ -417,9 +417,9 @@ int main(int argc, char* argv[]) {
 					}
 					animID = enteredAnim;
 					frames = 0;
-					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
-					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
-					float dist = sqrt(x * x + y * y);
+					double x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
+					double y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
+					double dist = sqrt(x * x + y * y);
 					while (2 + frames * 10/6.0f < dist) {
 						frames+=6;
 						// Start Render

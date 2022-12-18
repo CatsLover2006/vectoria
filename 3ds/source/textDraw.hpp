@@ -1,6 +1,6 @@
 #include "../../data/letters.hpp"
 // Draw String
-void drawString(std::string str, float x, float y, float scale, float weight, u32 color) {
+void drawString(std::string str, double x, double y, double scale, double weight, u32 color) {
 	for (unsigned int i = 0; i < str.size(); i++) {
 		if (str.at(i) == ' ') x += 23 * scale + weight; // Effectively an A
 		else {
@@ -26,7 +26,7 @@ void drawString(std::string str, float x, float y, float scale, float weight, u3
 }
 #include "../../data/buttons.hpp"
 // Draw Button
-void drawButton (button* buttonToDraw, u32 color, float weight) {
+void drawButton (button* buttonToDraw, u32 color, double weight) {
 	C2D_DrawLine(buttonToDraw->x, buttonToDraw->y, color, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y, color, weight, 0.4f);
 	C2D_DrawLine(buttonToDraw->x, buttonToDraw->y, color, buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, color, weight, 0.4f);
 	C2D_DrawLine(buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, color, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y + buttonToDraw->h, color, weight, 0.4f);
@@ -38,7 +38,7 @@ void drawButton (button* buttonToDraw, u32 color, float weight) {
 	drawString(buttonToDraw->buttonText, buttonToDraw->x + buttonToDraw->w/2 - getWidth(buttonToDraw->buttonText, buttonToDraw->textScale, weight)/2,
 						buttonToDraw->y + (buttonToDraw->h/2) + buttonToDraw->textScale * 12.5, buttonToDraw->textScale, weight, color);
 }
-void drawButton (const button* buttonToDraw, u32 color, float weight) {
+void drawButton (const button* buttonToDraw, u32 color, double weight) {
 	C2D_DrawLine(buttonToDraw->x, buttonToDraw->y, color, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y, color, weight, 0.4f);
 	C2D_DrawLine(buttonToDraw->x, buttonToDraw->y, color, buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, color, weight, 0.4f);
 	C2D_DrawLine(buttonToDraw->x, buttonToDraw->y + buttonToDraw->h, color, buttonToDraw->x + buttonToDraw->w, buttonToDraw->y + buttonToDraw->h, color, weight, 0.4f);

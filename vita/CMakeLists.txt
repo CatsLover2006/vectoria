@@ -31,13 +31,18 @@ link_directories(
 add_executable(${VITA_APP_NAME}
   src/main.cpp
   src/textDraw.hpp
+  ../data/letters.hpp
+  ../data/buttons.hpp
+  ../data/lineListNintendo.hpp
+  ../data/lineList.hpp
+  ../data/collisions.hpp
 )
 
 target_link_libraries(${VITA_APP_NAME}
   SceLibKernel_stub
   SceTouch_stub
   SceAudio_stub
-  vita2d 
+  vita2d
   SceAppMgr_stub
   SceDisplay_stub
   SceGxm_stub

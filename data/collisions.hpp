@@ -1,33 +1,33 @@
 #include <cmath>
 
-float closestX;
-float closestY;
+double closestX;
+double closestY;
 
-float dist(float x1, float y1, float x2, float y2) {
-	float dX = x1 - x2;
-	float dY = y1 - y2;
+double dist(double x1, double y1, double x2, double y2) {
+	double dX = x1 - x2;
+	double dY = y1 - y2;
 	return sqrt(dX*dX + dY*dY);
 }
 
-bool linePoint(float x1, float y1, float x2, float y2, float px, float py) {
-  float d1 = dist(px,py, x1,y1);
-  float d2 = dist(px,py, x2,y2);
-  float lineLen = dist(x1,y1, x2,y2);
-  float buffer = 0.1; // Approximation
+bool linePoint(double x1, double y1, double x2, double y2, double px, double py) {
+  double d1 = dist(px,py, x1,y1);
+  double d2 = dist(px,py, x2,y2);
+  double lineLen = dist(x1,y1, x2,y2);
+  double buffer = 0.1; // Approximation
   return (d1+d2 >= lineLen-buffer && d1+d2 <= lineLen+buffer);
 }
 
-bool pointCircle(float px, float py, float cx, float cy, float r) {
-  float distX = px - cx;
-  float distY = py - cy;
+bool pointCircle(double px, double py, double cx, double cy, double r) {
+  double distX = px - cx;
+  double distY = py - cy;
   return sqrt((distX*distX) + (distY*distY)) <= r;
 }
 
-bool lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, float r) {
-  float distX = x1 - x2;
-  float distY = y1 - y2;
-  float len = sqrt( (distX*distX) + (distY*distY) );
-  float dot = ( ((cx-x1)*(x2-x1)) + ((cy-y1)*(y2-y1)) ) / pow(len,2);
+bool lineCircle(double x1, double y1, double x2, double y2, double cx, double cy, double r) {
+  double distX = x1 - x2;
+  double distY = y1 - y2;
+  double len = sqrt( (distX*distX) + (distY*distY) );
+  double dot = ( ((cx-x1)*(x2-x1)) + ((cy-y1)*(y2-y1)) ) / pow(len,2);
   closestX = x1 + (dot * (x2-x1));
   closestY = y1 + (dot * (y2-y1));
   bool onSegment = linePoint(x1,y1,x2,y2, closestX,closestY);
@@ -46,6 +46,6 @@ bool lineCircle(float x1, float y1, float x2, float y2, float cx, float cy, floa
   }
   distX = closestX - cx;
   distY = closestY - cy;
-  float distance = sqrt( (distX*distX) + (distY*distY) );
+  double distance = sqrt( (distX*distX) + (distY*distY) );
   return distance <= r;
 }
