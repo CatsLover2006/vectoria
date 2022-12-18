@@ -1,6 +1,8 @@
 // Vectoria 3DS
 // By Hail AKA Half-Qilin
 
+float scaleFactor = 1;
+
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
@@ -18,8 +20,7 @@ const double pi = acos(-1.0);
 
 #include "../../data/lineListNintendo.hpp"
 #include "../../data/collisions.hpp"
-#include "../../data/letters.hpp"
-#include "../../data/buttons.hpp"
+#include "textDraw.hpp"
 
 const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
@@ -58,8 +59,7 @@ float playerX = 69,
     cX = playerX,
     cY = playerY,
 	animTimer = 0,
-	depthOffset = 0,
-	scaleFactor = 1;
+	depthOffset = 0;
 
 u8 consoleModel = 3;
 u8 lang = CFG_LANGUAGE_EN;
@@ -282,7 +282,7 @@ int main(int argc, char* argv[]) {
 	saveData(highScores);
 	log << "Game Ready!" << std::endl;
 	
-	// Compiler Warning Fixes
+	// Pretouch
 	hidScanInput();
     hidTouchRead(&startTouch);
 	

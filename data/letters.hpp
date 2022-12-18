@@ -277,32 +277,6 @@ int getIndex(char character) {
 	return 26; // Backup is 0
 }
 
-// Draw String
-void drawString(std::string str, float x, float y, float scale, float weight, u32 color) {
-	for (unsigned int i = 0; i < str.size(); i++) {
-		if (str.at(i) == ' ') x += 23 * scale + weight; // Effectively an A
-		else {
-			for (int j = 0; j < letters[getIndex(str.at(i))]->len; j++) {
-				C2D_DrawLine(letters[getIndex(str.at(i))]->lines[j]->startX * scale + floor(0.5 + x),
-							letters[getIndex(str.at(i))]->lines[j]->startY * scale + floor(0.5 + y),
-							color,
-							letters[getIndex(str.at(i))]->lines[j]->endX * scale + floor(0.5 + x),
-							letters[getIndex(str.at(i))]->lines[j]->endY * scale + floor(0.5 + y),
-							color, weight, 0.5f);
-			}
-			for (int j = 0; j < letters[getIndex(str.at(i))]->len; j++) {
-				C2D_DrawCircleSolid(letters[getIndex(str.at(i))]->lines[j]->startX * scale + floor(0.5 + x),
-									letters[getIndex(str.at(i))]->lines[j]->startY * scale + floor(0.5 + y),
-									0.5f, weight/2, color);
-				C2D_DrawCircleSolid(letters[getIndex(str.at(i))]->lines[j]->endX * scale + floor(0.5 + x),
-									letters[getIndex(str.at(i))]->lines[j]->endY * scale + floor(0.5 + y),
-									0.5f, weight/2, color);
-			}
-			x += (letters[getIndex(str.at(i))]->size + 3) * scale + weight;
-		}
-	}
-}
-
 float getWidth(std::string str, float scale, float weight) {
 	float x = 0;
 	for (unsigned int i = 0; i < str.size(); i++) {

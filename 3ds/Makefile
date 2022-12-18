@@ -7,7 +7,7 @@ endif
 TOPDIR ?= $(CURDIR)
 include /opt/devkitpro/devkitARM/3ds_rules
 
-TARGET			:=	lines
+TARGET			:=	vectoria
 BUILD			:=	build
 SOURCES			:=	source
 DATA			:=	data

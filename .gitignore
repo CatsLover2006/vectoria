@@ -15,3 +15,5 @@
 *.o
 *.d
 *.DS_Store
+*/cmake/*
+*/cmake
