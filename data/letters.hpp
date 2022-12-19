@@ -290,8 +290,10 @@ float getWidth(std::string str, float scale, float weight) {
 std::string to_str (float t, int accuracy = 3)
 {
   std::ostringstream os;
-  if (t < 0) os << "-";
-  t = abs(t);
+  if (t < 0) {
+	os << "-";
+  	t *= -1;
+  }
   os << (unsigned long long)floor(t) << "."; // Whole Number
   os << std::setfill('0') << std::setw(accuracy) << (unsigned short)floor((t - floor(t))*pow(10, accuracy)); // Decimal
   return os.str ();

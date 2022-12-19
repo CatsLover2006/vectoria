@@ -6,7 +6,7 @@ float scaleFactor = 1;
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
-#define SUBSTEPS 6
+#define 6 6
 #define MAX_SPEED 59
 
 #include <citro2d.h>
@@ -22,8 +22,8 @@ const float pi = acos(-1.0);
 #include "../../data/collisions.hpp"
 #include "textDraw.hpp"
 
-const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
-			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
+const float xDiv = 1 + (sqrt(6)-1)/6,
+			xAdd = 2.69/sqrt(6*sqrt(6)-pow(6, xDiv)/(xDiv*sqrt(2)));
 
 const unsigned int currentSaveVersion = 1;
 unsigned int saveVersion = 0; // Save Version Update Handling
@@ -324,7 +324,7 @@ int main(int argc, char* argv[]) {
 					levelTimerRunning = false;
 					hasStarted = true;
 				}
-				for (int lol = 0; lol < SUBSTEPS; lol++) {
+				for (int lol = 0; lol < 6; lol++) {
 					oX = playerX;
 					oY = playerY;
 					if (kHeld & (KEY_DOWN | KEY_LEFT | KEY_RIGHT | KEY_A)) {
@@ -337,48 +337,45 @@ int main(int argc, char* argv[]) {
 					timerBlockOffset += getWidth(to_str(levelTimer / 360.0f), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
 					timerBlockOffset /= 41;
 					if (!vcolCheck || !jumpableFor) {
-						playerYVel += 0.3 / SUBSTEPS;
-						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
+						playerYVel += 0.3 / 6;
+						if (kHeld & KEY_DOWN) playerYVel += 0.9 / 6;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
 					playerXVel /= xDiv;
 					if (kHeld & KEY_LEFT) playerXVel -= xAdd;
 					if (kHeld & KEY_RIGHT) playerXVel += xAdd;
-					playerX += playerXVel / SUBSTEPS;
+					playerX += playerXVel / 6;
 					hcolCheck = false;
-					if (vcolCheck) playerY -= abs(playerXVel/SUBSTEPS);
+					if (vcolCheck) playerY -= abs(playerXVel/6);
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 							hcolCheck = true;
-							if (playerX == closestX) continue;
-							else playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan((playerY - closestY)/(playerX - closestX))));
+							playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan2(playerY - closestY,playerX - closestX)));
 						}
 					}
-					if (vcolCheck) playerY += abs(playerXVel/SUBSTEPS);
+					if (vcolCheck) playerY += abs(playerXVel/6);
 					tcolCheck = vcolCheck;
 					vcolCheck = false;
-					playerY += playerYVel / SUBSTEPS;
+					playerY += playerYVel / 6;
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 						if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 							vcolCheck = vcolCheck || (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
 							if (!vcolCheck) continue;
-							if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
-							else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
+							playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan2(playerY - closestY,playerX - closestX)));
 							if (closestY > playerY) jumpableFor = 25;
 						}
 					}
 					if (tcolCheck && !vcolCheck) {
-						playerY += abs(playerXVel/SUBSTEPS);
+						playerY += abs(playerXVel/6);
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 							if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 							if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 								tcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
 								vcolCheck = vcolCheck || tcolCheck;
 								if (!tcolCheck) continue;
-								if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
-								else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
+								=playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan2(playerY - closestY,playerX - closestX)));
 								if (closestY > playerY) jumpableFor = 25;
 							}
 						}

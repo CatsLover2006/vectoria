@@ -22,6 +22,7 @@ set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d PARENTAL_LEVEL=1")
 
 include_directories(
 	../data
+	include
 )
 
 link_directories(
@@ -30,12 +31,12 @@ link_directories(
 
 add_executable(${VITA_APP_NAME}
   src/main.cpp
-  src/textDraw.hpp
-  ../data/letters.hpp
-  ../data/buttons.hpp
+  ../data/collisions.hpp
   ../data/lineListNintendo.hpp
   ../data/lineList.hpp
-  ../data/collisions.hpp
+  ../data/letters.hpp
+  ../data/buttons.hpp
+  include/textDraw.hpp
 )
 
 target_link_libraries(${VITA_APP_NAME}

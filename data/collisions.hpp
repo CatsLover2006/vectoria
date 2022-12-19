@@ -1,5 +1,3 @@
-#include <cmath>
-
 float closestX;
 float closestY;
 
