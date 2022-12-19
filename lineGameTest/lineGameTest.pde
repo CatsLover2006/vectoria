@@ -13,8 +13,13 @@ float playerY = 50,
   cX = playerX,
   cY = playerY,
   xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
-  xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2))),
+  xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(SUBSTEPS/3))),
   doLogic = 0;
+
+float abs_c (float x) {
+  if (x < 0) return -x;
+  return x;
+}
 
 boolean pressed[] = new boolean[4];
 boolean vcolCheck = false,
@@ -23,9 +28,9 @@ boolean vcolCheck = false,
   tcolCheck = false;
 
 void settings() {
-  size(800, 480, P2D);
+  size(960, 544, P2D);
   scaleFactor = max(height/240.0f, width/400.0f);
-  smooth(65536); 
+  noSmooth(); 
 }//*/
 
 void setup() {
@@ -54,7 +59,7 @@ void draw() {
   scale(scaleFactor);
   background(255);
   doLogic += 1 / frameRate;
-  while (doLogic > 1 / 360.0f) {
+  while (doLogic > 1 / (SUBSTEPS * 60.0f)) {
     oX = playerX;
     oY = playerY;
     if (!vcolCheck || jumpableFor == 0) {
@@ -68,42 +73,42 @@ void draw() {
     if (pressed[3]) playerXVel += xAdd;
     playerX += playerXVel / SUBSTEPS;
     hcolCheck = false;
-    if (vcolCheck) playerY -= abs(playerXVel / SUBSTEPS);
+    if (vcolCheck) playerY -= abs_c(playerXVel / SUBSTEPS);
     for (int i = 0; i < lineList[level].length; i++) {
       if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
         hcolCheck=true;
         if (playerX == closestX) continue;
-        else playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan((playerY - closestY)/(playerX - closestX))));
+        else playerX = closestX + (closestX < playerX ? 10 : -10) * abs_c(cos(atan((playerY - closestY)/(playerX - closestX))));
       }
     }
-    if (vcolCheck) playerY += abs(playerXVel / SUBSTEPS);
+    if (vcolCheck) playerY += abs_c(playerXVel / SUBSTEPS);
     tcolCheck = vcolCheck;
     vcolCheck = false;
     playerY += playerYVel / SUBSTEPS;
     for (int i = 0; i < lineList[level].length; i++) {
-      if (abs((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
+      if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
       if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
-        vcolCheck = vcolCheck || (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+        vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
         if (!vcolCheck) continue;
         if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
-        else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
+        else playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan((playerY - closestY)/(playerX - closestX))));
         if (closestY > playerY) jumpableFor = 25;
       }
     }
     if (tcolCheck && !vcolCheck) {
-      playerY += abs(playerXVel / SUBSTEPS);
+      playerY += abs_c(playerXVel / SUBSTEPS);
       for (int i = 0; i < lineList[level].length; i++) {
-        if (abs((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
+        if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
         if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
-          vcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+          vcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
           if (!vcolCheck) continue;
           if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
-          else playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan((playerY - closestY)/(playerX - closestX))));
+          else playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan((playerY - closestY)/(playerX - closestX))));
           if (closestY > playerY) jumpableFor = 25;
         }
       }
       if (!vcolCheck) {
-        playerY -= abs(playerXVel / SUBSTEPS);
+        playerY -= abs_c(playerXVel / SUBSTEPS);
       }
     }
     if (jumpableFor > 0) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor > 0 ? 1 : 0));
@@ -112,15 +117,15 @@ void draw() {
       playerYVel = 0;
     } else if (jumpableFor > 0) jumpableFor--;
     if (jumpableFor > 0 && pressed[1]) {
-      playerYVel = xAdd * -6.5 * (pressed[2]?2:1);
-      playerY -= abs(playerXVel);
+      playerYVel = xAdd * sqrt(42.3) * (pressed[2]?-2:-1);
+      playerY -= abs_c(playerXVel);
       jumpableFor = 0;
     }
-    cX += constrain(playerX, (width/scaleFactor)/2 + bounds[level][0], bounds[level][2] - (width/scaleFactor)/2) * 0.3;
-    cX /= 1.3;
+    cX += constrain(playerX, (width/scaleFactor)/2 + bounds[level][0], bounds[level][2] - (width/scaleFactor)/2) * 0.06;
+    cX /= 1.06;
     if ((width/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (width/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
-    cY += constrain(playerY, (height/scaleFactor)/2 + bounds[level][1], bounds[level][3] - (height/scaleFactor)/2) * 0.3;
-    cY /= 1.3;
+    cY += constrain(playerY, (height/scaleFactor)/2 + bounds[level][1], bounds[level][3] - (height/scaleFactor)/2) * 0.06;
+    cY /= 1.06;
     rot += rotSpd;
     if (playerY > bounds[level][3]) { //rip
       hasStarted = false;
@@ -131,7 +136,7 @@ void draw() {
         hasStarted = false;
         doLogic = 0;
       }
-    doLogic -= 1 / 360.0f;
+    doLogic -= 1 / (SUBSTEPS * 60.0f);
   }
   strokeWeight(2);
   stroke(200);

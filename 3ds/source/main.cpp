@@ -3,10 +3,15 @@
 
 float scaleFactor = 1;
 
+float abs_c(float x) {
+	if (x < 0) return -x;
+	return x;
+}
+
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
-#define 6 6
+#define SUBSTEPS 6
 #define MAX_SPEED 59
 
 #include <citro2d.h>
@@ -22,8 +27,8 @@ const float pi = acos(-1.0);
 #include "../../data/collisions.hpp"
 #include "textDraw.hpp"
 
-const float xDiv = 1 + (sqrt(6)-1)/6,
-			xAdd = 2.69/sqrt(6*sqrt(6)-pow(6, xDiv)/(xDiv*sqrt(2)));
+const float xDiv = 1 + (sqrt(SUBSTEPS)-1)/SUBSTEPS,
+			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(SUBSTEPS/3)));
 
 const unsigned int currentSaveVersion = 1;
 unsigned int saveVersion = 0; // Save Version Update Handling
@@ -184,7 +189,7 @@ void drawLevel() {
 void drawInfo(C3D_RenderTarget * target) {
 	C2D_TargetClear(target, clrWhite);
     C2D_SceneBegin(target);
-	drawString(to_str(levelTimer / 360.0f), 3, 15, 0.48f, 1, clrBlack);
+	drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 15, 0.48f, 1, clrBlack);
 	drawString(to_str(playerX), 3, 27, 0.40f, 1, clrBlack);
 	drawString(to_str(playerY), 3, 39, 0.40f, 1, clrBlack);
 	drawString(to_str(playerXVel), 3, 49, 0.32f, 1, clrBlack);
@@ -324,7 +329,7 @@ int main(int argc, char* argv[]) {
 					levelTimerRunning = false;
 					hasStarted = true;
 				}
-				for (int lol = 0; lol < 6; lol++) {
+				for (int lol = 0; lol < SUBSTEPS; lol++) {
 					oX = playerX;
 					oY = playerY;
 					if (kHeld & (KEY_DOWN | KEY_LEFT | KEY_RIGHT | KEY_A)) {
@@ -333,53 +338,54 @@ int main(int argc, char* argv[]) {
 					}
 					if (levelTimerRunning) levelTimer++;
 					if (levelTimer == 0 && levelTimerRunning) goto exitLoopLevel; // Overflow Check
-					timerBlockOffset *= 40;
-					timerBlockOffset += getWidth(to_str(levelTimer / 360.0f), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
-					timerBlockOffset /= 41;
+					timerBlockOffset *= 400;
+					timerBlockOffset += getWidth(to_str((levelTimer / 60.0f) / SUBSTEPS), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
+					timerBlockOffset /= 401;
 					if (!vcolCheck || !jumpableFor) {
-						playerYVel += 0.3 / 6;
-						if (kHeld & KEY_DOWN) playerYVel += 0.9 / 6;
+						playerYVel += 0.3 / SUBSTEPS;
+						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
 					playerXVel /= xDiv;
 					if (kHeld & KEY_LEFT) playerXVel -= xAdd;
 					if (kHeld & KEY_RIGHT) playerXVel += xAdd;
-					playerX += playerXVel / 6;
+					playerX += playerXVel / SUBSTEPS;
+					log << playerXVel / SUBSTEPS;
 					hcolCheck = false;
-					if (vcolCheck) playerY -= abs(playerXVel/6);
+					if (vcolCheck) playerY -= abs_c(playerXVel/SUBSTEPS);
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 							hcolCheck = true;
-							playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan2(playerY - closestY,playerX - closestX)));
+							playerX = closestX + (closestX < playerX ? 10 : -10) * abs_c(cos(atan2(playerY - closestY,playerX - closestX)));
 						}
 					}
-					if (vcolCheck) playerY += abs(playerXVel/6);
+					if (vcolCheck) playerY += abs_c(playerXVel/SUBSTEPS);
 					tcolCheck = vcolCheck;
 					vcolCheck = false;
-					playerY += playerYVel / 6;
+					playerY += playerYVel / SUBSTEPS;
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-						if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
+						if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
-							vcolCheck = vcolCheck || (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+							vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 							if (!vcolCheck) continue;
-							playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan2(playerY - closestY,playerX - closestX)));
+							playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan2(playerY - closestY,playerX - closestX)));
 							if (closestY > playerY) jumpableFor = 25;
 						}
 					}
 					if (tcolCheck && !vcolCheck) {
-						playerY += abs(playerXVel/6);
+						playerY += abs_c(playerXVel/SUBSTEPS);
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-							if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
+							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 							if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
-								tcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+								tcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 								vcolCheck = vcolCheck || tcolCheck;
 								if (!tcolCheck) continue;
-								=playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan2(playerY - closestY,playerX - closestX)));
+								playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan2(playerY - closestY,playerX - closestX)));
 								if (closestY > playerY) jumpableFor = 25;
 							}
 						}
-						if (!vcolCheck) playerY -= abs(playerXVel/SUBSTEPS);
+						if (!vcolCheck) playerY -= abs_c(playerXVel/SUBSTEPS);
 					}
 					if (vcolCheck) {
 						playerYVel = 0;
@@ -387,19 +393,19 @@ int main(int argc, char* argv[]) {
 					if ((kDown & KEY_A)) jumpFor = 25;
 					else if (jumpFor) jumpFor--;
 					if (jumpableFor && jumpFor) {
-						playerYVel = xAdd * -6.5 * ((kHeld&KEY_DOWN) ? 2 : 1);
-						playerY -= abs(playerXVel);
+						playerYVel = xAdd * sqrt(42.3) * ((kHeld&KEY_DOWN) ? -2 : -1);
+						playerY -= abs_c(playerXVel);
 						jumpableFor = 0;
 						jumpFor = 0;
 					}
 					if (jumpableFor) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor ? 1 : 0));
 					else rotSpd /= pow(1.1, 1/13.0);
 					rot += rotSpd;
-					cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.3;
-					cX /= 1.3;
+					cX += constrain(playerX, SCREEN_WIDTH / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH / 2) * 0.06;
+					cX /= 1.06;
 					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
-					cY += constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2) * 0.3;
-					cY /= 1.3;
+					cY += constrain(playerY, SCREEN_HEIGHT / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT / 2) * 0.06;
+					cY /= 1.06;
 					for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
 						if (lineCircle(linelistKO[curLine]->startX, linelistKO[curLine]->startY, linelistKO[curLine]->endX, linelistKO[curLine]->endY, playerX, playerY, 10)) 
 							goto exitLoopLevel;
@@ -429,7 +435,7 @@ int main(int argc, char* argv[]) {
 						for (int b = 0; b < 2; b++) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
-								depthOffset = abs(osGet3DSliderState());
+								depthOffset = abs_c(osGet3DSliderState());
 							}
 							if (b == 1) {
 								C2D_SceneBegin(top_sub);
@@ -452,7 +458,7 @@ int main(int argc, char* argv[]) {
 						// Timer
 						C2D_TargetClear(bottom, clrWhite);
 	        			C2D_SceneBegin(bottom);
-						drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
 						// Done Rendering!
 						C3D_FrameEnd(0);
 					}
@@ -478,7 +484,7 @@ int main(int argc, char* argv[]) {
 					for (int b = 0; b < 2; b++) {
 						if (b == 0) {
 							C2D_SceneBegin(top_main);
-							depthOffset = abs(osGet3DSliderState());
+							depthOffset = abs_c(osGet3DSliderState());
 						}
 						if (b == 1) {
 							C2D_SceneBegin(top_sub);
@@ -490,11 +496,11 @@ int main(int argc, char* argv[]) {
 					// Timer
 					C2D_TargetClear(bottom, clrWhite);
         			C2D_SceneBegin(bottom);
-					drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+					drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
 					// Done Rendering!
 					C3D_FrameEnd(0);
 					// Log It
-					log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
+					log << "Oof! Died after " << to_str((levelTimer / 60.0f) / SUBSTEPS) << " seconds on level " << level << std::endl;
 					animID = ded;
 					frames = 0;
 					while (frames < 24) {
@@ -504,7 +510,7 @@ int main(int argc, char* argv[]) {
 						for (int b = 0; b < 2; b++) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
-								depthOffset = abs(osGet3DSliderState());
+								depthOffset = abs_c(osGet3DSliderState());
 							}
 							if (b == 1) {
 								C2D_SceneBegin(top_sub);
@@ -534,7 +540,7 @@ int main(int argc, char* argv[]) {
 						for (int b = 0; b < 2; b++) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
-								depthOffset = abs(osGet3DSliderState());
+								depthOffset = abs_c(osGet3DSliderState());
 							}
 							if (b == 1) {
 								C2D_SceneBegin(top_sub);
@@ -617,7 +623,7 @@ int main(int argc, char* argv[]) {
 		for (int b = 0; b < 2; b++) {
 			if (b == 0) {
 				C2D_SceneBegin(top_main);
-				depthOffset = abs(osGet3DSliderState());
+				depthOffset = abs_c(osGet3DSliderState());
 			}
 			if (b == 1) {
 				C2D_SceneBegin(top_sub);
@@ -631,7 +637,7 @@ int main(int argc, char* argv[]) {
 					// Draw Timer
 					//C2D_DrawRectSolid(0, 0, 0.9f, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
 					//C2D_DrawCircleSolid(timerBlockOffset, 0, 0.9f, 21.75f*scaleFactor, clrBlack);
-					//drawString(to_str(levelTimer / 360.0f), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
+					//drawString(to_str((levelTimer / 60.0f) / SUBSTEPSf), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 
 					// Draw Player
 					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + playerX,
@@ -674,7 +680,7 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			case mainLevel: {
-				drawString(to_str(levelTimer / 360.0), 3, 18, 0.6f, 2.0f, clrBlack);
+				drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
 				break;
 			}
 		}

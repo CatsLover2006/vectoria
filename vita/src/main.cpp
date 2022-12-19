@@ -3,9 +3,14 @@
 
 float scaleFactor = 2.4;
 
+float abs_c(float x) {
+	if (x < 0) return -x;
+	return x;
+}
+
 #define SCREEN_WIDTH 960
 #define SCREEN_HEIGHT 544
-//#define 6 6
+#define SUBSTEPS 6
 #define MAX_SPEED 59
 
 #include <psp2/kernel/processmgr.h>
@@ -25,8 +30,8 @@ const float pi = acos(-1.0);
 #include "../../data/collisions.hpp"
 #include "textDraw.hpp"
 
-const float xDiv = 1 + (sqrt(6)-1)/6,
-			xAdd = 2.69/sqrt(6*sqrt(6)-pow(6, xDiv)/(xDiv*sqrt(2)));
+const float xDiv = 1 + (sqrt(SUBSTEPS)-1)/SUBSTEPS,
+			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(SUBSTEPS/3)));
 
 const unsigned int currentSaveVersion = 1;
 unsigned int saveVersion = 0; // Save Version Update Handling
@@ -106,67 +111,43 @@ float min (float a, float b) {
 	return b;
 }
 
+void drawLine(float x1, float y1, float x2, float y2, unsigned int color = clrBlack) {
+	drawLine(x1, y1, x2, y2, 1, color);
+}
+
+void drawLine(float x1, float y1, float x2, float y2, float weight, unsigned int color = clrBlack) {
+	vita2d_draw_line(x1, y1, x2, y2, color);
+}
+
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		vita2d_draw_line((linelistBG[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelistBG[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelistBG[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 (linelistBG[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelistBG[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 clrGrey);
 	}
-	/*for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelistBG[curLine]->endX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							linelistBG[curLine]->endY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.05f, 1, clrGrey);
-		C2D_DrawCircleSolid(linelistBG[curLine]->startX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							linelistBG[curLine]->startY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.05f, 1, clrGrey);
-	}*/
 	for (curLine = falseStart[level]; curLine < falseEnd[level]; curLine++) {
-		vita2d_draw_line((lineListFake[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+		drawLine((lineListFake[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (lineListFake[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 (lineListFake[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (lineListFake[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 clrFake);
 	}
-	/*for (curLine = falseStart[level]; curLine < falseEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(lineListFake[curLine]->endX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							lineListFake[curLine]->endY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.09f, 1, clrFake);
-		C2D_DrawCircleSolid(lineListFake[curLine]->startX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							lineListFake[curLine]->startY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.09f, 1, clrFake);
-	}*/
 	for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-		vita2d_draw_line((linelist[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelist[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelist[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 (linelist[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelist[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 clrBlack);
 	}
-	/*for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelist[curLine]->endX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							linelist[curLine]->endY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.1f, 1, clrBlack);
-		C2D_DrawCircleSolid(linelist[curLine]->startX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							linelist[curLine]->startY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.1f, 1, clrBlack);
-	}*/
 	for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
-		vita2d_draw_line((linelistKO[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelistKO[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelistKO[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 (linelistKO[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelistKO[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 clrRed);
 	}
-	/*for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelistKO[curLine]->endX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							linelistKO[curLine]->endY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.11f, 1, clrRed);
-		C2D_DrawCircleSolid(linelistKO[curLine]->startX + (0.5 - cX + (SCREEN_WIDTH/scaleFactor) / 2),
-							linelistKO[curLine]->startY + (0.5 - cY + (SCREEN_HEIGHT/scaleFactor) / 2),
-							0.11f, 1, clrRed);
-	}*/
 	vita2d_draw_fill_circle((endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 						(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 						3 * scaleFactor, clrBlack);
@@ -303,7 +284,7 @@ int main(int argc, char* argv[]) {
 					levelTimerRunning = false;
 					hasStarted = true;
 				}
-				for (int lol = 0; lol < 6; lol++) {
+				for (int lol = 0; lol < SUBSTEPS; lol++) {
 					oX = playerX;
 					oY = playerY;
 					if (kHeld & (SCE_CTRL_DOWN | SCE_CTRL_LEFT | SCE_CTRL_RIGHT | SCE_CTRL_CROSS)) {
@@ -312,53 +293,53 @@ int main(int argc, char* argv[]) {
 					}
 					if (levelTimerRunning) levelTimer++;
 					if (levelTimer == 0 && levelTimerRunning) goto exitLoopLevel; // Overflow Check
-					timerBlockOffset *= 40;
-					timerBlockOffset += getWidth(to_str(levelTimer / 360.0f), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
-					timerBlockOffset /= 41;
+					timerBlockOffset *= 400;
+					timerBlockOffset += getWidth(to_str((levelTimer / 60.0f) / SUBSTEPS), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
+					timerBlockOffset /= 401;
 					if (!vcolCheck || !jumpableFor) {
-						playerYVel += 0.3 / 6;
-						if (kHeld & SCE_CTRL_DOWN) playerYVel += 0.9 / 6;
+						playerYVel += 0.3 / SUBSTEPS;
+						if (kHeld & SCE_CTRL_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
 					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
 					playerXVel /= xDiv;
 					if (kHeld & SCE_CTRL_LEFT) playerXVel -= xAdd;
 					if (kHeld & SCE_CTRL_RIGHT) playerXVel += xAdd;
-					playerX += playerXVel / 6;
+					playerX += playerXVel / SUBSTEPS;
 					hcolCheck = false;
-					if (vcolCheck) playerY -= abs(playerXVel/6);
+					if (vcolCheck) playerY -= abs_c(playerXVel/SUBSTEPS);
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 							hcolCheck = true;
-							playerX = closestX + (closestX < playerX ? 10 : -10) * abs(cos(atan2(playerY - closestY,playerX - closestX)));
+							playerX = closestX + (closestX < playerX ? 10 : -10) * abs_c(cos(atan2(playerY - closestY,playerX - closestX)));
 						}
 					}
-					if (vcolCheck) playerY += abs(playerXVel/6);
+					if (vcolCheck) playerY += abs_c(playerXVel/SUBSTEPS);
 					tcolCheck = vcolCheck;
 					vcolCheck = false;
-					playerY += playerYVel / 6;
+					playerY += playerYVel / SUBSTEPS;
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-						if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
+						if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
-							vcolCheck = vcolCheck || (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+							vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 							if (!vcolCheck) continue;
-							playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan2(playerY - closestY,playerX - closestX)));
+							playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan2(playerY - closestY,playerX - closestX)));
 							if (closestY > playerY) jumpableFor = 25;
 						}
 					}
 					if (tcolCheck && !vcolCheck) {
-						playerY += abs(playerXVel/6);
+						playerY += abs_c(playerXVel/SUBSTEPS);
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-							if (abs((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
+							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 							if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
-								tcolCheck = (closestX == playerX) || abs((closestY - playerY) / (closestX - playerX))>0.5;
+								tcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 								vcolCheck = vcolCheck || tcolCheck;
 								if (!tcolCheck) continue;
-								playerY = closestY + (closestY < playerY ? 10 : -10) * abs(sin(atan2(playerY - closestY,playerX - closestX)));
+								playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan2(playerY - closestY,playerX - closestX)));
 								if (closestY > playerY) jumpableFor = 25;
 							}
 						}
-						if (!vcolCheck) playerY -= abs(playerXVel/6);
+						if (!vcolCheck) playerY -= abs_c(playerXVel/SUBSTEPS);
 					}
 					if (vcolCheck) {
 						playerYVel = 0;
@@ -366,19 +347,19 @@ int main(int argc, char* argv[]) {
 					if ((kDown & SCE_CTRL_CROSS)) jumpFor = 25;
 					else if (jumpFor) jumpFor--;
 					if (jumpableFor && jumpFor) {
-						playerYVel = xAdd * -6.5 * ((kHeld&SCE_CTRL_DOWN) ? 2 : 1);
-						playerY -= abs(playerXVel);
+						playerYVel = xAdd * sqrt(42.3) * ((kHeld&SCE_CTRL_DOWN) ? -2 : -1);
+						playerY -= abs_c(playerXVel);
 						jumpableFor = 0;
 						jumpFor = 0;
 					}
 					if (jumpableFor) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor ? 1 : 0));
 					else rotSpd /= pow(1.1, 1/13.0);
 					rot += rotSpd;
-					cX += constrain(playerX, (SCREEN_WIDTH/scaleFactor) / 2 + bounds[level][0], bounds[level][2] - (SCREEN_WIDTH/scaleFactor) / 2) * 0.3;
-					cX /= 1.3;
+					cX += constrain(playerX, (SCREEN_WIDTH/scaleFactor) / 2 + bounds[level][0], bounds[level][2] - (SCREEN_WIDTH/scaleFactor) / 2) * 0.06;
+					cX /= 1.01;
 					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
-					cY += constrain(playerY, (SCREEN_HEIGHT/scaleFactor) / 2 + bounds[level][1], bounds[level][3] - (SCREEN_HEIGHT/scaleFactor) / 2) * 0.3;
-					cY /= 1.3;
+					cY += constrain(playerY, (SCREEN_HEIGHT/scaleFactor) / 2 + bounds[level][1], bounds[level][3] - (SCREEN_HEIGHT/scaleFactor) / 2) * 0.06;
+					cY /= 1.01;
 					for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
 						if (lineCircle(linelistKO[curLine]->startX, linelistKO[curLine]->startY, linelistKO[curLine]->endX, linelistKO[curLine]->endY, playerX, playerY, 10)) 
 							goto exitLoopLevel;
@@ -420,7 +401,7 @@ int main(int argc, char* argv[]) {
 											(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 											(2 + frames * 10/6.0f) * scaleFactor, clrCyan);
 						// Timer
-						drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
 						// Done Rendering!
 						vita2d_end_drawing();
 						vita2d_swap_buffers();
@@ -446,7 +427,7 @@ int main(int argc, char* argv[]) {
 					vita2d_clear_screen();
 					drawLevel();
 					// Timer
-					drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+					drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
 					// Done Rendering!
 					vita2d_end_drawing();
 					vita2d_swap_buffers();
@@ -556,10 +537,6 @@ int main(int argc, char* argv[]) {
 			case mainLevel: {
 				// Draw Level
 				drawLevel();
-				// Draw Timer
-				vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
-				vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
-				drawString(to_str(levelTimer / 360.0), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 				// Draw Player
 				vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX)*scaleFactor,
 									((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY)*scaleFactor,
@@ -567,6 +544,10 @@ int main(int argc, char* argv[]) {
 				vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
 									((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
 									(animID == -1 ? 3 : min(animTimer * 30, 3)) * scaleFactor, clrCyan);
+				// Draw Timer
+				vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
+				vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
+				drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 				if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));
 				break;
 			}
@@ -582,7 +563,7 @@ int main(int argc, char* argv[]) {
 		}
 		
         if (touch.reportNum != 0) {
-        	vita2d_draw_line(touch.report[0].x/screenXMul, touch.report[0].y/screenYMul,
+        	drawLine(touch.report[0].x/screenXMul, touch.report[0].y/screenYMul,
         		startTouch.report[0].x/screenXMul, startTouch.report[0].y/screenYMul, RGBA8(255, 0, 0, 0xc0));
         	vita2d_draw_fill_circle(startTouch.report[0].x/screenXMul, startTouch.report[0].y/screenYMul, scaleFactor, clrRed);
         }
