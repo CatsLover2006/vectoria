@@ -1,7 +1,7 @@
 // Vectoria 3DS
 // By Hail AKA Half-Qilin
 
-double scaleFactor = 1;
+float scaleFactor = 1;
 
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
@@ -16,13 +16,13 @@ double scaleFactor = 1;
 #include <iostream>
 #include <cmath>
 
-const double pi = acos(-1.0);
+const float pi = acos(-1.0);
 
 #include "../../data/lineListNintendo.hpp"
 #include "../../data/collisions.hpp"
 #include "textDraw.hpp"
 
-const double xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
+const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
 
 const unsigned int currentSaveVersion = 1;
@@ -48,7 +48,7 @@ enum menuID {
 	levelSelect = 1,
 };
 
-double playerX = 69,
+float playerX = 69,
     playerY = 420,
     oX = playerX,
     oY = playerY,
@@ -59,7 +59,8 @@ double playerX = 69,
     cX = playerX,
     cY = playerY,
 	animTimer = 0,
-	depthOffset = 0;
+	depthOffset = 0,
+	timerBlockOffset = 0;
 
 u8 consoleModel = 3;
 u8 lang = CFG_LANGUAGE_EN;
@@ -91,18 +92,18 @@ const button* menuButtons[] = {
 };
 const int menuButtonCount = 2;
 
-double constrain(double x, double min, double max) {
+float constrain(float x, float min, float max) {
 	if (x < min) return min;
 	if (x > max) return max;
 	return x;
 }
 
-double max (double a, double b) {
+float max (float a, float b) {
 	if (a > b) return a;
 	return b;
 }
 
-double min (double a, double b) {
+float min (float a, float b) {
 	if (a < b) return a;
 	return b;
 }
@@ -310,6 +311,7 @@ int main(int argc, char* argv[]) {
 					playerY = startPos[level][1];
 					playerYVel = 0;
 					playerXVel = 0;
+					timerBlockOffset = 0;
 					oX = playerX;
 					oY = playerY;
 					if (animID == enteredAnim) {
@@ -331,6 +333,9 @@ int main(int argc, char* argv[]) {
 					}
 					if (levelTimerRunning) levelTimer++;
 					if (levelTimer == 0 && levelTimerRunning) goto exitLoopLevel; // Overflow Check
+					timerBlockOffset *= 40;
+					timerBlockOffset += getWidth(to_str(levelTimer / 360.0f), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
+					timerBlockOffset /= 41;
 					if (!vcolCheck || !jumpableFor) {
 						playerYVel += 0.3 / SUBSTEPS;
 						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
@@ -417,9 +422,9 @@ int main(int argc, char* argv[]) {
 					}
 					animID = enteredAnim;
 					frames = 0;
-					double x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
-					double y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
-					double dist = sqrt(x * x + y * y);
+					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH / 2, SCREEN_WIDTH - (endPoint[level][0] - cX + SCREEN_WIDTH / 2));
+					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT / 2, SCREEN_HEIGHT - (endPoint[level][1] - cY + SCREEN_HEIGHT / 2));
+					float dist = sqrt(x * x + y * y);
 					while (2 + frames * 10/6.0f < dist) {
 						frames+=6;
 						// Start Render
@@ -626,10 +631,15 @@ int main(int argc, char* argv[]) {
 					// Draw Level
 					drawLevel();
 
+					// Draw Timer
+					//C2D_DrawRectSolid(0, 0, 0.9f, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
+					//C2D_DrawCircleSolid(timerBlockOffset, 0, 0.9f, 21.75f*scaleFactor, clrBlack);
+					//drawString(to_str(levelTimer / 360.0f), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
+
 					// Draw Player
 					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + playerX,
 										floor(0.5 - cY + SCREEN_HEIGHT / 2) + playerY,
-										0.3f, (animID == -1 ? 10 : min(animTimer * 100, 10)), clrBlack);
+										0.3f, (animID == -1 ? 10 : min(animTimer * 100, 10)), clrBlack);//*/
 					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerX,
 										floor(0.5 - cY + SCREEN_HEIGHT / 2) + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerY,
 										0.4f, (animID == -1 ? 3 : min(animTimer * 30, 3)), clrCyan);
@@ -667,7 +677,7 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			case mainLevel: {
-				drawString(to_str(levelTimer / 360.0f), 3, 18, 0.6f, 2.0f, clrBlack);
+				drawString(to_str(levelTimer / 360.0), 3, 18, 0.6f, 2.0f, clrBlack);
 				break;
 			}
 		}

@@ -277,8 +277,8 @@ int getIndex(char character) {
 	return 26; // Backup is 0
 }
 
-double getWidth(std::string str, double scale, double weight) {
-	double x = 0;
+float getWidth(std::string str, float scale, float weight) {
+	float x = 0;
 	for (unsigned int i = 0; i < str.size(); i++) {
 		if (str.at(i) == ' ') x += 23 * scale + weight; // Effectively an A
 		else x += (letters[getIndex(str.at(i))]->size + 3) * scale + weight;
@@ -286,8 +286,8 @@ double getWidth(std::string str, double scale, double weight) {
 	return x - weight;
 }
 
-// double to String
-std::string to_str (double t, int accuracy = 3)
+// float to String
+std::string to_str (float t, int accuracy = 3)
 {
   std::ostringstream os;
   if (t < 0) os << "-";

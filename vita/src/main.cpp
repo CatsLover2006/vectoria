@@ -1,7 +1,7 @@
 // Vectoria PS Vita
 // By Hail AKA Half-Qilin
 
-double scaleFactor = 2.4;
+float scaleFactor = 2.4;
 
 #define SCREEN_WIDTH 960
 #define SCREEN_HEIGHT 544
@@ -19,13 +19,13 @@ double scaleFactor = 2.4;
 #include <iostream>
 #include <cmath>
 
-const double pi = acos(-1.0);
+const float pi = acos(-1.0);
 
 #include "../../data/lineListNintendo.hpp"
 #include "../../data/collisions.hpp"
 #include "textDraw.hpp"
 
-const double xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
+const float xDiv = 1 + (sqrt(6)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(2)));
 
 const unsigned int currentSaveVersion = 1;
@@ -51,7 +51,7 @@ enum menuID {
 	levelSelect = 1,
 };
 
-double playerX = 69,
+float playerX = 69,
     playerY = 420,
     oX = playerX,
     oY = playerY,
@@ -89,18 +89,18 @@ const button* menuButtons[] = {
 };
 const int menuButtonCount = 2;
 
-double constrain(double x, double min, double max) {
+float constrain(float x, float min, float max) {
 	if (x < min) return min;
 	if (x > max) return max;
 	return x;
 }
 
-double max (double a, double b) {
+float max (float a, float b) {
 	if (a > b) return a;
 	return b;
 }
 
-double min (double a, double b) {
+float min (float a, float b) {
 	if (a < b) return a;
 	return b;
 }
@@ -174,7 +174,7 @@ void drawLevel() {
 						2 * scaleFactor, clrCyan);
 }
 
-int doubleTo8Int(double i) {
+int floatTo8Int(float i) {
 	if (i > 1) return 255;
 	if (i < 0) return 0;
 	return (i * 255);
@@ -266,7 +266,7 @@ int main(int argc, char* argv[]) {
 		animTimer += 1 / 60.0f;
 		
 		// Input
-		double screenXMul, screenYMul;
+		float screenXMul, screenYMul;
 		SceTouchPanelInfo pannel;
 		sceTouchGetPanelInfo(0, &pannel);
 		screenXMul = pannel.maxDispX / (SCREEN_WIDTH * 1.0f);
@@ -397,9 +397,9 @@ int main(int argc, char* argv[]) {
 					}
 					animID = enteredAnim;
 					frames = 0;
-					double x = max(endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2, (SCREEN_WIDTH/scaleFactor) - (endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2));
-					double y = max(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2, (SCREEN_HEIGHT/scaleFactor) - (endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2));
-					double dist = sqrt(x * x + y * y);
+					float x = max(endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2, (SCREEN_WIDTH/scaleFactor) - (endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2));
+					float y = max(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2, (SCREEN_HEIGHT/scaleFactor) - (endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2));
+					float dist = sqrt(x * x + y * y);
 					while (2 + frames * 10/6.0f < dist) {
 						frames+=6;
 						// Start Render
@@ -463,11 +463,11 @@ int main(int argc, char* argv[]) {
 						// Funni Animation
 						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (frames / 24.0f) * 69 * scaleFactor,
-											RGBA8(255, doubleTo8Int(200 - 200 * (frames / 24.0f)), 0,
-														doubleTo8Int(0.5 - (frames / 48.0f))));
+											RGBA8(255, floatTo8Int(200 - 200 * (frames / 24.0f)), 0,
+														floatTo8Int(0.5 - (frames / 48.0f))));
 						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (frames / 24.0f) * 69 * scaleFactor,
-											RGBA8(255, 255, 255, doubleTo8Int((frames / 12.0f) - 1)));
+											RGBA8(255, 255, 255, floatTo8Int((frames / 12.0f) - 1)));
 						// Done Rendering!
 						vita2d_end_drawing();
 						vita2d_set_vblank_wait(1);
@@ -483,7 +483,7 @@ int main(int argc, char* argv[]) {
 							// Funni Animation
 							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, 69 * scaleFactor,
-												RGBA8(255, 255, 255, doubleTo8Int(1-(frames / 10.0f))));
+												RGBA8(255, 255, 255, floatTo8Int(1-(frames / 10.0f))));
 						// Done Rendering!
 						vita2d_end_drawing();
 						vita2d_swap_buffers();
@@ -566,16 +566,16 @@ int main(int argc, char* argv[]) {
 				vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
 									((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
 									(animID == -1 ? 3 : min(animTimer * 30, 3)) * scaleFactor, clrCyan);
-					if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, doubleTo8Int(max(0, 0.4 - animTimer)/0.4)));
+					if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));
 				break;
 			}
 			case menu: {
 				drawString("VECTORIA", (((SCREEN_WIDTH/scaleFactor)/2-getWidth("VECTORIA", 1.3f, 4))/2)*scaleFactor, (SCREEN_HEIGHT/scaleFactor)/2 + (14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f*scaleFactor, 4*scaleFactor, clrBlack);
 				for (int i = 0; i < menuButtonCount; i++)
 							drawButton(menuButtons[i], (touch.reportNum != 0 && onButton(menuButtons[i], startTouch.report[0].x/screenXMul, startTouch.report[0].y/screenYMul))?clrRed:clrBlack, 2.0f);
-				if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, doubleTo8Int(max(0, 0.4 - animTimer)/0.4)));
-				if (animID == gameStart) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 0, 0, doubleTo8Int(max(0, 0.4 - animTimer)/0.4)));
-				if (animID == exitAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, doubleTo8Int(levelTimer / 144.0f)));
+				if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));
+				if (animID == gameStart) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 0, 0, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));
+				if (animID == exitAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, floatTo8Int(levelTimer / 144.0f)));
 				break;
 			}
 		}
