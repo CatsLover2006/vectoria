@@ -370,7 +370,7 @@ int main(int argc, char* argv[]) {
 						}
 					}
 					if (tcolCheck && !vcolCheck) {
-						playerY += abs_c(playerXVel/SUBSTEPS);
+						playerY += abs_c(playerXVel / SUBSTEPS) * 2;
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
 							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 							if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
@@ -381,7 +381,7 @@ int main(int argc, char* argv[]) {
 								if (closestY > playerY) jumpableFor = 25;
 							}
 						}
-						if (!vcolCheck) playerY -= abs_c(playerXVel/SUBSTEPS);
+						if (!vcolCheck) playerY -= abs_c(playerXVel / SUBSTEPS) * 2;
 					}
 					if (vcolCheck) {
 						playerYVel = 0;
