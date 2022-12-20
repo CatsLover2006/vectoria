@@ -107,10 +107,6 @@ float min (float a, float b) {
 	return b;
 }
 
-void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned int color = clrBlack) {
-	vita2d_draw_line(x1, y1, x2, y2, color);
-}
-
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
 		drawLine((linelistBG[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
@@ -247,8 +243,8 @@ int main(int argc, char* argv[]) {
 		// Input
 		lastTouch = touch;
 		sceCtrlPeekBufferPositiveExt(0, &curButtons, 1);
-		kUp = !curButtons.buttons & kHeld;
-		kDown = curButtons.buttons & !kHeld;
+		kDown = (curButtons.buttons ^ kHeld) & curButtons.buttons;
+		kUp = (curButtons.buttons ^ kHeld) ^ kDown;
 		kHeld = curButtons.buttons;
         sceTouchPeek(0, &touch, 1);
 		if (touch.reportNum > lastTouch.reportNum) startTouch = touch;
@@ -547,6 +543,7 @@ int main(int argc, char* argv[]) {
 			}
 			case menu: {
 				drawString("VECTORIA", (((SCREEN_WIDTH/scaleFactor)/2-getWidth("VECTORIA", 1.3f, 4))/2)*scaleFactor, (SCREEN_HEIGHT/scaleFactor)/2 + (14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f*scaleFactor, 4*scaleFactor, clrBlack);
+				drawString("1.0-a1_3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, scaleFactor, clrBlack);
 				for (int i = 0; i < menuButtonCount; i++)
 							drawButton(menuButtons[i], (touch.reportNum != 0 && onButton(menuButtons[i], startTouch.report[0].x/screenXMul, startTouch.report[0].y/screenYMul))?clrRed:clrBlack, 2.0f);
 				if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH/scaleFactor), (SCREEN_HEIGHT/scaleFactor), RGBA8(0, 255, 255, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));

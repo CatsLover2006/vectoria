@@ -20,8 +20,8 @@ const line* letterA[] = {
 	new line(5, -12.5, 15, -12.5),
 };
 const line* letterBL[] = {
-	new line(0, -25, 0, 0),
 	new line(0, 0, 16, 0),
+	new line(0, -25, 0, 0),
 	new line(20, 0, 16, 0),
 	new line(0, -25, 20, -25),
 	new line(20, -18, 20, -25),
@@ -262,6 +262,7 @@ const letter* letters[] = {
 	new letter(letterPeriod, 4, 5),
 	new letter(letterMinus, 1, 10),
 	new letter(letterPeriod, 5, 5),
+	new letter(letterBL, 1, 16),
 };
 
 // Char to array index
@@ -273,8 +274,9 @@ int getIndex(char character) {
 		case '.': return 36;
 		case '-': return 37;
 		case ',': return 38;
+		case '_': return 39;
 	}
-	return 26; // Backup is 0
+	return 37; // Backup is a dash
 }
 
 float getWidth(std::string str, float scale, float weight) {
