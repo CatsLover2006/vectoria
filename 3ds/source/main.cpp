@@ -394,7 +394,7 @@ int main(int argc, char* argv[]) {
 					else if (jumpFor) jumpFor--;
 					if (jumpableFor && jumpFor) {
 						playerYVel = xAdd * sqrt(42.3) * ((kHeld&KEY_DOWN) ? -2 : -1);
-						playerY -= abs_c(playerXVel);
+						playerY -= abs_c(playerXVel) + 1;
 						jumpableFor = 0;
 						jumpFor = 0;
 					}
