@@ -3,10 +3,7 @@
 
 float scaleFactor = 2.4;
 
-float abs_c(float x) {
-	if (x < 0) return -x;
-	return x;
-}
+#include "../../data/basemath.hpp"
 
 #define SCREEN_WIDTH 960
 #define SCREEN_HEIGHT 544
@@ -22,7 +19,6 @@ float abs_c(float x) {
 
 #include <fstream>
 #include <iostream>
-#include <cmath>
 
 const float pi = acos(-1.0);
 
