@@ -74,7 +74,8 @@ const line* linelist[] = {
     new line(400, 170, 340, 180), // Level 8
     new line(400, 0, 0, -40), // Level 8
     new line(50, 70, 100, 20), // Level 8
-    new line(0, 10, 10, 20), // Level 8new line(0, 0, 0, 60), // Level 3
+    new line(0, 10, 10, 20), // Level 8
+    new line(0, 0, 0, 60), // Level 3
     new line(0, 0, 400, 0), // Level 3
     new line(40, 60, 0, 60), // Level 3
     new line(400, 0, 400, 60), // Level 3

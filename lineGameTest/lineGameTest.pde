@@ -96,7 +96,7 @@ void draw() {
       }
     }
     if (tcolCheck && !vcolCheck) {
-      playerY += abs_c(playerXVel / SUBSTEPS);
+      playerY += abs_c(playerXVel / SUBSTEPS) * 2;
       for (int i = 0; i < lineList[level].length; i++) {
         if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
         if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
@@ -108,7 +108,7 @@ void draw() {
         }
       }
       if (!vcolCheck) {
-        playerY -= abs_c(playerXVel / SUBSTEPS);
+        playerY -= abs_c(playerXVel / SUBSTEPS) * 2;
       }
     }
     if (jumpableFor > 0) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor > 0 ? 1 : 0));
