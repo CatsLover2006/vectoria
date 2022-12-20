@@ -147,7 +147,7 @@ void drawLevel() {
 int floatTo8Int(float i) {
 	if (i > 1) return 255;
 	if (i < 0) return 0;
-	return (i * 255);
+	return floor(i * 255);
 }
 
 void saveData (unsigned long* highScores) {
@@ -165,7 +165,7 @@ void saveData (unsigned long* highScores) {
 
 int main(int argc, char* argv[]) {
     // Init Libs
-	vita2d_init();
+	vita2d_init_advanced_with_msaa((16*1024*1024), SCE_GXM_MULTISAMPLE_4X);
     srand(time(NULL));
 	
 	// Input Vars
@@ -390,8 +390,10 @@ int main(int argc, char* argv[]) {
 						vita2d_draw_fill_circle((endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 											(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 											(2 + frames * 10/6.0f) * scaleFactor, clrCyan);
-						// Timer
-						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
+						// Draw Timer
+						vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
+						vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
+						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 						// Done Rendering!
 						vita2d_end_drawing();
 						vita2d_swap_buffers();
@@ -412,16 +414,6 @@ int main(int argc, char* argv[]) {
 						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - (SCREEN_WIDTH/scaleFactor)) / 2, bounds[level][0] + (bounds[level][2] + (SCREEN_WIDTH/scaleFactor)) / 2);
 					else
 						playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
-					// Start Render
-					vita2d_start_drawing();
-					vita2d_clear_screen();
-					drawLevel();
-					// Timer
-					drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
-					// Done Rendering!
-					vita2d_end_drawing();
-					vita2d_swap_buffers();
-					vita2d_set_vblank_wait(1);
 					// Log It
 					log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
 					animID = ded;
@@ -430,19 +422,34 @@ int main(int argc, char* argv[]) {
 						frames++;
 						// Start Render
 						vita2d_start_drawing();
+						vita2d_clear_screen();
 						// Draw Level
 						drawLevel();
+						// Draw Player
+						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+											10 * scaleFactor, clrBlack);
+						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2 + (cos(rot) * 5))*scaleFactor,
+											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2 + (sin(rot) * 5))*scaleFactor,
+											3 * scaleFactor, clrCyan);
 						// Funni Animation
-						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (frames / 24.0f) * 69 * scaleFactor,
-											RGBA8(255, floatTo8Int(200 - 200 * (frames / 24.0f)), 0,
-														floatTo8Int(0.5 - (frames / 48.0f))));
-						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (frames / 24.0f) * 69 * scaleFactor,
-											RGBA8(255, 255, 255, floatTo8Int((frames / 12.0f) - 1)));
+						for (int i = 0; i++ < frames; ) {
+							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 24.0f) * 69 * scaleFactor,
+												RGBA8(255, (int)floor(200 - 200 * (i / 24.0f)), 0,
+															floatTo8Int(0.5 - (i / 48.0f))));
+							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 24.0f) * 69 * scaleFactor,
+												RGBA8(255, 255, 255, floatTo8Int((i / 12.0f) - 1)));
+						}
+						// Draw Timer
+						vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
+						vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
+						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 						// Done Rendering!
 						vita2d_end_drawing();
 						vita2d_set_vblank_wait(1);
+						vita2d_swap_buffers();
 					}
 					frames = 0;
 					while (frames < 10) {
@@ -450,16 +457,17 @@ int main(int argc, char* argv[]) {
 						// Start Render
 						vita2d_start_drawing();
 						vita2d_clear_screen();
-						// Draw Level
-						drawLevel();
+						vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
+						vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
+						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 						// Funni Animation
 						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, 69 * scaleFactor,
 												RGBA8(255, 255, 255, floatTo8Int(1-(frames / 10.0f))));
 						// Done Rendering!
 						vita2d_end_drawing();
-						vita2d_swap_buffers();
 						vita2d_set_vblank_wait(1);
+						vita2d_swap_buffers();
 					}
 					hasStarted = false;
 					goto startFrame;

@@ -1,13 +1,16 @@
 // Draw Line
-void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned int color = clrBlack) {
+void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned int color = 0xFF000000) {
 	float dx = x1 - x2;
 	float dy = y1 - y2;
-	for (float i = -weight; i < weight; i+=0.5) {
-		vita2d_draw_line(x1 - i * abs_c(cos(atan2(dy,dx))), y1 - i * abs_c(sin(atan2(dy,dx))), x2 - i * abs_c(cos(atan2(dy,dx))), y2 - i * abs_c(sin(atan2(dy,dx))), color);
+	weight /= 2;
+	float lineangle = atan2(dy,dx) + pi/2;
+	while (lineangle < 0) lineangle += pi;
+	for (float i = -weight; i < weight; i+=1/7.0f) {
+		vita2d_draw_line(x1 - i * cos(lineangle), y1 - i * sin(lineangle), x2 - i * cos(lineangle), y2 - i * sin(lineangle), color);
 	}
-	vita2d_draw_line(x1 - weight * abs_c(cos(atan2(dy,dx))), y1 - weight * abs_c(sin(atan2(dy,dx))), x2 - weight * abs_c(cos(atan2(dy,dx))), y2 - weight * abs_c(sin(atan2(dy,dx))), color);
-	vita2d_draw_fill_circle(x1, y1, weight/2, color);
-	vita2d_draw_fill_circle(x2, y2, weight/2, color);
+	vita2d_draw_line(x1 - weight * cos(lineangle), y1 - weight * sin(lineangle), x2 - weight * cos(lineangle), y2 - weight * sin(lineangle), color);
+	vita2d_draw_fill_circle(x1, y1, weight, color);
+	vita2d_draw_fill_circle(x2, y2, weight, color);
 }
 #include "../../data/letters.hpp"
 // Draw String

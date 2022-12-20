@@ -428,6 +428,8 @@ int main(int argc, char* argv[]) {
 						frames+=6;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						C2D_TargetClear(top_main, clrWhite);
+						C2D_TargetClear(top_sub, clrWhite);
 						for (int b = 0; b < 2; b++) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
@@ -473,28 +475,6 @@ int main(int argc, char* argv[]) {
 						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - SCREEN_WIDTH) / 2, bounds[level][0] + (bounds[level][2] + SCREEN_WIDTH) / 2);
 					else
 						playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
-					// Start Render
-					C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-					C2D_TargetClear(top_main, clrWhite);
-					C2D_TargetClear(top_sub, clrWhite);
-					for (int b = 0; b < 2; b++) {
-						if (b == 0) {
-							C2D_SceneBegin(top_main);
-							depthOffset = abs_c(osGet3DSliderState());
-						}
-						if (b == 1) {
-							C2D_SceneBegin(top_sub);
-							depthOffset = -depthOffset;
-						}
-						// Draw Level
-						drawLevel();
-					}
-					// Timer
-					C2D_TargetClear(bottom, clrWhite);
-        			C2D_SceneBegin(bottom);
-					drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
-					// Done Rendering!
-					C3D_FrameEnd(0);
 					// Log It
 					log << "Oof! Died after " << to_str((levelTimer / 60.0f) / SUBSTEPS) << " seconds on level " << level << std::endl;
 					animID = ded;
@@ -503,6 +483,8 @@ int main(int argc, char* argv[]) {
 						frames++;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						C2D_TargetClear(top_main, clrWhite);
+						C2D_TargetClear(top_sub, clrWhite);
 						for (int b = 0; b < 2; b++) {
 							if (b == 0) {
 								C2D_SceneBegin(top_main);
@@ -515,13 +497,15 @@ int main(int argc, char* argv[]) {
 							// Draw Level
 							drawLevel();
 							// Funni Animation
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (frames / 24.0f) * 69,
-												C2D_Color32(255, 200 - 200 * (frames / 24.0f), 0,
-															C2D_FloatToU8(0.5 - (frames / 48.0f))));
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (frames / 24.0f) * 69,
-												C2D_Color32(255, 255, 255, C2D_FloatToU8((frames / 12.0f) - 1)));
+							for (int i = 0; i++ < frames; ) {
+								C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
+													playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
+													C2D_Color32(255, 200 - 200 * (i / 24.0f), 0,
+																C2D_FloatToU8(0.5 - (i / 48.0f))));
+								C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
+													playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
+													C2D_Color32(255, 255, 255, C2D_FloatToU8((i / 12.0f) - 1)));
+							}
 						}
 						// Done Rendering!
 						C3D_FrameEnd(0);
