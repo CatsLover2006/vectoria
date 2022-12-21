@@ -33,10 +33,34 @@ void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned
 	weight /= 2;
 	float lineangle = atan2(dy,dx) + pi/2;
 	while (lineangle < 0) lineangle += pi;
-	for (float i = -weight; i < weight; i+=1/5.0f) {
+	/*for (float i = -weight; i < weight; i+=1/5.0f) {
 		vita2d_draw_line(x1 - i * cos(lineangle), y1 - i * sin(lineangle), x2 - i * cos(lineangle), y2 - i * sin(lineangle), color);
 	}
-	vita2d_draw_line(x1 - weight * cos(lineangle), y1 - weight * sin(lineangle), x2 - weight * cos(lineangle), y2 - weight * sin(lineangle), color);
+	vita2d_draw_line(x1 - weight * cos(lineangle), y1 - weight * sin(lineangle), x2 - weight * cos(lineangle), y2 - weight * sin(lineangle), color);*/
+	vita2d_color_vertex *vertices = (vita2d_color_vertex *)vita2d_pool_memalign(
+		4 * sizeof(vita2d_color_vertex), // 4 vertices
+		sizeof(vita2d_color_vertex));
+	vertices[0].x = x1 - weight * cos(lineangle);
+	vertices[0].y = y1 - weight * sin(lineangle);
+	vertices[0].z = +0.5f;
+	vertices[0].color = color;
+
+	vertices[1].x = x1 + weight * cos(lineangle);
+	vertices[1].y = y1 + weight * sin(lineangle);
+	vertices[1].z = +0.5f;
+	vertices[1].color = color;
+
+	vertices[2].x = x2 - weight * cos(lineangle);
+	vertices[2].y = y2 - weight * sin(lineangle);
+	vertices[2].z = +0.5f;
+	vertices[2].color = color;
+
+	vertices[3].x = x2 + weight * cos(lineangle);
+	vertices[3].y = y2 + weight * sin(lineangle);
+	vertices[3].z = +0.5f;
+	vertices[3].color = color;
+
+	vita2d_draw_array(SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, vertices, 4);
 	vita2d_draw_fill_circle(x1, y1, weight, color);
 	vita2d_draw_fill_circle(x2, y2, weight, color);
 }
