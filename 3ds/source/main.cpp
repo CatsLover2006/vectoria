@@ -26,7 +26,7 @@ const float pi = acos(-1.0);
 const float xDiv = 1 + (sqrt(SUBSTEPS)-1)/SUBSTEPS,
 			xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(SUBSTEPS/3)));
 
-const unsigned int currentSaveVersion = 1;
+const unsigned int currentSaveVersion = 2;
 unsigned int saveVersion = 0; // Save Version Update Handling
 
 enum gamestate {
@@ -47,6 +47,7 @@ enum levelExitType {
 enum menuID {
 	mainMenu = 0,
 	levelSelect = 1,
+	colorPick = 2,
 };
 
 float playerX = 69,
@@ -67,7 +68,7 @@ u8 consoleModel = 3;
 u8 lang = CFG_LANGUAGE_EN;
 u8 serial = 0;
 
-static u32 clrWhite, clrBlack, clrCyan, clrRed, clrGrey, clrFake;
+static u32 clrWhite, clrBlack, clrPlayer, clrRed, clrGrey, clrFake;
 
 int level = 0,
 	curLine,
@@ -90,24 +91,10 @@ bool vcolCheck = false,
 const button* menuButtons[] = {
 	new button("All levels", BOTTOM_SCREEN_WIDTH/2 - 100, 24, 200, 28, 0.6f),
 	new button("Level Select", BOTTOM_SCREEN_WIDTH/2 - 100, 72, 200, 28, 0.6f),
+	new button("Color Select", BOTTOM_SCREEN_WIDTH/2 - 100, 120, 200, 28, 0.6f),
 };
-const int menuButtonCount = 2;
 
-float constrain(float x, float min, float max) {
-	if (x < min) return min;
-	if (x > max) return max;
-	return x;
-}
-
-float max (float a, float b) {
-	if (a > b) return a;
-	return b;
-}
-
-float min (float a, float b) {
-	if (a < b) return a;
-	return b;
-}
+const int menuButtonCount = 3;
 
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
@@ -179,7 +166,7 @@ void drawLevel() {
 						0.15f, 3, clrBlack);
 	C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
 						endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
-						0.4f, 2, clrCyan);
+						0.4f, 2, clrPlayer);
 }
 
 void drawInfo(C3D_RenderTarget * target) {
@@ -205,6 +192,7 @@ void saveData (unsigned long* highScores) {
 		saveFile << std::hex << (highScores[i] ^ maxScoreRandomCode) << "|" << std::hex
 			<< ~maxScoreRandomCode << "|" << std::endl;
 	}
+	saveFile << std::hex << clrPlayer << "|" << std::endl;
     saveFile.close();
 }
 
@@ -232,7 +220,7 @@ int main(int argc, char* argv[]) {
 	// Create Colors
     clrWhite = C2D_Color32(255, 255, 255, 0xFF);
 	clrBlack = C2D_Color32(0, 0, 0, 0xFF);
-	clrCyan = C2D_Color32(0, 255, 255, 0xFF);
+	clrPlayer = C2D_Color32(0, 255, 255, 0xFF);
 	clrRed = C2D_Color32(255, 0, 0, 0xFF);
 	clrGrey = C2D_Color32(200, 200, 200, 0xFF);
 	clrFake = C2D_Color32(0, 0, 100, 0xFF);
@@ -275,6 +263,20 @@ int main(int argc, char* argv[]) {
 				highScores[i] = tScore ^ (~scoreRandomCode);
     			log << "Level " << i << " high score " << highScores[i] << std::endl;
 			}
+			break;
+		}
+		case 2: {
+			unsigned int len = 0;
+			unsigned long scoreRandomCode = 0;
+			unsigned long tScore = 0;
+            fscanf(saveFile, "%x", &len);
+			for (unsigned int i = 0; i < min(len, levels); i++) {
+				highScores[i] = 0;
+				fscanf(saveFile, "%lx|%lx|\n", &tScore, &scoreRandomCode);
+				highScores[i] = tScore ^ (~scoreRandomCode);
+    			log << "Level " << i << " high score " << highScores[i] << std::endl;
+			}
+			fscanf(saveFile, "%lx|\n", &clrPlayer);
 			break;
 		}
     }
@@ -347,7 +349,6 @@ int main(int argc, char* argv[]) {
 					if (kHeld & KEY_LEFT) playerXVel -= xAdd;
 					if (kHeld & KEY_RIGHT) playerXVel += xAdd;
 					playerX += playerXVel / SUBSTEPS;
-					log << playerXVel / SUBSTEPS;
 					hcolCheck = false;
 					if (vcolCheck) playerY -= abs_c(playerXVel/SUBSTEPS);
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
@@ -447,11 +448,11 @@ int main(int argc, char* argv[]) {
 												0.3f, 10, clrBlack);
 							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(cos(rot) * 5),
 												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2) + floor(sin(rot) * 5),
-												0.4f, 3, clrCyan);
+												0.4f, 3, clrPlayer);
 							// Funni Animation
 							C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
 												endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
-												0.9f, 2 + frames * 10/6.0f, clrCyan);
+												0.9f, 2 + frames * 10/6.0f, clrPlayer);
 						}
 						// Timer
 						C2D_TargetClear(bottom, clrWhite);
@@ -574,6 +575,10 @@ int main(int argc, char* argv[]) {
 							(kUp & KEY_TOUCH && onButton(menuButtons[1], lastTouch.px, lastTouch.py))) {
 							currentMenu = levelSelect;
 						}
+						if (onButton(menuButtons[2], startTouch.px, startTouch.py) && 
+							(kUp & KEY_TOUCH && onButton(menuButtons[2], lastTouch.px, lastTouch.py))) {
+							currentMenu = colorPick;
+						}
 						break;
 					}
 					case levelSelect: {
@@ -586,6 +591,25 @@ int main(int argc, char* argv[]) {
 								level = i;
 								goTo = toMenu;
 							}
+						if (kUp & KEY_B) currentMenu = mainMenu;
+						break;
+					}
+					case colorPick: {
+						if (kHeld & KEY_TOUCH) {
+							if (startTouch.py > 40 && startTouch.py < 80 && startTouch.px > 12 && startTouch.px < 308) {
+								clrPlayer = C2D_Color32(constrain(touch.px - 32, 0, 255), (clrPlayer>>(u32)8 & 0xFF), (clrPlayer>>(u32)16 & 0xFF), 0xff);
+							}
+							if (startTouch.py > 100 && startTouch.py < 140 && startTouch.px > 12 && startTouch.px < 308) {
+								clrPlayer = C2D_Color32((clrPlayer>>(u32)0 & 0xFF), constrain(touch.px - 32, 0, 255), (clrPlayer>>(u32)16 & 0xFF), 0xff);
+							}
+							if (startTouch.py > 160 && startTouch.py < 200 && startTouch.px > 12 && startTouch.px < 308) {
+								clrPlayer = C2D_Color32((clrPlayer>>(u32)0 & 0xFF), (clrPlayer>>(u32)8 & 0xFF), constrain(touch.px - 32, 0, 255), 0xff);
+							}
+						}
+						if (kUp & KEY_B) {
+							saveData(highScores);
+							currentMenu = mainMenu;
+						}
 						break;
 					}
 				}
@@ -614,28 +638,23 @@ int main(int argc, char* argv[]) {
 					// Draw Level
 					drawLevel();
 
-					// Draw Timer
-					//C2D_DrawRectSolid(0, 0, 0.9f, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
-					//C2D_DrawCircleSolid(timerBlockOffset, 0, 0.9f, 21.75f*scaleFactor, clrBlack);
-					//drawString(to_str((levelTimer / 60.0f) / SUBSTEPSf), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
-
 					// Draw Player
 					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + playerX,
 										floor(0.5 - cY + SCREEN_HEIGHT / 2) + playerY,
 										0.3f, (animID == -1 ? 10 : min(animTimer * 100, 10)), clrBlack);//*/
 					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerX,
 										floor(0.5 - cY + SCREEN_HEIGHT / 2) + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerY,
-										0.4f, (animID == -1 ? 3 : min(animTimer * 30, 3)), clrCyan);
+										0.4f, (animID == -1 ? 3 : min(animTimer * 30, 3)), clrPlayer);
 
-					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
+					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					break;
 				}
 				case menu: {
 					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 3 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
-					drawString("1.0-a1_3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, scaleFactor, clrBlack);
-					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
+					drawString("1.0-a1_3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2*scaleFactor, clrBlack);
+					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
-					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 255, 255, C2D_FloatToU8(levelTimer / 144.0f)));
+					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(levelTimer / 144.0f)));
 					break;
 				}
 			}
@@ -656,6 +675,24 @@ int main(int argc, char* argv[]) {
 							drawButton(levelButtons[i], (kHeld & KEY_TOUCH && onButton(levelButtons[i], startTouch.px, startTouch.py))?clrRed:clrBlack, 2.0f);
 						break;
 					}
+					case colorPick: {
+						C2D_TargetClear(bottom, clrPlayer);
+						C2D_DrawCircleSolid(32, 60, 0.3f, 20, clrBlack);
+						C2D_DrawCircleSolid(288, 60, 0.3f, 20, C2D_Color32(255, 0, 0, 0xFF));
+						C2D_DrawRectangle(32, 40, 0.3f, 256, 40, clrBlack, C2D_Color32(255, 0, 0, 0xFF), clrBlack, C2D_Color32(255, 0, 0, 0xFF));
+						C2D_DrawCircleSolid((clrPlayer>>(u32)0 & 0xFF)+32, 60, 0.4f, 10, clrBlack);
+						C2D_DrawLine((clrPlayer>>(u32)0 & 0xFF)+32, 35, clrPlayer, (clrPlayer>>0 & 0xFF)+32, 85, clrPlayer, 2, 0.5f);
+						C2D_DrawCircleSolid(32, 120, 0.3f, 20, clrBlack);
+						C2D_DrawCircleSolid(288, 120, 0.3f, 20, C2D_Color32(0, 255, 0, 0xFF));
+						C2D_DrawRectangle(32, 100, 0.3f, 256, 40, clrBlack, C2D_Color32(0, 255, 0, 0xFF), clrBlack, C2D_Color32(0, 255, 0, 0xFF));
+						C2D_DrawCircleSolid((clrPlayer>>(u32)8 & 0xFF)+32, 120, 0.4f, 10, clrBlack);
+						C2D_DrawLine((clrPlayer>>(u32)8 & 0xFF)+32, 95, clrPlayer, (clrPlayer>>(u32)8 & 0xFF)+32, 145, clrPlayer, 2, 0.5f);
+						C2D_DrawCircleSolid(32, 180, 0.3f, 20, clrBlack);
+						C2D_DrawCircleSolid(288, 180, 0.3f, 20, C2D_Color32(0, 0, 255, 0xFF));
+						C2D_DrawRectangle(32, 160, 0.3f, 256, 40, clrBlack, C2D_Color32(0, 0, 255, 0xFF), clrBlack, C2D_Color32(0, 0, 255, 0xFF));
+						C2D_DrawCircleSolid((clrPlayer>>(u32)16 & 0xFF)+32, 180, 0.4f, 10, clrBlack);
+						C2D_DrawLine((clrPlayer>>(u32)16 & 0xFF)+32, 155, clrPlayer, (clrPlayer>>(u32)16 & 0xFF)+32, 205, clrPlayer, 2, 0.5f);
+					}
 				}
 				if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, BOTTOM_SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 				break;
@@ -666,9 +703,10 @@ int main(int argc, char* argv[]) {
 			}
 		}
         if (kHeld & KEY_TOUCH) {
-        	C2D_DrawLine(touch.px, touch.py, C2D_Color32(255, 255, 255, 0x00),
-        		startTouch.px, startTouch.py, C2D_Color32(255, 0, 0, 0xc0), 2, 0.9f);
-        	C2D_DrawCircleSolid(startTouch.px, startTouch.py, 0.9f, 1, clrRed);
+        	C2D_DrawLine(touch.px, touch.py, clrPlayer,
+        		startTouch.px, startTouch.py, clrPlayer, 2, 0.9f);
+        	C2D_DrawCircleSolid(touch.px, touch.py, 0.9f, 1, clrPlayer);
+        	C2D_DrawCircleSolid(startTouch.px, startTouch.py, 0.9f, 1, clrPlayer);
         }
         
         // Done Rendering!

@@ -30,3 +30,19 @@ long abs_c(long x) {
 long long abs_c(long long x) {
 	return (((x > 0)<<1)-1)*x;
 }
+
+float constrain(float x, float min, float max) {
+	if (x < min) return min;
+	if (x > max) return max;
+	return x;
+}
+
+float max (float a, float b) {
+	if (a > b) return a;
+	return b;
+}
+
+float min (float a, float b) {
+	if (a < b) return a;
+	return b;
+}

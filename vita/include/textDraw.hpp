@@ -1,3 +1,39 @@
+void vita2d_draw_rectangle_gradient(float x, float y, float w, float h, unsigned int colorTR, unsigned int colorTL, unsigned int colorBR, unsigned int colorBL)
+{
+	vita2d_color_vertex *vertices = (vita2d_color_vertex *)vita2d_pool_memalign(
+		4 * sizeof(vita2d_color_vertex), // 4 vertices
+		sizeof(vita2d_color_vertex));
+
+	vertices[0].x = x;
+	vertices[0].y = y;
+	vertices[0].z = +0.5f;
+	vertices[0].color = colorTR;
+
+	vertices[1].x = x + w;
+	vertices[1].y = y;
+	vertices[1].z = +0.5f;
+	vertices[1].color = colorTL;
+
+	vertices[2].x = x;
+	vertices[2].y = y + h;
+	vertices[2].z = +0.5f;
+	vertices[2].color = colorBR;
+
+	vertices[3].x = x + w;
+	vertices[3].y = y + h;
+	vertices[3].z = +0.5f;
+	vertices[3].color = colorBL;
+
+	sceGxmSetVertexProgram(_vita2d_context, _vita2d_colorVertexProgram);
+	sceGxmSetFragmentProgram(_vita2d_context, _vita2d_colorFragmentProgram);
+
+	void *vertexDefaultBuffer;
+	sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertexDefaultBuffer);
+	sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_colorWvpParam, 0, 16, _vita2d_ortho_matrix);
+
+	sceGxmSetVertexStream(_vita2d_context, 0, vertices);
+	sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, vita2d_get_linear_indices(), 4);
+}
 // Draw Line
 void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned int color = 0xFF000000) {
 	float dx = x1 - x2;
