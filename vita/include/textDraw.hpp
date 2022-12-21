@@ -24,15 +24,7 @@ void vita2d_draw_rectangle_gradient(float x, float y, float w, float h, unsigned
 	vertices[3].z = +0.5f;
 	vertices[3].color = colorBL;
 
-	sceGxmSetVertexProgram(_vita2d_context, _vita2d_colorVertexProgram);
-	sceGxmSetFragmentProgram(_vita2d_context, _vita2d_colorFragmentProgram);
-
-	void *vertexDefaultBuffer;
-	sceGxmReserveVertexDefaultUniformBuffer(_vita2d_context, &vertexDefaultBuffer);
-	sceGxmSetUniformDataF(vertexDefaultBuffer, _vita2d_colorWvpParam, 0, 16, _vita2d_ortho_matrix);
-
-	sceGxmSetVertexStream(_vita2d_context, 0, vertices);
-	sceGxmDraw(_vita2d_context, SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, SCE_GXM_INDEX_FORMAT_U16, vita2d_get_linear_indices(), 4);
+	vita2d_draw_array(SCE_GXM_PRIMITIVE_TRIANGLE_STRIP, vertices, 4);
 }
 // Draw Line
 void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned int color = 0xFF000000) {
@@ -41,7 +33,7 @@ void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned
 	weight /= 2;
 	float lineangle = atan2(dy,dx) + pi/2;
 	while (lineangle < 0) lineangle += pi;
-	for (float i = -weight; i < weight; i+=1/7.0f) {
+	for (float i = -weight; i < weight; i+=1/5.0f) {
 		vita2d_draw_line(x1 - i * cos(lineangle), y1 - i * sin(lineangle), x2 - i * cos(lineangle), y2 - i * sin(lineangle), color);
 	}
 	vita2d_draw_line(x1 - weight * cos(lineangle), y1 - weight * sin(lineangle), x2 - weight * cos(lineangle), y2 - weight * sin(lineangle), color);
