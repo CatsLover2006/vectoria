@@ -30,13 +30,14 @@ link_directories(
 )
 
 add_executable(${VITA_APP_NAME}
+  ../data/letters.cpp
+  ../data/buttons.cpp
+  ../data/collisions.cpp
+  ../data/lineList.cpp
+  ../data/lineListNintendo.cpp
+  ../data/basemath.cpp
   src/main.cpp
-  ../data/collisions.hpp
-  ../data/lineListNintendo.hpp
-  ../data/lineList.hpp
-  ../data/letters.hpp
-  ../data/buttons.hpp
-  include/textDraw.hpp
+  src/textDraw.cpp
 )
 
 target_link_libraries(${VITA_APP_NAME}

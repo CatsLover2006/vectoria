@@ -4,6 +4,7 @@
 float scaleFactor = 1;
 
 #include "../../data/basemath.hpp"
+#include <cmath>
 
 #define SCREEN_WIDTH 400
 #define BOTTOM_SCREEN_WIDTH 320
@@ -17,10 +18,13 @@ float scaleFactor = 1;
 #include <fstream>
 #include <iostream>
 
-const float pi = acos(-1.0);
+#include "../../data/line.hpp"
 
+#include "../../data/lineList.hpp"
 #include "../../data/lineListNintendo.hpp"
 #include "../../data/collisions.hpp"
+#include "../../data/letters.hpp"
+#include "../../data/buttons.hpp"
 #include "textDraw.hpp"
 
 const float xDiv = 1 + (sqrt(SUBSTEPS)-1)/SUBSTEPS,
@@ -88,13 +92,13 @@ bool vcolCheck = false,
 	levelTimerRunning = false,
 	updateSave = true;
 
-const button* menuButtons[] = {
+button* menuButtons[] = {
 	new button("All levels", BOTTOM_SCREEN_WIDTH/2 - 100, 24, 200, 28, 0.6f),
 	new button("Level Select", BOTTOM_SCREEN_WIDTH/2 - 100, 72, 200, 28, 0.6f),
 	new button("Color Select", BOTTOM_SCREEN_WIDTH/2 - 100, 120, 200, 28, 0.6f),
 };
 
-const int menuButtonCount = 3;
+int menuButtonCount = 3;
 
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
@@ -651,7 +655,7 @@ int main(int argc, char* argv[]) {
 				}
 				case menu: {
 					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 3 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
-					drawString("1.0-a1_3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2*scaleFactor, clrBlack);
+					drawString("1.0-a2", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2*scaleFactor, clrBlack);
 					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(levelTimer / 144.0f)));
@@ -680,17 +684,17 @@ int main(int argc, char* argv[]) {
 						C2D_DrawCircleSolid(32, 60, 0.3f, 20, clrBlack);
 						C2D_DrawCircleSolid(288, 60, 0.3f, 20, C2D_Color32(255, 0, 0, 0xFF));
 						C2D_DrawRectangle(32, 40, 0.3f, 256, 40, clrBlack, C2D_Color32(255, 0, 0, 0xFF), clrBlack, C2D_Color32(255, 0, 0, 0xFF));
-						C2D_DrawCircleSolid((clrPlayer>>(u32)0 & 0xFF)+32, 60, 0.4f, 10, clrBlack);
+						C2D_DrawCircleSolid((clrPlayer>>(u32)0 & 0xFF)+32, 60, 0.4f, 10, clrWhite);
 						C2D_DrawLine((clrPlayer>>(u32)0 & 0xFF)+32, 35, clrPlayer, (clrPlayer>>0 & 0xFF)+32, 85, clrPlayer, 2, 0.5f);
 						C2D_DrawCircleSolid(32, 120, 0.3f, 20, clrBlack);
 						C2D_DrawCircleSolid(288, 120, 0.3f, 20, C2D_Color32(0, 255, 0, 0xFF));
 						C2D_DrawRectangle(32, 100, 0.3f, 256, 40, clrBlack, C2D_Color32(0, 255, 0, 0xFF), clrBlack, C2D_Color32(0, 255, 0, 0xFF));
-						C2D_DrawCircleSolid((clrPlayer>>(u32)8 & 0xFF)+32, 120, 0.4f, 10, clrBlack);
+						C2D_DrawCircleSolid((clrPlayer>>(u32)8 & 0xFF)+32, 120, 0.4f, 10, clrWhite);
 						C2D_DrawLine((clrPlayer>>(u32)8 & 0xFF)+32, 95, clrPlayer, (clrPlayer>>(u32)8 & 0xFF)+32, 145, clrPlayer, 2, 0.5f);
 						C2D_DrawCircleSolid(32, 180, 0.3f, 20, clrBlack);
 						C2D_DrawCircleSolid(288, 180, 0.3f, 20, C2D_Color32(0, 0, 255, 0xFF));
 						C2D_DrawRectangle(32, 160, 0.3f, 256, 40, clrBlack, C2D_Color32(0, 0, 255, 0xFF), clrBlack, C2D_Color32(0, 0, 255, 0xFF));
-						C2D_DrawCircleSolid((clrPlayer>>(u32)16 & 0xFF)+32, 180, 0.4f, 10, clrBlack);
+						C2D_DrawCircleSolid((clrPlayer>>(u32)16 & 0xFF)+32, 180, 0.4f, 10, clrWhite);
 						C2D_DrawLine((clrPlayer>>(u32)16 & 0xFF)+32, 155, clrPlayer, (clrPlayer>>(u32)16 & 0xFF)+32, 205, clrPlayer, 2, 0.5f);
 					}
 				}

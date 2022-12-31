@@ -9,7 +9,7 @@ include /opt/devkitpro/devkitARM/3ds_rules
 
 TARGET			:=	vectoria
 BUILD			:=	build
-SOURCES			:=	source
+SOURCES			:=	source ../data
 DATA			:=	data
 INCLUDES		:=	include
 GRAPHICS		:=	gfx
