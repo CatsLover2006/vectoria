@@ -18,8 +18,8 @@ GFXBUILD		:=	$(ROMFS)/gfx
 APP_TITLE		:=	Vectoria
 APP_AUTHOR		:=	Hail (Half-Qilin)
 APP_DESCRIPTION	:=	A game of lines and a circle (Built with citro2d, libctru & devkitARM)
-#ICON 			:=  icon.png
-#SMOL_ICON 		:=  smol_icon.png
+ICON 			:=  icon.png
+SMOL_ICON 		:=  smol_icon.png
 
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
@@ -51,6 +51,7 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
+CPPFILES	:= 	$(filter-out lineListSony.cpp, $(CPPFILES))
 SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
 SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
