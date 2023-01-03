@@ -34,7 +34,7 @@ add_executable(${VITA_APP_NAME}
   ../data/buttons.cpp
   ../data/collisions.cpp
   ../data/lineList.cpp
-  ../data/lineListNintendo.cpp
+  ../data/lineListSony.cpp
   ../data/basemath.cpp
   src/main.cpp
   src/textDraw.cpp

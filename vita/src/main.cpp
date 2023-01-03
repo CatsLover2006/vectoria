@@ -24,7 +24,7 @@ float scaleFactor = 2.4;
 #include "../../data/line.hpp"
 
 #include "../../data/lineList.hpp"
-#include "../../data/lineListNintendo.hpp"
+#include "../../data/lineListSony.hpp"
 #include "../../data/collisions.hpp"
 #include "../../data/letters.hpp"
 #include "../../data/buttons.hpp"
