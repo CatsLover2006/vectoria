@@ -2,6 +2,8 @@ extern line* linelist[];
 
 extern line* linelistKO[];
 
+extern line* linelistTop[];
+
 extern line* lineListLift[];
 
 extern line* lineListFake[];
@@ -13,6 +15,10 @@ extern int levelEnd[];
 extern int koStart[];
 
 extern int koEnd[];
+
+extern int topStart[];
+
+extern int topEnd[];
 
 extern int liftStart[];
 

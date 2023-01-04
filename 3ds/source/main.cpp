@@ -182,6 +182,22 @@ void drawLevel() {
 							linelistKO[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
 							0.11f, 1, clrRed);
 	}
+	for (curLine = topStart[level]; curLine < topEnd[level]; curLine++) {
+		C2D_DrawLine(linelistTop[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+					 linelistTop[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 clrBlack,
+					 linelistTop[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+					 linelistTop[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 clrBlack, 2, 0.2f);
+	}
+	for (curLine = topStart[level]; curLine < topEnd[level]; curLine++) {
+		C2D_DrawCircleSolid(linelistTop[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+							linelistTop[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+							0.2f, 1, clrBlack);
+		C2D_DrawCircleSolid(linelistTop[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+							linelistTop[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+							0.2f, 1, clrBlack);
+	}
 	C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
 						endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
 						0.15f, 3, clrBlack);
@@ -371,7 +387,7 @@ int main(int argc, char* argv[]) {
 						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
-					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
+					if (playerYVel < -MAX_SPEED/8) playerYVel = -MAX_SPEED/8;
 					playerXVel /= xDiv;
 					if (kHeld & KEY_LEFT) playerXVel -= xAdd;
 					if (kHeld & KEY_RIGHT) playerXVel += xAdd;

@@ -68,8 +68,6 @@ line* linelist[] = {
     new line(300, 140, 0, 110), // Level 8
     new line(400, 170, 340, 180), // Level 8
     new line(400, 0, 0, -40), // Level 8
-    new line(50, 70, 100, 20), // Level 8
-    new line(0, 10, 10, 20), // Level 8
     new line(0, 0, 0, 60), // Level 3
     new line(0, 0, 400, 0), // Level 3
     new line(40, 60, 0, 60), // Level 3
@@ -109,6 +107,20 @@ line* linelist[] = {
     new line(100, 0, 85, 97.5), // Level 5
     new line(50, 140, 70, 195), // Level 5
     new line(50, 140, 85, 97.5), // Level 5
+    new line(15, 230, 35, 230), // Level 9
+    new line(15, 230, -15, 240), // Level 9
+    new line(35, 230, 65, 240), // Level 9
+    new line(30, 100, 50, 40), // Level 9, Out 1
+    new line(20, 20, 0, -40), // Level 9, Out 2
+    new line(30, -100, 50, -160), // Level 9, Out 3
+    new line(0, 200, 0, -205), // Level 9, Wall
+    new line(50, 200, 50, -205), // Level 9, Wall
+    new line(30, 100, 50, 40), // Level 9, Out 1
+    new line(20, 20, 0, -40), // Level 9, Out 2
+    new line(30, -100, 50, -160), // Level 9, Out 3
+    new line(40, -300, 10, -300), // Level 9
+    new line(70, -330, 50, -350), // Level 9
+    new line(-20, -330, 0, -350), // Level 9
 };
 
 line* linelistKO[] = {
@@ -166,14 +178,23 @@ line* linelistKO[] = {
              200 + (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
     new line(200 + (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
              200 + (80 * sin(2 * pi / 12)), 60 - 80 * cos(2 * pi / 12)), // Level 3
+    new line(10, -300, 25, -285), // Level 9
+    new line(40, -300, 25, -285), // Level 9
 };
 
 line* lineListLift[] = {
-    new line(184, 74, 170, 0), // Level 5
-    new line(187, 77, 180, 0), // Level 5
+    new line(166, 74, 180, 0), // Level 5
+    new line(178, 77, 185, 0), // Level 5
     new line(190, 80, 190, 0), // Level 5
-    new line(193, 77, 200, 0), // Level 5
-    new line(196, 74, 210, 0), // Level 5
+    new line(202, 77, 195, 0), // Level 5
+    new line(214, 74, 200, 0), // Level 5
+    new line(37.5, -50, 37.5, 80), // Level 8
+    new line(10, 190, 10, -300), // Level 9
+    new line(20, 180, 20, -300), // Level 9
+    new line(30, 180, 30, -300), // Level 9
+    new line(40, 190, 40, -300), // Level 9
+    new line(50, 200, 25, 175), // Level 9
+    new line(0, 200, 25, 175), // Level 9
 };
 
 line* lineListFake[] = {
@@ -195,29 +216,35 @@ line* lineListFake[] = {
     new line(200, 60, 200 + (80 * sin(22 * pi / 12)), 60 + (80 * cos(22 * pi / 12))), // Level 3
 };
 
+line* linelistTop[] = {
+    new line(30, 100, 50, 40), // Level 9, Out 1
+    new line(20, 20, 0, -40), // Level 9, Out 2
+    new line(30, -100, 50, -160), // Level 9, Out 3
+};
+
 int levelStart[] = {
 	0,
 	47,
-	64,
+	62,
 	11,
-	82,
+	80,
 	0,
 	0,
 	56,
-	0,
+	93,
 	25
 };
 
 int levelEnd[] = {
 	11,
 	56,
-	82,
+	80,
 	25,
-	95,
+	93,
 	0,
 	0,
-	64,
-	0,
+	62,
+	107,
 	47
 };
 
@@ -230,7 +257,7 @@ int koStart[] = {
 	0,
 	0,
 	19,
-	0,
+	40,
 	16
 };
 
@@ -243,11 +270,11 @@ int koEnd[] = {
 	0,
 	0,
 	20,
-	0,
+	42,
 	17
 };
 
-int liftStart[] = {
+int topStart[] = {
 	0,
 	0,
 	0,
@@ -260,6 +287,32 @@ int liftStart[] = {
 	0
 };
 
+int topEnd[] = {
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	3,
+	0
+};
+
+int liftStart[] = {
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	5,
+	6,
+	0
+};
+
 int liftEnd[] = {
 	0,
 	0,
@@ -268,8 +321,8 @@ int liftEnd[] = {
 	5,
 	0,
 	0,
-	0,
-	0,
+	6,
+	12,
 	0
 };
 
@@ -350,9 +403,9 @@ float bounds[][4] = {
   	},
 	{
 		0,
-		-100,
-		400,
-		300
+		-400,
+		50,
+		240
 	},
 	{
     	0,
@@ -396,8 +449,8 @@ float startPos[][2] = {
 	    164.85
   	},
 	{
-		50,
-		249.8
+		25,
+		220
 	},
 	{
     	20,
@@ -439,8 +492,8 @@ float endPoint[][2] = {
     	24
   	},
 	{
-		50,
-		249.8
+		25,
+		-350
 	},
 	{
     	475,

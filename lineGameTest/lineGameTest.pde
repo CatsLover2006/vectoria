@@ -41,6 +41,7 @@ void setup() {
   println(lineList[level].length);
   println(koList[level].length);
   println(lineListLift[level].length);
+  println(lineListTop[level].length);
   println(bgList[level].length);
   println(fakeList[level].length);
 }//*/
@@ -75,7 +76,7 @@ void draw() {
       if (pressed[2]) playerYVel += 0.9 / SUBSTEPS;
     }
     if (playerYVel > 59) playerYVel = 59;
-    if (playerYVel < -59) playerYVel = -59;
+    if (playerYVel < -(59/8)) playerYVel = -(59/8);
     playerXVel = playerXVel / xDiv;
     if (pressed[0]) playerXVel -= xAdd;
     if (pressed[3]) playerXVel += xAdd;
@@ -181,6 +182,13 @@ void draw() {
       (((height/scaleFactor)/2)-cY) + koList[level][i].startY,
       (((width/scaleFactor)/2)-cX) + koList[level][i].endX,
       (((height/scaleFactor)/2)-cY) + koList[level][i].endY);
+  }
+  stroke(0);
+  for (int i = 0; i < lineListTop[level].length; i++) {
+    line((((width/scaleFactor)/2)-cX) + lineListTop[level][i].startX,
+      (((height/scaleFactor)/2)-cY) + lineListTop[level][i].startY,
+      (((width/scaleFactor)/2)-cX) + lineListTop[level][i].endX,
+      (((height/scaleFactor)/2)-cY) + lineListTop[level][i].endY);
   }
   noStroke();
   fill(0);

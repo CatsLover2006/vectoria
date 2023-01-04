@@ -134,6 +134,13 @@ void drawLevel() {
 					 (linelistKO[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 2 * scaleFactor, clrRed);
 	}
+	for (curLine = topStart[level]; curLine < topEnd[level]; curLine++) {
+		drawLine((linelistTop[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+					 (linelistTop[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+					 (linelistTop[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+					 (linelistTop[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+					 2 * scaleFactor, clrBlack);
+	}
 	vita2d_draw_fill_circle((endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 						(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 						3 * scaleFactor, clrBlack);
@@ -307,7 +314,7 @@ int main(int argc, char* argv[]) {
 						if (kHeld & SCE_CTRL_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
-					if (playerYVel < -MAX_SPEED) playerYVel = -MAX_SPEED;
+					if (playerYVel < -MAX_SPEED/8) playerYVel = -MAX_SPEED/8;
 					playerXVel /= xDiv;
 					if (kHeld & SCE_CTRL_LEFT) playerXVel -= xAdd;
 					if (kHeld & SCE_CTRL_RIGHT) playerXVel += xAdd;
