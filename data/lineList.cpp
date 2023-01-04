@@ -96,6 +96,15 @@ line* linelist[] = {
              200 + (160 * sin(pi / 12)), 60 + (160 * cos(pi / 12))), // Level 3
     new line(200, 220, 200 + (160 * sin(pi / 12)), 60 + (160 * cos(pi / 12))), // Level 3
     new line(200 + (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12), 305, 110), // Level 3
+    new line(0, 0, 0, 200), // Level 5
+    new line(0, 0, 200, 0), // Level 5
+    new line(40, 60, 0, 60), // Level 5
+    new line(125, 250, 0, 200), // Level 5
+    new line(70, 195, 160 - (360.0f / 13), 60), // Level 5
+    new line(180, 180, 180, 240), // Level 5
+    new line(170, 185, 190, 175), // Level 5
+    new line(320, 130, 320, 240), // Level 5
+    new line(310, 135, 330, 125), // Level 5
 };
 
 line* linelistKO[] = {
@@ -153,6 +162,17 @@ line* linelistKO[] = {
              200 + (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
     new line(200 + (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
              200 + (80 * sin(2 * pi / 12)), 60 - 80 * cos(2 * pi / 12)), // Level 3
+    new line(100, 0, 85, 97.5), // Level 5
+    new line(50, 140, 70, 195), // Level 5
+    new line(50, 140, 85, 97.5), // Level 5
+};
+
+line* lineListLift[] = {
+    new line(180, 80, 160, 0), // Level 5
+    new line(180, 80, 170, 0), // Level 5
+    new line(180, 80, 180, 0), // Level 5
+    new line(180, 80, 190, 0), // Level 5
+    new line(180, 80, 200, 0), // Level 5
 };
 
 line* lineListFake[] = {
@@ -179,7 +199,7 @@ int levelStart[] = {
 	47,
 	64,
 	11,
-	0,
+	82,
 	0,
 	0,
 	56,
@@ -192,7 +212,7 @@ int levelEnd[] = {
 	56,
 	82,
 	25,
-	0,
+	91,
 	0,
 	0,
 	64,
@@ -205,7 +225,7 @@ int koStart[] = {
 	17,
 	20,
 	11,
-	0,
+	40,
 	0,
 	0,
 	19,
@@ -218,12 +238,38 @@ int koEnd[] = {
 	19,
 	40,
 	16,
-	0,
+	43,
 	0,
 	0,
 	20,
 	0,
 	17
+};
+
+int liftStart[] = {
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
+};
+
+int liftEnd[] = {
+	0,
+	0,
+	0,
+	0,
+	5,
+	0,
+	0,
+	0,
+	0,
+	0
 };
 
 int falseStart[] = {
@@ -279,9 +325,9 @@ float bounds[][4] = {
 	},
 	{
 		0,
-		-100,
+		0,
 		400,
-		300
+		240
 	},
 	{
 		0,
@@ -333,8 +379,8 @@ float startPos[][2] = {
 		249.8
 	},
 	{
-		50,
-		249.8
+		20,
+		50
 	},
 	{
 		50,
@@ -376,8 +422,8 @@ float endPoint[][2] = {
 		-20
 	},
 	{
-		50,
-		249.8
+		72,
+		150
 	},
 	{
 		50,

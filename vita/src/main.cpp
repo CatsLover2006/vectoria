@@ -70,7 +70,7 @@ float playerX = 69,
 	animTimer = 0,
 	timerBlockOffset = 0;
 
-static unsigned int clrWhite, clrBlack, clrPlayer, clrRed, clrGrey, clrFake;
+static unsigned int clrWhite, clrBlack, clrPlayer, clrRed, clrGrey, clrFake, clrGreen;
 
 int level = 2,
 	curLine,
@@ -118,6 +118,13 @@ void drawLevel() {
 					 (linelist[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 					 (linelist[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
 					 2 * scaleFactor, clrBlack);
+	}
+	for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
+		drawLine((lineListLift[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+					 (lineListLift[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+					 (lineListLift[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
+					 (lineListLift[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+					 2 * scaleFactor, clrGreen);
 	}
 	for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
 		drawLine((linelistKO[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
@@ -184,6 +191,7 @@ int main(int argc, char* argv[]) {
 	clrRed = RGBA8(255, 0, 0, 0xFF);
 	clrGrey = RGBA8(200, 200, 200, 0xFF);
 	clrFake = RGBA8(0, 0, 100, 0xFF);
+	clrGreen = RGBA8(0, 255, 0, 0xFF);
 
     // Level Buttons
     button* levelButtons[levels];
@@ -281,7 +289,6 @@ int main(int argc, char* argv[]) {
 					oX = playerX;
 					oY = playerY;
 					if (kHeld & (SCE_CTRL_DOWN | SCE_CTRL_LEFT | SCE_CTRL_RIGHT | SCE_CTRL_CROSS)) {
-					//	if (!levelTimerRunning) log << "We Going!" << std::endl;
 						levelTimerRunning = true;
 					}
 					if (levelTimerRunning) levelTimer++;
@@ -289,8 +296,13 @@ int main(int argc, char* argv[]) {
 					timerBlockOffset *= 400;
 					timerBlockOffset += getWidth(to_str((levelTimer / 60.0f) / SUBSTEPS), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
 					timerBlockOffset /= 401;
-					if (!vcolCheck || !jumpableFor) {
-						playerYVel += 0.3 / SUBSTEPS;
+					invertGrav = false;
+					for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
+      					invertGrav = lineCircle(lineListLift[curLine]->startX, lineListLift[curLine]->startY, lineListLift[curLine]->endX, lineListLift[curLine]->endY, playerX, playerY, 10);
+      					if (invertGrav) break;
+    				}
+					if (!vcolCheck || !jumpableFor || invertGrav) {
+						playerYVel += (invertGrav?-0.3:0.3) / SUBSTEPS;
 						if (kHeld & SCE_CTRL_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
@@ -365,12 +377,9 @@ int main(int argc, char* argv[]) {
 				break;
 				{
 					winMainLevel:
-					// Log it
-				//	log << "Nice! Beat level " << level << " with a time of " << to_str(levelTimer/360.0f) << " seconds!" << std::endl;
 					if (highScores[level] == 0 || levelTimer < highScores[level]) {
 						highScores[level] = levelTimer;
 						updateSave = true;
-					//	log << "New high score!" << std::endl;
 					}
 					animID = enteredAnim;
 					frames = 0;

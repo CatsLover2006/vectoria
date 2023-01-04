@@ -11,95 +11,43 @@ public class line {
 
 line[][] lineList = {
   {
-    new line(0, 0, 0, 60), // Level 3
-    new line(0, 0, 400, 0), // Level 3
-    new line(40, 60, 0, 60), // Level 3
-    new line(400, 0, 400, 60), // Level 3
-    new line(360, 60, 400, 60), // Level 3
-    new line(200 - (160 * sin(5 * PI / 12)), 60 + (160 * cos(5 * PI / 12)), 40, 60), // Level 3
-    new line(200 - (160 * sin(5 * PI / 12)), 60 + (160 * cos(5 * PI / 12)),
-             200 - (160 * sin(4 * PI / 12)), 60 + (160 * cos(4 * PI / 12))), // Level 3
-    new line(200 - (160 * sin(3 * PI / 12)), 60 + (160 * cos(3 * PI / 12)),
-             200 - (160 * sin(4 * PI / 12)), 60 + (160 * cos(4 * PI / 12))), // Level 3
-    new line(200 - (160 * sin(3 * PI / 12)), 60 + (160 * cos(3 * PI / 12)),
-             200 - (160 * sin(2 * PI / 12)), 60 + (160 * cos(2 * PI / 12))), // Level 3
-    new line(200 - (160 * sin(2 * PI / 12)), 60 + (160 * cos(2 * PI / 12)),
-             200 - (160 * sin(PI / 12)), 60 + (160 * cos(PI / 12))), // Level 3
-    new line(200, 220, 200 - (160 * sin(PI / 12)), 60 + (160 * cos(PI / 12))), // Level 3
-    new line(200 + (160 * sin(5 * PI / 12)), 60 + (160 * cos(5 * PI / 12)), 360, 60), // Level 3
-    new line(200 + (160 * sin(5 * PI / 12)), 60 + (160 * cos(5 * PI / 12)),
-             200 + (160 * sin(4 * PI / 12)), 60 + (160 * cos(4 * PI / 12))), // Level 3
-    new line(200 + (160 * sin(3 * PI / 12)), 60 + (160 * cos(3 * PI / 12)),
-             200 + (160 * sin(4 * PI / 12)), 60 + (160 * cos(4 * PI / 12))), // Level 3
-    new line(200 + (160 * sin(3 * PI / 12)), 60 + (160 * cos(3 * PI / 12)),
-             200 + (160 * sin(2 * PI / 12)), 60 + (160 * cos(2 * PI / 12))), // Level 3
-    new line(200 + (160 * sin(2 * PI / 12)), 60 + (160 * cos(2 * PI / 12)),
-             200 + (160 * sin(PI / 12)), 60 + (160 * cos(PI / 12))), // Level 3
-    new line(200, 220, 200 + (160 * sin(PI / 12)), 60 + (160 * cos(PI / 12))), // Level 3
-    new line(200 + (80 * sin(4 * PI / 12)), 60 + 80 * cos(4 * PI / 12), 305, 110), // Level 3
+    new line(0, 0, 0, 200), // Level 5
+    new line(0, 0, 200, 0), // Level 5
+    new line(40, 60, 0, 60), // Level 5
+    new line(125, 250, 0, 200), // Level 5
+    new line(70, 195, 160 - (360.0f / 13), 60), // Level 5
+    new line(180, 180, 180, 240), // Level 5
+    new line(170, 185, 190, 175), // Level 5
+    new line(320, 130, 320, 240), // Level 5
+    new line(310, 135, 330, 125), // Level 5
+  }
+};
+
+line[][] lineListLift = {
+  {
+    new line(180, 80, 160, 0), // Level 5
+    new line(180, 80, 170, 0), // Level 5
+    new line(180, 80, 180, 0), // Level 5
+    new line(180, 80, 190, 0), // Level 5
+    new line(180, 80, 200, 0), // Level 5
   }
 };
 
 line[][] koList = {
   {
-    new line(200 - (80 * sin(5 * PI / 12)), 60 + 80 * cos(5 * PI / 12), 120, 60), // Level 3
-    new line(200 - (80 * sin(5 * PI / 12)), 60 + 80 * cos(5 * PI / 12),
-             200 - (80 * sin(4 * PI / 12)), 60 + 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 - (80 * sin(3 * PI / 12)), 60 + 80 * cos(3 * PI / 12),
-             200 - (80 * sin(4 * PI / 12)), 60 + 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 - (80 * sin(3 * PI / 12)), 60 + 80 * cos(3 * PI / 12),
-             200 - (80 * sin(2 * PI / 12)), 60 + 80 * cos(2 * PI / 12)), // Level 3
-    new line(200 - (80 * sin(2 * PI / 12)), 60 + 80 * cos(2 * PI / 12),
-             200 - (80 * sin(PI / 12)), 60 + 80 * cos(PI / 12)), // Level 3
-    new line(200, 140, 200 - (80 * sin(PI / 12)), 60 + 80 * cos(PI / 12)), // Level 3
-    new line(200 + (80 * sin(5 * PI / 12)), 60 + 80 * cos(5 * PI / 12), 280, 60), // Level 3
-    new line(200 + (80 * sin(5 * PI / 12)), 60 + 80 * cos(5 * PI / 12),
-             200 + (80 * sin(4 * PI / 12)), 60 + 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 + (80 * sin(3 * PI / 12)), 60 + 80 * cos(3 * PI / 12),
-             200 + (80 * sin(4 * PI / 12)), 60 + 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 + (80 * sin(3 * PI / 12)), 60 + 80 * cos(3 * PI / 12),
-             200 + (80 * sin(2 * PI / 12)), 60 + 80 * cos(2 * PI / 12)), // Level 3
-    new line(200 + (80 * sin(2 * PI / 12)), 60 + 80 * cos(2 * PI / 12),
-             200 + (80 * sin(PI / 12)), 60 + 80 * cos(PI / 12)), // Level 3
-    new line(200, 140, 200 + (80 * sin(PI / 12)), 60 + 80 * cos(PI / 12)), // Level 3
-    new line(200 - (80 * sin(5 * PI / 12)), 60 - 80 * cos(5 * PI / 12), 120, 60), // Level 3
-    new line(200 - (80 * sin(5 * PI / 12)), 60 - 80 * cos(5 * PI / 12),
-             200 - (80 * sin(4 * PI / 12)), 60 - 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 - (80 * sin(3 * PI / 12)), 60 - 80 * cos(3 * PI / 12),
-             200 - (80 * sin(4 * PI / 12)), 60 - 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 - (80 * sin(3 * PI / 12)), 60 - 80 * cos(3 * PI / 12),
-             200 - (80 * sin(2 * PI / 12)), 60 - 80 * cos(2 * PI / 12)), // Level 3
-    new line(200 + (80 * sin(5 * PI / 12)), 60 - 80 * cos(5 * PI / 12), 280, 60), // Level 3
-    new line(200 + (80 * sin(5 * PI / 12)), 60 - 80 * cos(5 * PI / 12),
-             200 + (80 * sin(4 * PI / 12)), 60 - 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 + (80 * sin(3 * PI / 12)), 60 - 80 * cos(3 * PI / 12),
-             200 + (80 * sin(4 * PI / 12)), 60 - 80 * cos(4 * PI / 12)), // Level 3
-    new line(200 + (80 * sin(3 * PI / 12)), 60 - 80 * cos(3 * PI / 12),
-             200 + (80 * sin(2 * PI / 12)), 60 - 80 * cos(2 * PI / 12)), // Level 3
-  }
+    new line(100, 0, 85, 97.5), // Level 5
+    new line(50, 140, 70, 195), // Level 5
+    new line(50, 140, 85, 97.5), // Level 5
+ }
 };
 
 line[][] bgList = {
   {
-    new line(290, 139, 290 - sqrt(200), 139 + sqrt(200)), // Level 3, Arrow 2
-    new line(290, 139, 290 - sqrt(200), 139), // Level 3, Arrow 2
-    new line(290, 139, 290, 139 + sqrt(200)), // Level 3, Arrow 2
-    new line(110 + sqrt(200), 139 + sqrt(200), 110, 139), // Level 3, Arrow 1
-    new line(110 + sqrt(200), 139 + sqrt(200), 110, 139 + sqrt(200)), // Level 3, Arrow 1
-    new line(110 + sqrt(200), 139 + sqrt(200), 110 + sqrt(200), 139), // Level 3, Arrow 1
   }
 };
 
 line[][] fakeList = {
   {
-    new line(200, 60, 200 + (80 * sin(PI / 12)), 60 + (80 * cos(PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(4 * PI / 12)), 60 + (80 * cos(4 * PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(7 * PI / 12)), 60 + (80 * cos(7 * PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(10 * PI / 12)), 60 + (80 * cos(10 * PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(13 * PI / 12)), 60 + (80 * cos(13 * PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(16 * PI / 12)), 60 + (80 * cos(16 * PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(19 * PI / 12)), 60 + (80 * cos(19 * PI / 12))), // Level 3
-    new line(200, 60, 200 + (80 * sin(22 * PI / 12)), 60 + (80 * cos(22 * PI / 12))), // Level 3
   }
 };
 
@@ -121,7 +69,7 @@ float[][] startPos = {
 
 float[][] endPos = {
   {
-    380,
-    30
+    72,
+    150
   }
 };

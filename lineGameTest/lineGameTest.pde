@@ -25,19 +25,22 @@ boolean pressed[] = new boolean[4];
 boolean vcolCheck = false,
   hcolCheck = false,
   hasStarted = false,
-  tcolCheck = false;
+  tcolCheck = false,
+  invertGrav = false;
 
 void settings() {
   size(960, 544, P2D);
+  pixelDensity(displayDensity());
   scaleFactor = max(height/240.0f, width/400.0f);
-  noSmooth(); 
+  smooth(4); 
 }//*/
 
 void setup() {
   noStroke();
-  frameRate(360);
+  frameRate(60);
   println(lineList[level].length);
   println(koList[level].length);
+  println(lineListLift[level].length);
   println(bgList[level].length);
   println(fakeList[level].length);
 }//*/
@@ -62,8 +65,13 @@ void draw() {
   while (doLogic > 1 / (SUBSTEPS * 60.0f)) {
     oX = playerX;
     oY = playerY;
-    if (!vcolCheck || jumpableFor == 0) {
-      playerYVel += 0.3 / SUBSTEPS;
+    invertGrav = false;
+    for (int i = 0; i < lineListLift[level].length; i++) {
+      invertGrav = lineCircle(lineListLift[level][i].startX, lineListLift[level][i].startY, lineListLift[level][i].endX, lineListLift[level][i].endY, playerX, playerY, 10);
+      if (invertGrav) break;
+    }
+    if (!vcolCheck || jumpableFor == 0 || invertGrav) {
+      playerYVel += (invertGrav?-0.3:0.3) / SUBSTEPS;
       if (pressed[2]) playerYVel += 0.9 / SUBSTEPS;
     }
     if (playerYVel > 59) playerYVel = 59;
@@ -159,6 +167,13 @@ void draw() {
       (((height/scaleFactor)/2)-cY) + lineList[level][i].startY,
       (((width/scaleFactor)/2)-cX) + lineList[level][i].endX,
       (((height/scaleFactor)/2)-cY) + lineList[level][i].endY);
+  }
+  stroke(0, 255, 0);
+  for (int i = 0; i < lineListLift[level].length; i++) {
+    line((((width/scaleFactor)/2)-cX) + lineListLift[level][i].startX,
+      (((height/scaleFactor)/2)-cY) + lineListLift[level][i].startY,
+      (((width/scaleFactor)/2)-cX) + lineListLift[level][i].endX,
+      (((height/scaleFactor)/2)-cY) + lineListLift[level][i].endY);
   }
   stroke(255, 0, 0);
   for (int i = 0; i < koList[level].length; i++) {

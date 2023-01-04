@@ -72,7 +72,7 @@ u8 consoleModel = 3;
 u8 lang = CFG_LANGUAGE_EN;
 u8 serial = 0;
 
-static u32 clrWhite, clrBlack, clrPlayer, clrRed, clrGrey, clrFake;
+static u32 clrWhite, clrBlack, clrPlayer, clrRed, clrGrey, clrFake, clrGreen;
 
 int level = 0,
 	curLine,
@@ -90,7 +90,8 @@ bool vcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
 	levelTimerRunning = false,
-	updateSave = true;
+	updateSave = true,
+	invertGrav = false;
 
 button* menuButtons[] = {
 	new button("All levels", BOTTOM_SCREEN_WIDTH/2 - 100, 24, 200, 28, 0.6f),
@@ -148,6 +149,22 @@ void drawLevel() {
 		C2D_DrawCircleSolid(linelist[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
 							linelist[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
 							0.1f, 1, clrBlack);
+	}
+	for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
+		C2D_DrawLine(lineListLift[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+					 lineListLift[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 clrGreen,
+					 lineListLift[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+					 lineListLift[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 clrGreen, 2, 0.105f);
+	}
+	for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
+		C2D_DrawCircleSolid(lineListLift[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+							lineListLift[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+							0.105f, 1, clrGreen);
+		C2D_DrawCircleSolid(lineListLift[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
+							lineListLift[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+							0.105f, 1, clrGreen);
 	}
 	for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
 		C2D_DrawLine(linelistKO[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
@@ -228,7 +245,8 @@ int main(int argc, char* argv[]) {
 	clrRed = C2D_Color32(255, 0, 0, 0xFF);
 	clrGrey = C2D_Color32(200, 200, 200, 0xFF);
 	clrFake = C2D_Color32(0, 0, 100, 0xFF);
-	
+	clrGreen = C2D_Color32(0, 255, 0, 0xFF);
+
 	// 3D Mode
     Result res = cfguInit();
     if (R_SUCCEEDED(res)) {
@@ -343,8 +361,13 @@ int main(int argc, char* argv[]) {
 					timerBlockOffset *= 400;
 					timerBlockOffset += getWidth(to_str((levelTimer / 60.0f) / SUBSTEPS), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
 					timerBlockOffset /= 401;
-					if (!vcolCheck || !jumpableFor) {
-						playerYVel += 0.3 / SUBSTEPS;
+					invertGrav = false;
+					for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
+      					invertGrav = lineCircle(lineListLift[curLine]->startX, lineListLift[curLine]->startY, lineListLift[curLine]->endX, lineListLift[curLine]->endY, playerX, playerY, 10);
+      					if (invertGrav) break;
+    				}
+					if (!vcolCheck || !jumpableFor || invertGrav) {
+						playerYVel += (invertGrav?-0.3:0.3) / SUBSTEPS;
 						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
