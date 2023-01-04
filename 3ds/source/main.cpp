@@ -678,7 +678,7 @@ int main(int argc, char* argv[]) {
 				}
 				case menu: {
 					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 3 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
-					drawString("1.0-a2", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2*scaleFactor, clrBlack);
+					drawString("1.0-a3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2*scaleFactor, clrBlack);
 					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == exitAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(levelTimer / 144.0f)));

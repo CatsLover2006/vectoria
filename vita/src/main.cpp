@@ -621,7 +621,7 @@ int main(int argc, char* argv[]) {
 					}
 				}
 				drawString("VECTORIA", SCREEN_WIDTH/4-getWidth("VECTORIA", scaleFactor, 4*scaleFactor)/2 + 13*scaleFactor, SCREEN_HEIGHT/2 + (14 * sin(sin(sin(animTimer * 2.342))) + 13), scaleFactor, 4*scaleFactor, clrBlack);
-				drawString("1.0-a2", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2.0f*scaleFactor, clrBlack);
+				drawString("1.0-a3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2.0f*scaleFactor, clrBlack);
 				if (animID == enteredAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH), (SCREEN_HEIGHT), clrPlayer & RGBA8(255, 255, 255, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));
 				if (animID == gameStart) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH), (SCREEN_HEIGHT), RGBA8(255, 255, 255, floatTo8Int(max(0, 0.4 - animTimer)/0.4)));
 				if (animID == exitAnim) vita2d_draw_rectangle(0, 0, (SCREEN_WIDTH), (SCREEN_HEIGHT), clrPlayer & RGBA8(255, 255, 255, floatTo8Int(levelTimer / 144.0f)));
