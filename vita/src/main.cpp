@@ -325,7 +325,7 @@ int main(int argc, char* argv[]) {
 					vcolCheck = false;
 					playerY += playerYVel / SUBSTEPS;
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-						if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
+						if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>2) continue;
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 							vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 							if (!vcolCheck) continue;
@@ -336,7 +336,7 @@ int main(int argc, char* argv[]) {
 					if (tcolCheck && !vcolCheck) {
 						playerY += abs_c(playerXVel / SUBSTEPS) * 2;
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
+							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>2) continue;
 							if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 								tcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 								vcolCheck = vcolCheck || tcolCheck;

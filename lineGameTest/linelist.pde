@@ -12,32 +12,33 @@ public class line {
 line[][] lineList = {
   {
     new line(0, 0, 0, 200), // Level 5
-    new line(0, 0, 200, 0), // Level 5
+    new line(0, 0, 220, 0), // Level 5
+    new line(225, -1, 220, 0), // Level 5
     new line(40, 60, 0, 60), // Level 5
     new line(125, 250, 0, 200), // Level 5
     new line(70, 195, 160 - (360.0f / 13), 60), // Level 5
-    new line(180, 180, 180, 240), // Level 5
-    new line(170, 185, 190, 175), // Level 5
-    new line(320, 130, 320, 240), // Level 5
-    new line(310, 135, 330, 125), // Level 5
+    new line(185, 180, 185, 240), // Level 5
+    new line(170, 185, 200, 175), // Level 5
+    new line(315, 130, 315, 240), // Level 5
+    new line(300, 135, 330, 125), // Level 5
   }
 };
 
 line[][] lineListLift = {
   {
-    new line(180, 80, 160, 0), // Level 5
-    new line(180, 80, 170, 0), // Level 5
-    new line(180, 80, 180, 0), // Level 5
-    new line(180, 80, 190, 0), // Level 5
-    new line(180, 80, 200, 0), // Level 5
+    new line(179, 74, 165, 0), // Level 5
+    new line(182, 77, 175, 0), // Level 5
+    new line(185, 80, 185, 0), // Level 5
+    new line(188, 77, 195, 0), // Level 5
+    new line(191, 74, 205, 0), // Level 5
   }
 };
 
 line[][] koList = {
   {
     new line(100, 0, 85, 97.5), // Level 5
-    new line(50, 140, 70, 195), // Level 5
-    new line(50, 140, 85, 97.5), // Level 5
+    new line(55, 140, 70, 195), // Level 5
+    new line(55, 140, 85, 97.5), // Level 5
  }
 };
 

@@ -94,7 +94,7 @@ void draw() {
     vcolCheck = false;
     playerY += playerYVel / SUBSTEPS;
     for (int i = 0; i < lineList[level].length; i++) {
-      if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
+      if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>2) continue;
       if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
         vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
         if (!vcolCheck) continue;
@@ -106,7 +106,7 @@ void draw() {
     if (tcolCheck && !vcolCheck) {
       playerY += abs_c(playerXVel / SUBSTEPS) * 2;
       for (int i = 0; i < lineList[level].length; i++) {
-        if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
+        if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>2) continue;
         if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
           vcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
           if (!vcolCheck) continue;
