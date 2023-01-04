@@ -88,7 +88,8 @@ bool vcolCheck = false,
 	tcolCheck = false,
     hasStarted = false,
 	levelTimerRunning = false,
-	updateSave = true;
+	updateSave = true,
+	invertGrav = false;
 
 button* menuButtons[] = {
 	new button("All levels", ((SCREEN_WIDTH/scaleFactor)*3/4 - 75)*scaleFactor, 24*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
