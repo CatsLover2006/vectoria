@@ -100,12 +100,15 @@ line* linelist[] = {
     new line(0, 0, 220, 0), // Level 5
     new line(225, -1, 220, 0), // Level 5
     new line(40, 60, 0, 60), // Level 5
-    new line(125, 250, 0, 200), // Level 5
+    new line(125, 240, 0, 200), // Level 5
     new line(70, 195, 160 - (360.0f / 13), 60), // Level 5
-    new line(185, 180, 185, 240), // Level 5
-    new line(170, 185, 200, 175), // Level 5
-    new line(315, 130, 315, 240), // Level 5
-    new line(300, 135, 330, 125), // Level 5
+    new line(190, 180, 190, 240), // Level 5
+    new line(170, 185, 210, 175), // Level 5
+    new line(320, 130, 320, 240), // Level 5
+    new line(300, 135, 340, 125), // Level 5
+    new line(100, 0, 85, 97.5), // Level 5
+    new line(50, 140, 70, 195), // Level 5
+    new line(50, 140, 85, 97.5), // Level 5
 };
 
 line* linelistKO[] = {
@@ -163,17 +166,14 @@ line* linelistKO[] = {
              200 + (80 * sin(4 * pi / 12)), 60 - 80 * cos(4 * pi / 12)), // Level 3
     new line(200 + (80 * sin(3 * pi / 12)), 60 - 80 * cos(3 * pi / 12),
              200 + (80 * sin(2 * pi / 12)), 60 - 80 * cos(2 * pi / 12)), // Level 3
-    new line(100, 0, 85, 97.5), // Level 5
-    new line(50, 140, 70, 195), // Level 5
-    new line(50, 140, 85, 97.5), // Level 5
 };
 
 line* lineListLift[] = {
-    new line(179, 74, 165, 0), // Level 5
-    new line(182, 77, 175, 0), // Level 5
-    new line(185, 80, 185, 0), // Level 5
-    new line(188, 77, 195, 0), // Level 5
-    new line(191, 74, 205, 0), // Level 5
+    new line(184, 74, 170, 0), // Level 5
+    new line(187, 77, 180, 0), // Level 5
+    new line(190, 80, 190, 0), // Level 5
+    new line(193, 77, 200, 0), // Level 5
+    new line(196, 74, 210, 0), // Level 5
 };
 
 line* lineListFake[] = {
@@ -213,7 +213,7 @@ int levelEnd[] = {
 	56,
 	82,
 	25,
-	92,
+	95,
 	0,
 	0,
 	64,
@@ -226,7 +226,7 @@ int koStart[] = {
 	17,
 	20,
 	11,
-	40,
+	0,
 	0,
 	0,
 	19,
@@ -239,7 +239,7 @@ int koEnd[] = {
 	19,
 	40,
 	16,
-	43,
+	0,
 	0,
 	0,
 	20,
