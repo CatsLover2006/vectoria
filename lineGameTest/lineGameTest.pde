@@ -76,7 +76,7 @@ void draw() {
       if (pressed[2]) playerYVel += 0.9 / SUBSTEPS;
     }
     if (playerYVel > 59) playerYVel = 59;
-    if (playerYVel < -(59/8)) playerYVel = -(59/8);
+    if (invertGrav && playerYVel < -(59/8)) playerYVel = -(59/8);
     playerXVel = playerXVel / xDiv;
     if (pressed[0]) playerXVel -= xAdd;
     if (pressed[3]) playerXVel += xAdd;
@@ -97,7 +97,7 @@ void draw() {
     for (int i = 0; i < lineList[level].length; i++) {
       if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>2) continue;
       if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
-        vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
+        vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.7;
         if (!vcolCheck) continue;
         if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
         else playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan((playerY - closestY)/(playerX - closestX))));

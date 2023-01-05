@@ -34,7 +34,7 @@ boolean linePoint(float x1, float y1, float x2, float y2, float px, float py) {
   float d1 = dist(px,py, x1,y1);
   float d2 = dist(px,py, x2,y2);
   float lineLen = dist(x1,y1, x2,y2);
-  float buffer = 0.1;    // higher # = less accurate
+  float buffer = 0.000244140625;    // higher # = less accurate
   // if the two distances are equal to the line's length, the
   // point is on the line!
   // note we use the buffer here to give a range, rather than one #

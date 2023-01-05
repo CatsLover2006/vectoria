@@ -13,6 +13,7 @@ float scaleFactor = 1;
 #define MAX_SPEED 59
 
 #include <citro2d.h>
+
 #include <3ds.h>
 
 #include <fstream>
@@ -103,106 +104,106 @@ int menuButtonCount = 3;
 
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		C2D_DrawLine(linelistBG[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 - 3 * depthOffset),
-					 linelistBG[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawLine(linelistBG[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2) + (0 - 3 * depthOffset),
+					 linelistBG[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrGrey,
-					 linelistBG[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 - 3 * depthOffset),
-					 linelistBG[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 linelistBG[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2) + (0 - 3 * depthOffset),
+					 linelistBG[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrGrey, 2, 0.05f);
 	}
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelistBG[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 - 3 * depthOffset),
-							linelistBG[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelistBG[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2) + (0 - 3 * depthOffset),
+							linelistBG[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.05f, 1, clrGrey);
-		C2D_DrawCircleSolid(linelistBG[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 - 3 * depthOffset),
-							linelistBG[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelistBG[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2) + (0 - 3 * depthOffset),
+							linelistBG[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.05f, 1, clrGrey);
 	}
 	for (curLine = falseStart[level]; curLine < falseEnd[level]; curLine++) {
-		C2D_DrawLine(lineListFake[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 lineListFake[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawLine(lineListFake[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+					 lineListFake[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrFake,
-					 lineListFake[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 lineListFake[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 lineListFake[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+					 lineListFake[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrFake, 2, 0.09f);
 	}
 	for (curLine = falseStart[level]; curLine < falseEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(lineListFake[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							lineListFake[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(lineListFake[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+							lineListFake[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.09f, 1, clrFake);
-		C2D_DrawCircleSolid(lineListFake[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							lineListFake[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(lineListFake[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+							lineListFake[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.09f, 1, clrFake);
 	}
 	for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-		C2D_DrawLine(linelist[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 linelist[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawLine(linelist[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+					 linelist[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrBlack,
-					 linelist[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 linelist[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 linelist[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+					 linelist[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrBlack, 2, 0.1f);
 	}
 	for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelist[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							linelist[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelist[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+							linelist[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.1f, 1, clrBlack);
-		C2D_DrawCircleSolid(linelist[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							linelist[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelist[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+							linelist[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.1f, 1, clrBlack);
 	}
 	for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
-		C2D_DrawLine(lineListLift[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 lineListLift[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawLine(lineListLift[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+					 lineListLift[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrGreen,
-					 lineListLift[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 lineListLift[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 lineListLift[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+					 lineListLift[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrGreen, 2, 0.105f);
 	}
 	for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(lineListLift[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							lineListLift[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(lineListLift[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+							lineListLift[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.105f, 1, clrGreen);
-		C2D_DrawCircleSolid(lineListLift[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							lineListLift[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(lineListLift[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+							lineListLift[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.105f, 1, clrGreen);
 	}
 	for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
-		C2D_DrawLine(linelistKO[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 linelistKO[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawLine(linelistKO[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+					 linelistKO[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrRed,
-					 linelistKO[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 linelistKO[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 linelistKO[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+					 linelistKO[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrRed, 2, 0.11f);
 	}
 	for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelistKO[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							linelistKO[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelistKO[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+							linelistKO[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.11f, 1, clrRed);
-		C2D_DrawCircleSolid(linelistKO[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							linelistKO[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelistKO[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+							linelistKO[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.11f, 1, clrRed);
 	}
 	for (curLine = topStart[level]; curLine < topEnd[level]; curLine++) {
-		C2D_DrawLine(linelistTop[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 linelistTop[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawLine(linelistTop[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+					 linelistTop[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrBlack,
-					 linelistTop[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-					 linelistTop[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+					 linelistTop[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+					 linelistTop[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 					 clrBlack, 2, 0.2f);
 	}
 	for (curLine = topStart[level]; curLine < topEnd[level]; curLine++) {
-		C2D_DrawCircleSolid(linelistTop[curLine]->endX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							linelistTop[curLine]->endY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelistTop[curLine]->endX + (0 - cX + SCREEN_WIDTH / 2),
+							linelistTop[curLine]->endY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.2f, 1, clrBlack);
-		C2D_DrawCircleSolid(linelistTop[curLine]->startX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-							linelistTop[curLine]->startY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+		C2D_DrawCircleSolid(linelistTop[curLine]->startX + (0 - cX + SCREEN_WIDTH / 2),
+							linelistTop[curLine]->startY + (0 - cY + SCREEN_HEIGHT / 2),
 							0.2f, 1, clrBlack);
 	}
-	C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
-						endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+	C2D_DrawCircleSolid(endPoint[level][0] + (0 - cX + SCREEN_WIDTH / 2) + (0 + 2 * depthOffset),
+						endPoint[level][1] + (0 - cY + SCREEN_HEIGHT / 2),
 						0.15f, 3, clrBlack);
-	C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
-						endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+	C2D_DrawCircleSolid(endPoint[level][0] + (0 - cX + SCREEN_WIDTH / 2) + (0 + 2 * depthOffset),
+						endPoint[level][1] + (0 - cY + SCREEN_HEIGHT / 2),
 						0.4f, 2, clrPlayer);
 }
 
@@ -273,9 +274,9 @@ int main(int argc, char* argv[]) {
 	gfxSet3D(true);
 	
 	// Create Screens
-    C3D_RenderTarget * top_main = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
-    C3D_RenderTarget * top_sub = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
-    C3D_RenderTarget * bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+    C3D_RenderTarget * top_main = C2D_CreateScreenTargetAA(GFX_TOP, GFX_LEFT);
+    C3D_RenderTarget * top_sub = C2D_CreateScreenTargetAA(GFX_TOP, GFX_RIGHT);
+    C3D_RenderTarget * bottom = C2D_CreateScreenTargetHAA(GFX_BOTTOM, GFX_LEFT);
 
     // Level Buttons
     button* levelButtons[levels];
@@ -327,6 +328,9 @@ int main(int argc, char* argv[]) {
 	// Pretouch
 	hidScanInput();
     hidTouchRead(&startTouch);
+
+    // Scale
+    C2D_ViewScale(2,2);
 	
 	// Main Loop
 	while (aptMainLoop())
@@ -387,7 +391,7 @@ int main(int argc, char* argv[]) {
 						if (kHeld & KEY_DOWN) playerYVel += 0.9 / SUBSTEPS;
 					}
 					if (playerYVel > MAX_SPEED) playerYVel = MAX_SPEED;
-					if (playerYVel < -MAX_SPEED/8) playerYVel = -MAX_SPEED/8;
+					if (invertGrav && playerYVel < -MAX_SPEED/8) playerYVel = -MAX_SPEED/8;
 					playerXVel /= xDiv;
 					if (kHeld & KEY_LEFT) playerXVel -= xAdd;
 					if (kHeld & KEY_RIGHT) playerXVel += xAdd;
@@ -405,7 +409,7 @@ int main(int argc, char* argv[]) {
 					vcolCheck = false;
 					playerY += playerYVel / SUBSTEPS;
 					for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-						if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>2) continue;
+						if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 						if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 							vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 							if (!vcolCheck) continue;
@@ -416,7 +420,7 @@ int main(int argc, char* argv[]) {
 					if (tcolCheck && !vcolCheck) {
 						playerY += abs_c(playerXVel / SUBSTEPS) * 2;
 						for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>2) continue;
+							if (abs_c((linelist[curLine]->startY-linelist[curLine]->endY)/(linelist[curLine]->startX-linelist[curLine]->endX))>3) continue;
 							if (lineCircle(linelist[curLine]->startX, linelist[curLine]->startY, linelist[curLine]->endX, linelist[curLine]->endY, playerX, playerY, 10)) {
 								tcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
 								vcolCheck = vcolCheck || tcolCheck;
@@ -486,21 +490,23 @@ int main(int argc, char* argv[]) {
 							// Draw Level
 							drawLevel();
 							// Draw Player
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+							C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2),
+												playerY + (0 - cY + SCREEN_HEIGHT / 2),
 												0.3f, 10, clrBlack);
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(cos(rot) * 5),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2) + floor(sin(rot) * 5),
+							C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (cos(rot) * 5),
+												playerY + (0 - cY + SCREEN_HEIGHT / 2) + (sin(rot) * 5),
 												0.4f, 3, clrPlayer);
 							// Funni Animation
-							C2D_DrawCircleSolid(endPoint[level][0] + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 2 * depthOffset),
-												endPoint[level][1] + floor(0.5 - cY + SCREEN_HEIGHT / 2),
+							C2D_DrawCircleSolid(endPoint[level][0] + (0 - cX + SCREEN_WIDTH / 2) + (0 + 2 * depthOffset),
+												endPoint[level][1] + (0 - cY + SCREEN_HEIGHT / 2),
 												0.9f, 2 + frames * 10/6.0f, clrPlayer);
 						}
 						// Timer
 						C2D_TargetClear(bottom, clrWhite);
+						C2D_ViewScale(0.5,1);
 	        			C2D_SceneBegin(bottom);
 						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
+    					C2D_ViewScale(2,1);
 						// Done Rendering!
 						C3D_FrameEnd(0);
 					}
@@ -542,15 +548,21 @@ int main(int argc, char* argv[]) {
 							drawLevel();
 							// Funni Animation
 							for (int i = 0; i++ < frames; ) {
-								C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
-													playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
+								C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (0 + 5 * depthOffset),
+													playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
 													C2D_Color32(255, 200 - 200 * (i / 24.0f), 0,
 																C2D_FloatToU8(0.5 - (i / 48.0f))));
-								C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 5 * depthOffset),
-													playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
+								C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (0 + 5 * depthOffset),
+													playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
 													C2D_Color32(255, 255, 255, C2D_FloatToU8((i / 12.0f) - 1)));
 							}
 						}
+						// Timer
+						C2D_TargetClear(bottom, clrWhite);
+						C2D_ViewScale(0.5,1);
+	        			C2D_SceneBegin(bottom);
+						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
+    					C2D_ViewScale(2,1);
 						// Done Rendering!
 						C3D_FrameEnd(0);
 					}
@@ -573,8 +585,8 @@ int main(int argc, char* argv[]) {
 							// Draw Level
 							drawLevel();
 							// Funni Animation
-							C2D_DrawCircleSolid(playerX + floor(0.5 - cX + SCREEN_WIDTH / 2) + floor(0.5 + 4 * depthOffset),
-												playerY + floor(0.5 - cY + SCREEN_HEIGHT / 2), 0.9f, 69,
+							C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (0 + 4 * depthOffset),
+												playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, 69,
 												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
 						}
 						// Done Rendering!
@@ -682,18 +694,18 @@ int main(int argc, char* argv[]) {
 					drawLevel();
 
 					// Draw Player
-					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + playerX,
-										floor(0.5 - cY + SCREEN_HEIGHT / 2) + playerY,
+					C2D_DrawCircleSolid((0 - cX + SCREEN_WIDTH / 2) + playerX,
+										(0 - cY + SCREEN_HEIGHT / 2) + playerY,
 										0.3f, (animID == -1 ? 10 : min(animTimer * 100, 10)), clrBlack);//*/
-					C2D_DrawCircleSolid(floor(0.5 - cX + SCREEN_WIDTH / 2) + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerX,
-										floor(0.5 - cY + SCREEN_HEIGHT / 2) + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerY,
+					C2D_DrawCircleSolid((0 - cX + SCREEN_WIDTH / 2) + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerX,
+										(0 - cY + SCREEN_HEIGHT / 2) + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)) + playerY,
 										0.4f, (animID == -1 ? 3 : min(animTimer * 30, 3)), clrPlayer);
 
 					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					break;
 				}
 				case menu: {
-					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + floor(0.5 + 3 * depthOffset), SCREEN_HEIGHT/2 + floor(14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
+					drawString("VECTORIA", (SCREEN_WIDTH-getWidth("VECTORIA", 1.3f, 4))/2 + (0 + 3 * depthOffset), SCREEN_HEIGHT/2 + (14 * sin(sin(sin(animTimer * 2.342))) + 13), 1.3f, 4, clrBlack);
 					drawString("1.0-a3", 2*scaleFactor, SCREEN_HEIGHT - 2*scaleFactor, 0.6f*scaleFactor, 2*scaleFactor, clrBlack);
 					if (animID == enteredAnim) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 					if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
@@ -705,6 +717,7 @@ int main(int argc, char* argv[]) {
 		
 		// Bottom Screne
         C2D_SceneBegin(bottom);
+    	C2D_ViewScale(0.5,1);
 		switch (gameState) {
 			case menu: {
 				switch (currentMenu) {
@@ -751,7 +764,7 @@ int main(int argc, char* argv[]) {
         	C2D_DrawCircleSolid(touch.px, touch.py, 0.9f, 1, clrPlayer);
         	C2D_DrawCircleSolid(startTouch.px, startTouch.py, 0.9f, 1, clrPlayer);
         }
-        
+    	C2D_ViewScale(2,1);
         // Done Rendering!
 		C3D_FrameEnd(0);
 	}

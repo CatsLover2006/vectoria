@@ -115,6 +115,15 @@ line* linelistBG[] = {
     new line(45, -125, 65, -125), // Level 9, Out 3
     new line(65, -125, 55, -115), // Level 9, Out 3
     new line(65, -125, 55, -135), // Level 9, Out 3
+    new line(35, 100, 35 + sqrt(200), 100 - sqrt(200)), // Level 5, Arrow 1
+    new line(35, 100, 35 + sqrt(200), 100), // Level 5, Arrow 1
+    new line(35, 100, 35, 100 - sqrt(200)), // Level 5, Arrow 1
+    new line(255, 113, 255 - sqrt(200), 113 + sqrt(200)), // Level 5, Arrow 2
+    new line(255, 113, 255 - sqrt(200), 113), // Level 5, Arrow 2
+    new line(255, 113, 255, 113 + sqrt(200)), // Level 5, Arrow 2
+    new line(110, 50, 110 + sqrt(200), 50 - sqrt(200)), // Level 5, Arrow 3
+    new line(110, 50, 110 + sqrt(200), 50), // Level 5, Arrow 3
+    new line(110, 50, 110, 50 - sqrt(200)), // Level 5, Arrow 3
 };
 
 int bgStart[] = {
@@ -122,7 +131,7 @@ int bgStart[] = {
 	72,
 	94,
 	37,
-	0,
+	109,
 	0,
 	0,
 	78,
@@ -135,7 +144,7 @@ int bgEnd[] = {
 	78,
 	100,
 	56,
-	0,
+	118,
 	0,
 	0,
 	94,

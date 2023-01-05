@@ -118,7 +118,7 @@ line* linelist[] = {
     new line(30, 100, 50, 40), // Level 9, Out 1
     new line(20, 20, 0, -40), // Level 9, Out 2
     new line(30, -100, 50, -160), // Level 9, Out 3
-    new line(40, -300, 10, -300), // Level 9
+    new line(40, -301, 10, -301), // Level 9
     new line(70, -330, 50, -350), // Level 9
     new line(-20, -330, 0, -350), // Level 9
 };
