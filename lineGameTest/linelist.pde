@@ -49,6 +49,15 @@ line[][] koList = {
 
 line[][] bgList = {
   {
+    new line(35, 100, 35 + sqrt(200), 100 - sqrt(200)), // Level 5, Arrow 1
+    new line(35, 100, 35 + sqrt(200), 100), // Level 5, Arrow 1
+    new line(35, 100, 35, 100 - sqrt(200)), // Level 5, Arrow 1
+    new line(255, 113, 255 - sqrt(200), 113 + sqrt(200)), // Level 5, Arrow 2
+    new line(255, 113, 255 - sqrt(200), 113), // Level 5, Arrow 2
+    new line(255, 113, 255, 113 + sqrt(200)), // Level 5, Arrow 2
+    new line(110, 50, 110 + sqrt(200), 50 - sqrt(200)), // Level 5, Arrow 3
+    new line(110, 50, 110 + sqrt(200), 50), // Level 5, Arrow 3
+    new line(110, 50, 110, 50 - sqrt(200)), // Level 5, Arrow 3
   }
 };
 

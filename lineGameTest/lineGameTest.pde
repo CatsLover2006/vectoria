@@ -1,6 +1,10 @@
+import processing.javafx.*;
+
 int level = 0,
   jumpableFor = 0,
-  SUBSTEPS = 6;
+  SUBSTEPS = 6,
+  msaa_x = 4,
+  msaa_y = 4;
 float playerY = 50,
   playerX = 50,
   oX = playerX,
@@ -16,6 +20,8 @@ float playerY = 50,
   xAdd = 2.69/sqrt(SUBSTEPS*sqrt(SUBSTEPS)-pow(SUBSTEPS, xDiv)/(xDiv*sqrt(SUBSTEPS/3))),
   doLogic = 0;
 
+PGraphics main;
+
 float abs_c (float x) {
   if (x < 0) return -x;
   return x;
@@ -29,11 +35,9 @@ boolean vcolCheck = false,
   invertGrav = false;
 
 void settings() {
-  size(960, 544, P2D);
-  pixelDensity(displayDensity());
+  size(400, 240, P2D);
   scaleFactor = max(height/240.0f, width/400.0f);
-  smooth(4); 
-}//*/
+}
 
 void setup() {
   noStroke();
@@ -44,7 +48,10 @@ void setup() {
   println(lineListTop[level].length);
   println(bgList[level].length);
   println(fakeList[level].length);
-}//*/
+  main = createGraphics(width * msaa_x, height * msaa_y, P2D);
+  main.noSmooth();
+  ((PGraphicsOpenGL)g).textureSampling(4);
+}
 
 void draw() {
   if (!hasStarted) {
@@ -59,9 +66,10 @@ void draw() {
     hasStarted = true;
     return;
   }
-  pushMatrix();
-  scale(scaleFactor);
-  background(255);
+  main.beginDraw();
+  main.pushMatrix();
+  main.scale(scaleFactor * msaa_x, scaleFactor * msaa_y);
+  main.background(255);
   doLogic += 1 / frameRate;
   while (doLogic > 1 / (SUBSTEPS * 60.0f)) {
     oX = playerX;
@@ -95,9 +103,9 @@ void draw() {
     vcolCheck = false;
     playerY += playerYVel / SUBSTEPS;
     for (int i = 0; i < lineList[level].length; i++) {
-      if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>2) continue;
+      if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
       if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
-        vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.7;
+        vcolCheck = vcolCheck || (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
         if (!vcolCheck) continue;
         if (playerX == closestX) playerY = closestY + (closestY < playerY ? 10 : -10);
         else playerY = closestY + (closestY < playerY ? 10 : -10) * abs_c(sin(atan((playerY - closestY)/(playerX - closestX))));
@@ -107,7 +115,7 @@ void draw() {
     if (tcolCheck && !vcolCheck) {
       playerY += abs_c(playerXVel / SUBSTEPS) * 2;
       for (int i = 0; i < lineList[level].length; i++) {
-        if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>2) continue;
+        if (abs_c((lineList[level][i].startY-lineList[level][i].endY)/(lineList[level][i].startX-lineList[level][i].endX))>3) continue;
         if (lineCircle(lineList[level][i].startX, lineList[level][i].startY, lineList[level][i].endX, lineList[level][i].endY, playerX, playerY, 10)) {
           vcolCheck = (closestX == playerX) || abs_c((closestY - playerY) / (closestX - playerX))>0.5;
           if (!vcolCheck) continue;
@@ -147,57 +155,59 @@ void draw() {
       }
     doLogic -= 1 / (SUBSTEPS * 60.0f);
   }
-  strokeWeight(2);
-  stroke(200);
+  main.strokeWeight(2);
+  main.stroke(200);
   for (int i = 0; i < bgList[level].length; i++) {
-    line((((width/scaleFactor)/2)-cX) + bgList[level][i].startX,
+    main.line((((width/scaleFactor)/2)-cX) + bgList[level][i].startX,
       (((height/scaleFactor)/2)-cY) + bgList[level][i].startY,
       (((width/scaleFactor)/2)-cX) + bgList[level][i].endX,
       (((height/scaleFactor)/2)-cY) + bgList[level][i].endY);
   }
-  stroke(0, 0, 100);
+  main.stroke(0, 0, 100);
   for (int i = 0; i < fakeList[level].length; i++) {
-    line((((width/scaleFactor)/2)-cX) + fakeList[level][i].startX,
+    main.line((((width/scaleFactor)/2)-cX) + fakeList[level][i].startX,
       (((height/scaleFactor)/2)-cY) + fakeList[level][i].startY,
       (((width/scaleFactor)/2)-cX) + fakeList[level][i].endX,
       (((height/scaleFactor)/2)-cY) + fakeList[level][i].endY);
   }
-  stroke(0);
+  main.stroke(0);
   for (int i = 0; i < lineList[level].length; i++) {
-    line((((width/scaleFactor)/2)-cX) + lineList[level][i].startX,
+    main.line((((width/scaleFactor)/2)-cX) + lineList[level][i].startX,
       (((height/scaleFactor)/2)-cY) + lineList[level][i].startY,
       (((width/scaleFactor)/2)-cX) + lineList[level][i].endX,
       (((height/scaleFactor)/2)-cY) + lineList[level][i].endY);
   }
-  stroke(0, 255, 0);
+  main.stroke(0, 255, 0);
   for (int i = 0; i < lineListLift[level].length; i++) {
-    line((((width/scaleFactor)/2)-cX) + lineListLift[level][i].startX,
+    main.line((((width/scaleFactor)/2)-cX) + lineListLift[level][i].startX,
       (((height/scaleFactor)/2)-cY) + lineListLift[level][i].startY,
       (((width/scaleFactor)/2)-cX) + lineListLift[level][i].endX,
       (((height/scaleFactor)/2)-cY) + lineListLift[level][i].endY);
   }
-  stroke(255, 0, 0);
+  main.stroke(255, 0, 0);
   for (int i = 0; i < koList[level].length; i++) {
     line((((width/scaleFactor)/2)-cX) + koList[level][i].startX,
       (((height/scaleFactor)/2)-cY) + koList[level][i].startY,
       (((width/scaleFactor)/2)-cX) + koList[level][i].endX,
       (((height/scaleFactor)/2)-cY) + koList[level][i].endY);
   }
-  stroke(0);
+  main.stroke(0);
   for (int i = 0; i < lineListTop[level].length; i++) {
-    line((((width/scaleFactor)/2)-cX) + lineListTop[level][i].startX,
+    main.line((((width/scaleFactor)/2)-cX) + lineListTop[level][i].startX,
       (((height/scaleFactor)/2)-cY) + lineListTop[level][i].startY,
       (((width/scaleFactor)/2)-cX) + lineListTop[level][i].endX,
       (((height/scaleFactor)/2)-cY) + lineListTop[level][i].endY);
   }
-  noStroke();
-  fill(0);
-  circle((((width/scaleFactor)/2)-cX) + endPos[level][0], (((height/scaleFactor)/2)-cY) + endPos[level][1], 6);
-  circle((((width/scaleFactor)/2)-cX) + playerX, (((height/scaleFactor)/2)-cY) + playerY, 20);
-  fill(0, 255, 255);
-  circle((((width/scaleFactor)/2)-cX) + cos(rot) * 5 + playerX, (((height/scaleFactor)/2)-cY) + sin(rot) * 5 + playerY, 6);
-  circle((((width/scaleFactor)/2)-cX) + endPos[level][0], (((height/scaleFactor)/2)-cY) + endPos[level][1], 4);
-  popMatrix();
+  main.noStroke();
+  main.fill(0);
+  main.circle((((width/scaleFactor)/2)-cX) + endPos[level][0], (((height/scaleFactor)/2)-cY) + endPos[level][1], 6);
+  main.circle((((width/scaleFactor)/2)-cX) + playerX, (((height/scaleFactor)/2)-cY) + playerY, 20);
+  main.fill(0, 255, 255);
+  main.circle((((width/scaleFactor)/2)-cX) + cos(rot) * 5 + playerX, (((height/scaleFactor)/2)-cY) + sin(rot) * 5 + playerY, 6);
+  main.circle((((width/scaleFactor)/2)-cX) + endPos[level][0], (((height/scaleFactor)/2)-cY) + endPos[level][1], 4);
+  main.popMatrix();
+  main.endDraw();
+  image(main.get(), 0, 0, width, height);
 }
 
 void keyPressed() {
