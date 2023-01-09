@@ -2,3 +2,4 @@ void vita2d_draw_rectangle_gradient(float x, float y, float w, float h, unsigned
 void drawLine(float x1, float y1, float x2, float y2, float weight = 1, unsigned int color = 0xFF000000);
 void drawString(std::string str, double x, double y, double scale, double weight, unsigned int color);
 void drawButton (button* buttonToDraw, unsigned int color, double weight);
+void vita2d_draw_fill_arc(float x, float y, float radius, float initial_rotation, float end_rotation, unsigned int color);

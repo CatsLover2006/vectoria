@@ -605,21 +605,27 @@ int main(int argc, char* argv[]) {
 						break;
 					}
 					case colorPick: {
-						vita2d_draw_fill_circle(SCREEN_WIDTH * 3 / 2, SCREEN_HEIGHT/2, SCREEN_WIDTH, clrPlayer);
-						vita2d_draw_fill_circle(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 30 * scaleFactor, 10 * scaleFactor, clrBlack);
-						vita2d_draw_fill_circle(174 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 30 * scaleFactor, 10 * scaleFactor, RGBA8(255, 0, 0, 0xFF));
+						vita2d_draw_fill_arc(SCREEN_WIDTH * 3 / 2, SCREEN_HEIGHT/2, SCREEN_WIDTH, pi * 3 / 4, pi * 5 / 4, clrPlayer);
+						vita2d_draw_fill_arc(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 30 * scaleFactor,
+											 10 * scaleFactor, pi/2, pi * 3 / 2, clrBlack);
+						vita2d_draw_fill_arc(174 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 30 * scaleFactor,
+											 10 * scaleFactor, pi * 3 / 2, pi/2, RGBA8(255, 0, 0, 0xFF));
 						vita2d_draw_rectangle_gradient(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 40 * scaleFactor, 128 * scaleFactor, 20 * scaleFactor, clrBlack, RGBA8(255, 0, 0, 0xFF), clrBlack, RGBA8(255, 0, 0, 0xFF));
 						vita2d_draw_fill_circle(((clrPlayer>>(unsigned int)0 & 0xFF)/2+46)*scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 30 * scaleFactor, 5 * scaleFactor, clrWhite);
 						drawLine(((clrPlayer>>(unsigned int)0 & 0xFF)/2+46) * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 45 * scaleFactor,
 								((clrPlayer>>(unsigned int)0 & 0xFF)/2+46) * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 15 * scaleFactor, scaleFactor, clrPlayer);
-						vita2d_draw_fill_circle(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2, 10 * scaleFactor, clrBlack);
-						vita2d_draw_fill_circle(174 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2, 10 * scaleFactor, RGBA8(0, 255, 0, 0xFF));
+						vita2d_draw_fill_arc(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2,
+											 10 * scaleFactor, pi/2, pi * 3 / 2, clrBlack);
+						vita2d_draw_fill_arc(174 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2,
+											 10 * scaleFactor, pi * 3 / 2, pi/2, RGBA8(0, 255, 0, 0xFF));
 						vita2d_draw_rectangle_gradient(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 10 * scaleFactor, 128 * scaleFactor, 20 * scaleFactor, clrBlack, RGBA8(0, 255, 0, 0xFF), clrBlack, RGBA8(0, 255, 0, 0xFF));
 						vita2d_draw_fill_circle(((clrPlayer>>(unsigned int)8 & 0xFF)/2+46)*scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2, 5 * scaleFactor, clrWhite);
 						drawLine(((clrPlayer>>(unsigned int)8 & 0xFF)/2+46)*scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 - 15 * scaleFactor,
-								((clrPlayer>>(unsigned int)8 & 0xFF)/2+46)*scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 5 * scaleFactor, scaleFactor, clrPlayer);
-						vita2d_draw_fill_circle(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 30 * scaleFactor, 10 * scaleFactor, clrBlack);
-						vita2d_draw_fill_circle(174 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 30 * scaleFactor, 10 * scaleFactor, RGBA8(0, 0, 255, 0xFF));
+								((clrPlayer>>(unsigned int)8 & 0xFF)/2+46)*scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 15 * scaleFactor, scaleFactor, clrPlayer);
+						vita2d_draw_fill_arc(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 30 * scaleFactor,
+											 10 * scaleFactor, pi/2, pi * 3 / 2, clrBlack);
+						vita2d_draw_fill_arc(174 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 30 * scaleFactor,
+											 10 * scaleFactor, pi * 3 / 2, pi/2, RGBA8(0, 0, 255, 0xFF));
 						vita2d_draw_rectangle_gradient(46 * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 20 * scaleFactor, 128 * scaleFactor, 20 * scaleFactor, clrBlack, RGBA8(0, 0, 255, 0xFF), clrBlack, RGBA8(0, 0, 255, 0xFF));
 						vita2d_draw_fill_circle(((clrPlayer>>(unsigned int)16 & 0xFF)/2+46) * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 30 * scaleFactor, 5 * scaleFactor, clrWhite);
 						drawLine(((clrPlayer>>(unsigned int)16 & 0xFF)/2+46) * scaleFactor + SCREEN_WIDTH / 2, SCREEN_HEIGHT/2 + 15 * scaleFactor,
