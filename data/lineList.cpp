@@ -96,7 +96,7 @@ line* linelist[] = {
     new line(200 + (80 * sin(4 * pi / 12)), 60 + 80 * cos(4 * pi / 12), 305, 110), // Level 3
     new line(0, 0, 0, 200), // Level 5
     new line(0, 0, 220, 0), // Level 5
-    new line(225, -1, 220, 0), // Level 5
+    new line(250, -10, 220, 0), // Level 5
     new line(40, 60, 0, 60), // Level 5
     new line(125, 240, 0, 200), // Level 5
     new line(70, 195, 160 - (360.0f / 13), 60), // Level 5
@@ -110,6 +110,9 @@ line* linelist[] = {
     new line(15, 230, 35, 230), // Level 9
     new line(15, 230, -15, 240), // Level 9
     new line(35, 230, 65, 240), // Level 9
+    new line(29, 106, 30, 100), // Level 9, Out 1
+    new line(21, 26, 20, 20), // Level 9, Out 2
+    new line(29, -94, 30, -100), // Level 9, Out 3
     new line(30, 100, 50, 40), // Level 9, Out 1
     new line(20, 20, 0, -40), // Level 9, Out 2
     new line(30, -100, 50, -160), // Level 9, Out 3
@@ -220,6 +223,10 @@ line* linelistTop[] = {
     new line(30, 100, 50, 40), // Level 9, Out 1
     new line(20, 20, 0, -40), // Level 9, Out 2
     new line(30, -100, 50, -160), // Level 9, Out 3
+    new line(29, 106, 30, 100), // Level 9, Out 1
+    new line(21, 26, 20, 20), // Level 9, Out 2
+    new line(29, -94, 30, -100), // Level 9, Out 3
+    new line(40, -301, 10, -301), // Level 9
 };
 
 int levelStart[] = {
@@ -244,7 +251,7 @@ int levelEnd[] = {
 	0,
 	0,
 	62,
-	107,
+	110,
 	47
 };
 
@@ -296,7 +303,7 @@ int topEnd[] = {
 	0,
 	0,
 	0,
-	3,
+	7,
 	0
 };
 
