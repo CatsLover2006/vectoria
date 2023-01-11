@@ -36,6 +36,7 @@ unsigned int saveVersion = 0; // Save Version Update Handling
 
 enum gamestate {
 	mainLevel = 1,
+	mainLevelPaused = -1,
 	menu = 0,
 };
 enum animstate {
@@ -369,6 +370,10 @@ int main(int argc, char* argv[]) {
 					levelTimerRunning = false;
 					hasStarted = true;
 				}
+				if (kUp && KEY_START) {
+					gameState = mainLevelPaused;
+					break;
+				}
 				for (int lol = 0; lol < SUBSTEPS; lol++) {
 					oX = playerX;
 					oY = playerY;
@@ -596,6 +601,47 @@ int main(int argc, char* argv[]) {
 					goto startFrame;
 				}
 			}
+			case mainLevelPaused: {
+				if (kUp & KEY_B) {
+					animTimer = 0;
+					while (animTimer < 0.4) {
+						// Start Render
+						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+						C2D_TargetClear(top_main, clrWhite);
+						C2D_TargetClear(top_sub, clrWhite);
+						for (int b = 0; b < 2; b++) {
+							if (b == 0) {
+								C2D_SceneBegin(top_main);
+								depthOffset = abs_c(osGet3DSliderState());
+							}
+							if (b == 1) {
+								C2D_SceneBegin(top_sub);
+								depthOffset = -depthOffset;
+							}
+							// Draw Level
+							drawLevel();
+							// Draw Player
+							C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2),
+												playerY + (0 - cY + SCREEN_HEIGHT / 2),
+												0.3f, 10, clrBlack);
+							C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (cos(rot) * 5),
+												playerY + (0 - cY + SCREEN_HEIGHT / 2) + (sin(rot) * 5),
+												0.4f, 3, clrPlayer);
+							// Anim
+							C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(animTimer/0.4)));
+						}
+					}
+					animID = enteredAnim;
+					gameState = menu;
+					hasStarted = false;
+					goto startFrame;
+				}
+				if (kUp & KEY_START) {
+					gameState = mainLevel;
+					goto startFrame;
+				}
+				break;
+			}
 			case menu: {
 				if (animID == exitAnim) {
 					levelTimer+=6;
@@ -689,6 +735,7 @@ int main(int argc, char* argv[]) {
 				depthOffset = -depthOffset;
 			}
 			switch (gameState) {
+				case mainLevelPaused:
 				case mainLevel: {
 					// Draw Level
 					drawLevel();
@@ -752,6 +799,11 @@ int main(int argc, char* argv[]) {
 				}
 				if (animID == gameStart) C2D_DrawRectSolid(0, 0, 0.9f, BOTTOM_SCREEN_WIDTH, SCREEN_HEIGHT, C2D_Color32(0, 0, 0, C2D_FloatToU8(max(0, 0.4 - animTimer)/0.4)));
 				break;
+			}
+			case mainLevelPaused: {
+				drawString("PAUSED", (BOTTOM_SCREEN_WIDTH-getWidth("PAUSED", 0.9f, 4))/2, SCREEN_HEIGHT/2 - 11, 0.9f, 4, clrBlack);
+				drawString("PRESS START TO RETURN TO GAME", (BOTTOM_SCREEN_WIDTH-getWidth("PRESS START TO RETURN TO GAME", 0.6f, 2))/2, SCREEN_HEIGHT/2 + 30, 0.6f, 2, clrBlack);
+				drawString("PRESS B TO EXIT", (BOTTOM_SCREEN_WIDTH-getWidth("PRESS B TO EXIT", 0.6f, 2))/2, SCREEN_HEIGHT/2 + 48, 0.6f, 2, clrBlack);
 			}
 			case mainLevel: {
 				drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);
