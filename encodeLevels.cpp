@@ -78,7 +78,7 @@ int main() {
 	}
 	std::cout << "Levels Encoded, Starting Compression..." << std::endl;
 	for (int i = 0; i < levels; i++) {
-		file.open("level" + std::to_string(i) + ".txt", std::fstream::in);
+		file.open("level/level" + std::to_string(i) + ".txt", std::fstream::in);
 		std::stringstream buffer;
 		buffer << file.rdbuf();
 		file.close();
