@@ -7,6 +7,7 @@
 #include "data/lineListNintendo.hpp"
 
 #include <brotli-cpp.hpp>
+#include <gif.h>
 #include "data/qrcodegen.hpp"
 
 #include <cstdint>
@@ -78,7 +79,7 @@ int main() {
 	}
 	std::cout << "Levels Encoded, Starting Compression..." << std::endl;
 	for (int i = 0; i < levels; i++) {
-		file.open("level/level" + std::to_string(i) + ".txt", std::fstream::in);
+		file.open("levels/level" + std::to_string(i) + ".txt", std::fstream::in);
 		std::stringstream buffer;
 		buffer << file.rdbuf();
 		file.close();
@@ -87,8 +88,26 @@ int main() {
 		file << brotliComp;
 		file.close();
 		std::cout << "Level " << (i + 1) << " text..." << std::endl;
-		qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(brotliComp.c_str(), qrcodegen::QrCode::Ecc::LOW);
-		
+		std::vector<uint8_t> levelBin(brotliComp.begin(), brotliComp.end());
+		qrcodegen::QrCode qr = qrcodegen::QrCode::encodeBinary(levelBin, qrcodegen::QrCode::Ecc::LOW);
+		std::vector<uint8_t> qrCode(((qr.getSize() + 2) * (qr.getSize() + 2)) * 4, 255);
+		GifWriter g;
+		GifBegin(&g, ("levels/level" + std::to_string(i) + ".qr.gif").c_str(), qr.getSize() + 2, qr.getSize() + 2, 1);
+		for (int y = 0; y < qr.getSize(); y++) {
+			for (int x = 0; x < qr.getSize(); x++) {
+				if (qr.getModule(x, y)) {
+					x++;
+					y++;
+					qrCode[(x + y * (qr.getSize() + 2)) * 4] = 0;
+					qrCode[(x + y * (qr.getSize() + 2)) * 4 + 1] = 0;
+					qrCode[(x + y * (qr.getSize() + 2)) * 4 + 2] = 0;
+					x--;
+					y--;
+				}
+			}
+		}
+		GifWriteFrame(&g, qrCode.data(), qr.getSize() + 2, qr.getSize() + 2, 1);
+		GifEnd(&g);
 		std::cout << "Level " << (i + 1) << " qr..." << std::endl;
 	}
 	std::cout << "Done!" << std::endl;

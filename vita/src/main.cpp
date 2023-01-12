@@ -38,6 +38,7 @@ unsigned int saveVersion = 0; // Save Version Update Handling
 
 enum gamestate {
 	mainLevel = 1,
+	mainLevelPaused = -1,
 	menu = 0,
 };
 enum animstate {
@@ -293,6 +294,10 @@ int main(int argc, char* argv[]) {
 					hasStarted = true;
 					timerBlockOffset = getWidth(to_str(0), 0.55f*scaleFactor, 2.0f*scaleFactor) - 3 * scaleFactor;
 				}
+				if (kUp & SCE_CTRL_START) {
+					gameState = mainLevelPaused;
+					break;
+				}
 				for (int lol = 0; lol < SUBSTEPS; lol++) {
 					oX = playerX;
 					oY = playerY;
@@ -440,7 +445,7 @@ int main(int argc, char* argv[]) {
 				//	log << "Oof! Died after " << to_str(levelTimer/360.0f) << " seconds on level " << level << std::endl;
 					animID = ded;
 					frames = 0;
-					while (frames < 24) {
+					while (frames < 144) {
 						frames++;
 						// Start Render
 						vita2d_start_drawing();
@@ -448,14 +453,15 @@ int main(int argc, char* argv[]) {
 						// Draw Level
 						drawLevel();
 						// Funni Animation
-						for (int i = 0; i++ < frames; ) {
+						for (int i = 0; (i-6) < frames; i += 6) {
+							if (i < frames) i = frames;
 							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 24.0f) * 69 * scaleFactor,
-												RGBA8(255, (int)floor(200 - 200 * (i / 24.0f)), 0,
-															floatTo8Int(0.5 - (i / 48.0f))));
+												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 144.0f) * 69 * scaleFactor,
+												RGBA8(255, (int)floor(200 - 200 * (i / 144.0f)), 0,
+															floatTo8Int(0.5 - (i / 288.0f))));
 							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 24.0f) * 69 * scaleFactor,
-												RGBA8(255, 255, 255, floatTo8Int((i / 12.0f) - 1)));
+												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 144.0f) * 69 * scaleFactor,
+												RGBA8(255, 255, 255, floatTo8Int((i / 72.0f) - 1)));
 						}
 						// Draw Timer
 						vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
@@ -467,8 +473,8 @@ int main(int argc, char* argv[]) {
 						vita2d_swap_buffers();
 					}
 					frames = 0;
-					while (frames < 10) {
-						frames++;
+					while (frames < 60) {
+						frames+=6;
 						// Start Render
 						vita2d_start_drawing();
 						vita2d_clear_screen();
@@ -480,7 +486,7 @@ int main(int argc, char* argv[]) {
 						// Funni Animation
 						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
 												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, 69 * scaleFactor,
-												RGBA8(255, 255, 255, floatTo8Int(1-(frames / 10.0f))));
+												RGBA8(255, 255, 255, floatTo8Int(1-(frames / 60.0f))));
 						// Done Rendering!
 						vita2d_end_drawing();
 						vita2d_set_vblank_wait(1);
@@ -489,6 +495,41 @@ int main(int argc, char* argv[]) {
 					hasStarted = false;
 					goto startFrame;
 				}
+			}
+			case mainLevelPaused: {
+				if (kUp & SCE_CTRL_CIRCLE) {
+					animTimer = 0;
+					while (animTimer < 0.4) {
+						// Start Render
+						vita2d_start_drawing();
+						vita2d_clear_screen();
+						// Draw Level
+						drawLevel();
+						// Draw Player
+						vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX)*scaleFactor,
+											((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY)*scaleFactor,
+											10 * scaleFactor, clrBlack);
+						vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX + cos(rot) * 5)*scaleFactor,
+											((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY + sin(rot) * 5)*scaleFactor,
+											10 * scaleFactor, clrPlayer);
+						// Anim
+						vita2d_draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & RGBA8(255, 255, 255, floatTo8Int(animTimer/0.4)));
+						// Done Rendering!
+						vita2d_end_drawing();
+						vita2d_swap_buffers();
+						vita2d_set_vblank_wait(1);
+						animTimer += 1 / 60.0f;
+					}
+					animID = enteredAnim;
+					gameState = menu;
+					hasStarted = false;
+					goto startFrame;
+				}
+				if (kUp & SCE_CTRL_START) {
+					gameState = mainLevel;
+					goto startFrame;
+				}
+				break;
 			}
 			case menu: {
 				if (animID == exitAnim) {
@@ -575,6 +616,21 @@ int main(int argc, char* argv[]) {
 		
 		// Draw
 		switch (gameState) {
+			case mainLevelPaused: {
+				drawLine((SCREEN_WIDTH-max(getWidth("PAUSED", 0.9f * scaleFactor, 4 * scaleFactor),
+										   max(getWidth("PRESS START TO RETURN TO GAME", 0.3f * scaleFactor, 2 * scaleFactor),
+											   getWidth("PRESS B TO EXIT", 0.3f * scaleFactor, 2 * scaleFactor))))/2,
+						 -4, (SCREEN_WIDTH+max(getWidth("PAUSED", 0.9f * scaleFactor, 4 * scaleFactor),
+										       max(getWidth("PRESS START TO RETURN TO GAME", 0.3f * scaleFactor, 2 * scaleFactor),
+											       getWidth("PRESS B TO EXIT", 0.3f * scaleFactor, 2 * scaleFactor))))/2,
+						 -4, 28, RGBA8(255, 255, 255, 100));
+				drawString("PAUSED", (SCREEN_WIDTH-getWidth("PAUSED", 0.9f * scaleFactor, 4 * scaleFactor))/2,
+						   SCREEN_HEIGHT/2 - 5 * scaleFactor, 0.9f * scaleFactor, 4 * scaleFactor, clrBlack);
+				drawString("PRESS START TO RETURN TO GAME", (SCREEN_WIDTH-getWidth("PRESS START TO RETURN TO GAME", 0.3f * scaleFactor, 2 * scaleFactor))/2,
+						   SCREEN_HEIGHT/2 + 10 * scaleFactor, 0.3f * scaleFactor, 2 * scaleFactor, clrBlack);
+				drawString("PRESS B TO EXIT", (SCREEN_WIDTH-getWidth("PRESS B TO EXIT", 0.3f * scaleFactor, 2 * scaleFactor))/2,
+						   SCREEN_HEIGHT/2 + 22 * scaleFactor, 0.3f * scaleFactor, 2 * scaleFactor, clrBlack);
+			}
 			case mainLevel: {
 				// Draw Level
 				drawLevel();

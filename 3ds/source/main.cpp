@@ -370,7 +370,7 @@ int main(int argc, char* argv[]) {
 					levelTimerRunning = false;
 					hasStarted = true;
 				}
-				if (kUp && KEY_START) {
+				if (kUp & KEY_START) {
 					gameState = mainLevelPaused;
 					break;
 				}
@@ -534,8 +534,8 @@ int main(int argc, char* argv[]) {
 					log << "Oof! Died after " << to_str((levelTimer / 60.0f) / SUBSTEPS) << " seconds on level " << level << std::endl;
 					animID = ded;
 					frames = 0;
-					while (frames < 24) {
-						frames++;
+					while (frames < 144) {
+						frames+=6;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 						C2D_TargetClear(top_main, clrWhite);
@@ -552,14 +552,15 @@ int main(int argc, char* argv[]) {
 							// Draw Level
 							drawLevel();
 							// Funni Animation
-							for (int i = 0; i++ < frames; ) {
+							for (int i = 0; (i-6) < frames; i += 6) {
+								if (i > frames) i = frames;
 								C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (0 + 5 * depthOffset),
-													playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
-													C2D_Color32(255, 200 - 200 * (i / 24.0f), 0,
-																C2D_FloatToU8(0.5 - (i / 48.0f))));
+													playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 144.0f) * 69,
+													C2D_Color32(255, 200 - 200 * (i / 144.0f), 0,
+																C2D_FloatToU8(0.5 - (i / 288.0f))));
 								C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (0 + 5 * depthOffset),
-													playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 24.0f) * 69,
-													C2D_Color32(255, 255, 255, C2D_FloatToU8((i / 12.0f) - 1)));
+													playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, (i / 144.0f) * 69,
+													C2D_Color32(255, 255, 255, C2D_FloatToU8((i / 72.0f) - 1)));
 							}
 						}
 						// Timer
@@ -572,8 +573,8 @@ int main(int argc, char* argv[]) {
 						C3D_FrameEnd(0);
 					}
 					frames = 0;
-					while (frames < 10) {
-						frames++;
+					while (frames < 60) {
+						frames+=6;
 						// Start Render
 						C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 						C2D_TargetClear(top_main, clrWhite);
@@ -592,7 +593,7 @@ int main(int argc, char* argv[]) {
 							// Funni Animation
 							C2D_DrawCircleSolid(playerX + (0 - cX + SCREEN_WIDTH / 2) + (0 + 4 * depthOffset),
 												playerY + (0 - cY + SCREEN_HEIGHT / 2), 0.9f, 69,
-												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 10.0f))));
+												C2D_Color32(255, 255, 255, C2D_FloatToU8(1-(frames / 60.0f))));
 						}
 						// Done Rendering!
 						C3D_FrameEnd(0);
@@ -630,6 +631,9 @@ int main(int argc, char* argv[]) {
 							// Anim
 							C2D_DrawRectSolid(0, 0, 0.9f, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & C2D_Color32(255, 255, 255, C2D_FloatToU8(animTimer/0.4)));
 						}
+						// Done Rendering!
+						C3D_FrameEnd(0);
+						animTimer += 1 / 60.0f;
 					}
 					animID = enteredAnim;
 					gameState = menu;
@@ -801,9 +805,9 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 			case mainLevelPaused: {
-				drawString("PAUSED", (BOTTOM_SCREEN_WIDTH-getWidth("PAUSED", 0.9f, 4))/2, SCREEN_HEIGHT/2 - 11, 0.9f, 4, clrBlack);
-				drawString("PRESS START TO RETURN TO GAME", (BOTTOM_SCREEN_WIDTH-getWidth("PRESS START TO RETURN TO GAME", 0.6f, 2))/2, SCREEN_HEIGHT/2 + 30, 0.6f, 2, clrBlack);
-				drawString("PRESS B TO EXIT", (BOTTOM_SCREEN_WIDTH-getWidth("PRESS B TO EXIT", 0.6f, 2))/2, SCREEN_HEIGHT/2 + 48, 0.6f, 2, clrBlack);
+				drawString("PAUSED", (BOTTOM_SCREEN_WIDTH-getWidth("PAUSED", 0.9f, 4))/2, SCREEN_HEIGHT/2 - 5, 0.9f, 4, clrBlack);
+				drawString("PRESS START TO RETURN TO GAME", (BOTTOM_SCREEN_WIDTH-getWidth("PRESS START TO RETURN TO GAME", 0.3f, 2))/2, SCREEN_HEIGHT/2 + 10, 0.3f, 2, clrBlack);
+				drawString("PRESS B TO EXIT", (BOTTOM_SCREEN_WIDTH-getWidth("PRESS B TO EXIT", 0.3f, 2))/2, SCREEN_HEIGHT/2 + 22, 0.3f, 2, clrBlack);
 			}
 			case mainLevel: {
 				drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3, 18, 0.6f, 2.0f, clrBlack);

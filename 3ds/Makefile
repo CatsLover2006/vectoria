@@ -9,7 +9,7 @@ include /opt/devkitpro/devkitARM/3ds_rules
 
 TARGET			:=	vectoria
 BUILD			:=	build
-SOURCES			:=	source ../data
+SOURCES			:=	source $(CURDIR)/../data
 DATA			:=	data
 INCLUDES		:=	include
 GRAPHICS		:=	gfx
@@ -24,19 +24,19 @@ SMOL_ICON 		:=  smol_icon.png
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
 CFLAGS	:=	-g -Wall -O2 -mword-relocations \
-			-fomit-frame-pointer -ffunction-sections \
+			-fomit-frame-pointer -ffunction-sections -fexceptions \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -D__3DS__
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -std=gnu++20
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS	:= -lcitro2d -lcitro3d -lctru -lm
+LIBS	:= -lcitro2d -lcitro3d -lctru -lm -lbrotlienc -lbrotlidec
 
-LIBDIRS	:= $(CTRULIB)
+LIBDIRS	:= $(CTRULIB) $(CURDIR)/..
 
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 

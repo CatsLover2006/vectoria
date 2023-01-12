@@ -21,12 +21,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++20")
 set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d PARENTAL_LEVEL=1")
 
 include_directories(
-	../data
+	../include
 	include
 )
 
 link_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
+  ../lib
 )
 
 add_executable(${VITA_APP_NAME}
