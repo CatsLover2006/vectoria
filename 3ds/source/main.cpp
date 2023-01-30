@@ -243,7 +243,7 @@ void saveData (unsigned long* highScores) {
     threadJoin(saveThread, U64_MAX);
     s32 threadPriority;
     svcGetThreadPriority(&threadPriority, threadGetHandle(threadGetCurrent()));
-    saveThread = threadCreate(doDataSave, highScores, 0xff, threadPriority-1, -1, true);
+    saveThread = threadCreate(doDataSave, highScores, 0xff, threadPriority+1, -1, true);
 }
 
 int main(int argc, char* argv[]) {
