@@ -13,6 +13,7 @@ float scaleFactor = 1;
 #define MAX_SPEED 59
 
 #include <citro2d.h>
+#include <3ds/thread.h>
 
 #include <3ds.h>
 
@@ -33,6 +34,7 @@ const float xDiv = 1 + (sqrt(SUBSTEPS)-1)/SUBSTEPS,
 
 const unsigned int currentSaveVersion = 2;
 unsigned int saveVersion = 0; // Save Version Update Handling
+Thread saveThread;
 
 enum gamestate {
 	mainLevel = 1,
@@ -221,18 +223,27 @@ void drawInfo(C3D_RenderTarget * target) {
 	drawString(to_str(C3D_GetCmdBufUsage()*100.0f), 3, 89, 0.32f, 1, clrBlack);
 }
 
-void saveData (unsigned long* highScores) {
+void doDataSave (void* highScoresIn) {
+    unsigned long* highScores = (unsigned long*)&highScoresIn;
     std::fstream saveFile;
     saveFile.open("save_hail_lines.txt", std::fstream::out | std::fstream::trunc);
     saveFile << std::hex << currentSaveVersion << std::endl;
     saveFile << std::hex << levels << std::endl;
-	for (int i = 0; i < levels; i++) {
-		unsigned long maxScoreRandomCode = rand();
-		saveFile << std::hex << (highScores[i] ^ maxScoreRandomCode) << "|" << std::hex
-			<< ~maxScoreRandomCode << "|" << std::endl;
-	}
-	saveFile << std::hex << clrPlayer << "|" << std::endl;
+    for (int i = 0; i < levels; i++) {
+        unsigned long maxScoreRandomCode = rand();
+        saveFile << std::hex << (highScores[i] ^ maxScoreRandomCode) << "|" << std::hex
+            << ~maxScoreRandomCode << "|" << std::endl;
+    }
+    saveFile << std::hex << clrPlayer << "|" << std::endl;
     saveFile.close();
+    threadExit(0);
+}
+
+void saveData (unsigned long* highScores) {
+    threadJoin(saveThread, U64_MAX);
+    s32 threadPriority;
+    svcGetThreadPriority(&threadPriority, threadGetHandle(threadGetCurrent()));
+    saveThread = threadCreate(doDataSave, highScores, 0xff, threadPriority-1, -1, true);
 }
 
 int main(int argc, char* argv[]) {
@@ -824,6 +835,9 @@ int main(int argc, char* argv[]) {
         // Done Rendering!
 		C3D_FrameEnd(0);
 	}
+    
+    // Save on exit
+    saveData(highScores);
 	
 	// Deinit Graphics
     C2D_Fini();
@@ -832,9 +846,9 @@ int main(int argc, char* argv[]) {
 	
 	// End Log
     log.close();
-	
-	// Save on exit
-	saveData(highScores);
+    
+    // Wait to finish saving
+    threadJoin(saveThread, U64_MAX);
 	
 	// Exit ROM
     romfsExit();

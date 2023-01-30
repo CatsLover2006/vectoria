@@ -5,13 +5,13 @@ $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>dev
 endif
 
 TOPDIR ?= $(CURDIR)
-include /opt/devkitpro/devkitARM/3ds_rules
+include $(DEVKITARM)/3ds_rules
 
 TARGET			:=	vectoria
 BUILD			:=	build
-SOURCES			:=	source $(CURDIR)/../data
+SOURCES			:=	source ../data
 DATA			:=	data
-INCLUDES		:=	include
+INCLUDES		:=	include 
 GRAPHICS		:=	gfx
 ROMFS			:=	romfs
 GFXBUILD		:=	$(ROMFS)/gfx
@@ -36,7 +36,7 @@ LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 LIBS	:= -lcitro2d -lcitro3d -lctru -lm -lbrotlienc -lbrotlidec
 
-LIBDIRS	:= $(CTRULIB) $(CURDIR)/..
+LIBDIRS	:= $(CTRULIB) $(TOPDIR)/..
 
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 
