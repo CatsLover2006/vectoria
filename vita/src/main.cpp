@@ -11,6 +11,9 @@ float scaleFactor = 2.4;
 #define SUBSTEPS 6
 #define MAX_SPEED 59
 
+#define SCREEN_WIDTH_SCALED (SCREEN_WIDTH/scaleFactor)
+#define SCREEN_HEIGHT_SCALED (SCREEN_HEIGHT/scaleFactor)
+
 #include <psp2/kernel/processmgr.h>
 #include <psp2/ctrl.h>
 #include <psp2/touch.h>
@@ -93,60 +96,60 @@ bool vcolCheck = false,
 	invertGrav = false;
 
 button* menuButtons[] = {
-	new button("All levels", ((SCREEN_WIDTH/scaleFactor)*3/4 - 75)*scaleFactor, 24*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
-	new button("Level Select", ((SCREEN_WIDTH/scaleFactor)*3/4 - 75)*scaleFactor, 56*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
-	new button("Color Select", ((SCREEN_WIDTH/scaleFactor)*3/4 - 75)*scaleFactor, 88*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
+	new button("All levels", (SCREEN_WIDTH_SCALED*3/4 - 75)*scaleFactor, 24*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
+	new button("Level Select", (SCREEN_WIDTH_SCALED*3/4 - 75)*scaleFactor, 56*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
+	new button("Color Select", (SCREEN_WIDTH_SCALED*3/4 - 75)*scaleFactor, 88*scaleFactor, 164*scaleFactor, 28*scaleFactor, 0.55f*scaleFactor),
 };
 int menuButtonCount = 3;
 
 void drawLevel() {
 	for (curLine = bgStart[level]; curLine < bgEnd[level]; curLine++) {
-		drawLine((linelistBG[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelistBG[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
-					 (linelistBG[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelistBG[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelistBG[curLine]->startX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelistBG[curLine]->startY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
+					 (linelistBG[curLine]->endX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelistBG[curLine]->endY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 					 2 * scaleFactor, clrGrey);
 	}
 	for (curLine = falseStart[level]; curLine < falseEnd[level]; curLine++) {
-		drawLine((lineListFake[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (lineListFake[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
-					 (lineListFake[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (lineListFake[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+		drawLine((lineListFake[curLine]->startX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (lineListFake[curLine]->startY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
+					 (lineListFake[curLine]->endX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (lineListFake[curLine]->endY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 					 2 * scaleFactor, clrFake);
 	}
 	for (curLine = levelStart[level]; curLine < levelEnd[level]; curLine++) {
-		drawLine((linelist[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelist[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
-					 (linelist[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelist[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelist[curLine]->startX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelist[curLine]->startY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
+					 (linelist[curLine]->endX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelist[curLine]->endY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 					 2 * scaleFactor, clrBlack);
 	}
 	for (curLine = liftStart[level]; curLine < liftEnd[level]; curLine++) {
-		drawLine((lineListLift[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (lineListLift[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
-					 (lineListLift[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (lineListLift[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+		drawLine((lineListLift[curLine]->startX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (lineListLift[curLine]->startY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
+					 (lineListLift[curLine]->endX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (lineListLift[curLine]->endY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 					 2 * scaleFactor, clrGreen);
 	}
 	for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
-		drawLine((linelistKO[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelistKO[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
-					 (linelistKO[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelistKO[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelistKO[curLine]->startX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelistKO[curLine]->startY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
+					 (linelistKO[curLine]->endX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelistKO[curLine]->endY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 					 2 * scaleFactor, clrRed);
 	}
 	for (curLine = topStart[level]; curLine < topEnd[level]; curLine++) {
-		drawLine((linelistTop[curLine]->startX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelistTop[curLine]->startY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
-					 (linelistTop[curLine]->endX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-					 (linelistTop[curLine]->endY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+		drawLine((linelistTop[curLine]->startX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelistTop[curLine]->startY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
+					 (linelistTop[curLine]->endX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+					 (linelistTop[curLine]->endY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 					 2 * scaleFactor, clrBlack);
 	}
-	vita2d_draw_fill_circle((endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-						(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+	vita2d_draw_fill_circle((endPoint[level][0] - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+						(endPoint[level][1] - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 						3 * scaleFactor, clrBlack);
-	vita2d_draw_fill_circle((endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-						(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+	vita2d_draw_fill_circle((endPoint[level][0] - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+						(endPoint[level][1] - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 						2 * scaleFactor, clrPlayer);
 }
 
@@ -284,8 +287,8 @@ int main(int argc, char* argv[]) {
 					oX = playerX;
 					oY = playerY;
 					if (animID == enteredAnim) {
-						cX = constrain(playerX, (SCREEN_WIDTH/scaleFactor) / 2 + bounds[level][0], bounds[level][2] - (SCREEN_WIDTH/scaleFactor) / 2);
-						cY = constrain(playerY, (SCREEN_HEIGHT/scaleFactor) / 2 + bounds[level][1], bounds[level][3] - (SCREEN_HEIGHT/scaleFactor) / 2);
+						cX = constrain(playerX, SCREEN_WIDTH_SCALED / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH_SCALED / 2);
+						cY = constrain(playerY, SCREEN_HEIGHT_SCALED / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT_SCALED / 2);
 					}
 					levelTimer = 0;
 					jumpableFor = 0;
@@ -375,10 +378,10 @@ int main(int argc, char* argv[]) {
 					if (jumpableFor) rotSpd = ((playerX - oX) > 0 ? 0.1 : -0.1) * sqrt((playerX - oX) * (playerX - oX) + (playerY - oY) * (playerY - oY) * (jumpableFor ? 1 : 0));
 					else rotSpd /= pow(1.1, 1/13.0);
 					rot += rotSpd;
-					cX += constrain(playerX, (SCREEN_WIDTH/scaleFactor) / 2 + bounds[level][0], bounds[level][2] - (SCREEN_WIDTH/scaleFactor) / 2) * 0.06;
+					cX += constrain(playerX, SCREEN_WIDTH_SCALED / 2 + bounds[level][0], bounds[level][2] - SCREEN_WIDTH_SCALED / 2) * 0.06;
 					cX /= 1.06;
-					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2) cX = bounds[level][0] + bounds[level][2] / 2;
-					cY += constrain(playerY, (SCREEN_HEIGHT/scaleFactor) / 2 + bounds[level][1], bounds[level][3] - (SCREEN_HEIGHT/scaleFactor) / 2) * 0.06;
+					if (SCREEN_WIDTH_SCALED/2 + bounds[level][0] > bounds[level][2] - SCREEN_WIDTH_SCALED/2) cX = bounds[level][0] + bounds[level][2] / 2;
+					cY += constrain(playerY, SCREEN_HEIGHT_SCALED / 2 + bounds[level][1], bounds[level][3] - SCREEN_HEIGHT_SCALED / 2) * 0.06;
 					cY /= 1.06;
 					for (curLine = koStart[level]; curLine < koEnd[level]; curLine++) {
 						if (lineCircle(linelistKO[curLine]->startX, linelistKO[curLine]->startY, linelistKO[curLine]->endX, linelistKO[curLine]->endY, playerX, playerY, 10)) 
@@ -396,8 +399,8 @@ int main(int argc, char* argv[]) {
 					}
 					animID = enteredAnim;
 					frames = 0;
-					float x = max(endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2, (SCREEN_WIDTH/scaleFactor) - (endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2));
-					float y = max(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2, (SCREEN_HEIGHT/scaleFactor) - (endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2));
+					float x = max(endPoint[level][0] - cX + SCREEN_WIDTH_SCALED / 2, SCREEN_WIDTH_SCALED - (endPoint[level][0] - cX + SCREEN_WIDTH_SCALED / 2));
+					float y = max(endPoint[level][1] - cY + SCREEN_HEIGHT_SCALED / 2, SCREEN_HEIGHT_SCALED - (endPoint[level][1] - cY + SCREEN_HEIGHT_SCALED / 2));
 					float dist = sqrt(x * x + y * y);
 					while (2 + frames * 10/6.0f < dist) {
 						frames+=6;
@@ -407,19 +410,19 @@ int main(int argc, char* argv[]) {
 						// Draw Level
 						drawLevel();
 						// Draw Player
-						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+						vita2d_draw_fill_circle((playerX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+											(playerY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 											10 * scaleFactor, clrBlack);
-						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2 + (cos(rot) * 5))*scaleFactor,
-											(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2 + (sin(rot) * 5))*scaleFactor,
+						vita2d_draw_fill_circle((playerX - cX + SCREEN_WIDTH_SCALED / 2 + (cos(rot) * 5))*scaleFactor,
+											(playerY - cY + SCREEN_HEIGHT_SCALED / 2 + (sin(rot) * 5))*scaleFactor,
 											3 * scaleFactor, clrPlayer);
 						// Draw Timer
 						vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
 						vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
 						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite); 
 						// Funni Animation
-						vita2d_draw_fill_circle((endPoint[level][0] - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-											(endPoint[level][1] - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor,
+						vita2d_draw_fill_circle((endPoint[level][0] - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+											(endPoint[level][1] - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor,
 											(2 + frames * 10/6.0f) * scaleFactor, clrPlayer);
 						// Done Rendering!
 						vita2d_end_drawing();
@@ -437,8 +440,8 @@ int main(int argc, char* argv[]) {
 				{
 					exitLoopLevel:
 					playerY = constrain(playerY, bounds[level][1], bounds[level][3]);
-					if ((SCREEN_WIDTH/scaleFactor)/2 + bounds[level][0] > bounds[level][2] - (SCREEN_WIDTH/scaleFactor)/2)
-						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - (SCREEN_WIDTH/scaleFactor)) / 2, bounds[level][0] + (bounds[level][2] + (SCREEN_WIDTH/scaleFactor)) / 2);
+					if (SCREEN_WIDTH_SCALED/2 + bounds[level][0] > bounds[level][2] - SCREEN_WIDTH_SCALED/2)
+						playerX = constrain(playerX, bounds[level][0] + (bounds[level][2] - SCREEN_WIDTH_SCALED) / 2, bounds[level][0] + (bounds[level][2] + SCREEN_WIDTH_SCALED) / 2);
 					else
 						playerX = constrain(playerX, bounds[level][0], bounds[level][2]);
 					// Log It
@@ -446,7 +449,7 @@ int main(int argc, char* argv[]) {
 					animID = ded;
 					frames = 0;
 					while (frames < 144) {
-						frames++;
+						frames+=6;
 						// Start Render
 						vita2d_start_drawing();
 						vita2d_clear_screen();
@@ -454,13 +457,13 @@ int main(int argc, char* argv[]) {
 						drawLevel();
 						// Funni Animation
 						for (int i = 0; (i-6) < frames; i += 6) {
-							if (i < frames) i = frames;
-							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 144.0f) * 69 * scaleFactor,
+							if (i > frames) i = frames;
+							vita2d_draw_fill_circle((playerX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+												(playerY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor, (i / 144.0f) * 69 * scaleFactor,
 												RGBA8(255, (int)floor(200 - 200 * (i / 144.0f)), 0,
 															floatTo8Int(0.5 - (i / 288.0f))));
-							vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, (i / 144.0f) * 69 * scaleFactor,
+							vita2d_draw_fill_circle((playerX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+												(playerY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor, (i / 144.0f) * 69 * scaleFactor,
 												RGBA8(255, 255, 255, floatTo8Int((i / 72.0f) - 1)));
 						}
 						// Draw Timer
@@ -484,8 +487,8 @@ int main(int argc, char* argv[]) {
 						vita2d_draw_fill_circle(timerBlockOffset, 0, 21.75f*scaleFactor, clrBlack);
 						drawString(to_str((levelTimer / 60.0f) / SUBSTEPS), 3*scaleFactor, 18*scaleFactor, 0.55f*scaleFactor, 2.0f*scaleFactor, clrWhite);
 						// Funni Animation
-						vita2d_draw_fill_circle((playerX - cX + (SCREEN_WIDTH/scaleFactor) / 2)*scaleFactor,
-												(playerY - cY + (SCREEN_HEIGHT/scaleFactor) / 2)*scaleFactor, 69 * scaleFactor,
+						vita2d_draw_fill_circle((playerX - cX + SCREEN_WIDTH_SCALED / 2)*scaleFactor,
+												(playerY - cY + SCREEN_HEIGHT_SCALED / 2)*scaleFactor, 69 * scaleFactor,
 												RGBA8(255, 255, 255, floatTo8Int(1-(frames / 60.0f))));
 						// Done Rendering!
 						vita2d_end_drawing();
@@ -506,12 +509,12 @@ int main(int argc, char* argv[]) {
 						// Draw Level
 						drawLevel();
 						// Draw Player
-						vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX)*scaleFactor,
-											((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY)*scaleFactor,
+						vita2d_draw_fill_circle((SCREEN_WIDTH_SCALED / 2 - cX + playerX)*scaleFactor,
+											(SCREEN_HEIGHT_SCALED / 2 - cY + playerY)*scaleFactor,
 											10 * scaleFactor, clrBlack);
-						vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX + cos(rot) * 5)*scaleFactor,
-											((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY + sin(rot) * 5)*scaleFactor,
-											10 * scaleFactor, clrPlayer);
+						vita2d_draw_fill_circle((SCREEN_WIDTH_SCALED / 2 - cX + playerX + cos(rot) * 5)*scaleFactor,
+											(SCREEN_HEIGHT_SCALED / 2 - cY + playerY + sin(rot) * 5)*scaleFactor,
+											3 * scaleFactor, clrPlayer);
 						// Anim
 						vita2d_draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, clrPlayer & RGBA8(255, 255, 255, floatTo8Int(animTimer/0.4)));
 						// Done Rendering!
@@ -544,7 +547,7 @@ int main(int argc, char* argv[]) {
 				if (!hasStarted) {
     				for (int i = 0; i < levels; i++)
     					levelButtons[i] = new button((i != 0 && (highScores[i] == 0 && highScores[i-1] == 0)) ? "x" : std::to_string(i+1),
-    												((i % 6) * 28 + ((SCREEN_WIDTH/scaleFactor)*3/4 - 75)) * scaleFactor, ((i / 6) * 28 + 24) * scaleFactor, 24*scaleFactor, 24*scaleFactor, 0.5f * scaleFactor);
+    												((i % 6) * 28 + (SCREEN_WIDTH_SCALED*3/4 - 75)) * scaleFactor, ((i / 6) * 28 + 24) * scaleFactor, 24*scaleFactor, 24*scaleFactor, 0.5f * scaleFactor);
 					if (updateSave) saveData(highScores);
 					updateSave = false;
 					hasStarted = true;
@@ -635,11 +638,11 @@ int main(int argc, char* argv[]) {
 				// Draw Level
 				drawLevel();
 				// Draw Player
-				vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX)*scaleFactor,
-									((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY)*scaleFactor,
+				vita2d_draw_fill_circle((SCREEN_WIDTH_SCALED / 2 - cX + playerX)*scaleFactor,
+									(SCREEN_HEIGHT_SCALED / 2 - cY + playerY)*scaleFactor,
 									(animID == -1 ? 10 : min(animTimer * 100, 10)) * scaleFactor, clrBlack);
-				vita2d_draw_fill_circle(((SCREEN_WIDTH/scaleFactor) / 2 - cX + playerX + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
-									((SCREEN_HEIGHT/scaleFactor) / 2 - cY + playerY + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
+				vita2d_draw_fill_circle((SCREEN_WIDTH_SCALED / 2 - cX + playerX + cos(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
+									(SCREEN_HEIGHT_SCALED / 2 - cY + playerY + sin(rot) * (animID == -1 ? 5 : min(animTimer * 50, 5)))*scaleFactor,
 									(animID == -1 ? 3 : min(animTimer * 30, 3)) * scaleFactor, clrPlayer);
 				// Draw Timer
 				vita2d_draw_rectangle(0, 0, timerBlockOffset, 21.75f*scaleFactor, clrBlack);
